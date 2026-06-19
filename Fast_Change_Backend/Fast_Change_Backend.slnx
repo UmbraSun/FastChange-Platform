@@ -1,0 +1,9 @@
+<Solution>
+  <Project Path="Application/Application.csproj" Id="a4a24fd7-fa5e-4a20-9fab-a8cb74fa60d7" />
+  <Project Path="Core/Core.csproj" />
+  <Project Path="Domain/Domain.csproj" Id="2d89d267-9ac8-4f97-bcaa-8f871500d1cf" />
+  <Project Path="Infrastructure/Infrastructure.csproj" Id="35ae9ddd-bf6e-4dba-92c9-eab4a1b0c246" />
+  <Project Path="Persistence/Persistence.csproj" Id="c7a5a9dc-236a-4540-9b0f-baa3e7fb3982" />
+  <Project Path="Resources/Resources.csproj" Id="674cc48b-6208-45e0-b40b-20b62a7ea703" />
+  <Project Path="Tests/Tests.csproj" Id="90a8ef97-fe18-45ad-801b-093f57318d2d" />
+</Solution>

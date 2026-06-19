@@ -1,0 +1,6 @@
+@Fast_Change_Backend_Core_HostAddress = http://localhost:5234
+
+GET {{Fast_Change_Backend_Core_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
