@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:UI.ViewModels"
+             x:Class="UI.Views.RegisterPage"
+             x:DataType="vm:RegisterViewModel"
+             BackgroundColor="#0B0E11"
+             NavigationPage.HasNavigationBar="False">
+
+    <Grid RowDefinitions="Auto, *, Auto" Padding="20">
+        <!-- Header -->
+        <HorizontalStackLayout Grid.Row="0" Margin="0,10,0,0">
+            <Label Text="FastChange" TextColor="#00C087" FontSize="22" FontAttributes="Bold"/>
+        </HorizontalStackLayout>
+
+        <!-- Main Form -->
+        <VerticalStackLayout Grid.Row="1" VerticalOptions="Center" Spacing="16" MaximumWidthRequest="400">
+            <Label Text="Create Account" TextColor="#EAECEF" FontSize="26" FontAttributes="Bold"/>
+            <Label Text="Register to start trading." TextColor="#848E9C" FontSize="14"/>
+
+            <VerticalStackLayout Spacing="6">
+                <Label Text="EMAIL ADDRESS" TextColor="#848E9C" FontSize="11" FontAttributes="Bold"/>
+                <Entry Text="{Binding Email}" Placeholder="name@example.com" Keyboard="Email" TextColor="#EAECEF" BackgroundColor="#1E2329"/>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Spacing="6">
+                <Label Text="PASSWORD" TextColor="#848E9C" FontSize="11" FontAttributes="Bold"/>
+                <Entry Text="{Binding Password}" Placeholder="Minimum 8 characters" IsPassword="True" TextColor="#EAECEF" BackgroundColor="#1E2329"/>
+            </VerticalStackLayout>
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}" Color="#00C087" HeightRequest="30"/>
+
+            <Button Text="Sign Up" 
+                    Command="{Binding RegisterAsyncCommand}"
+                    BackgroundColor="#00C087" 
+                    TextColor="#0B0E11" 
+                    FontAttributes="Bold" 
+                    HeightRequest="50"/>
+        </VerticalStackLayout>
+
+        <!-- Footer -->
+        <Label Grid.Row="2" Text="By creating an account, you agree to our Terms." TextColor="#848E9C" FontSize="11" HorizontalTextAlignment="Center"/>
+    </Grid>
+
+</ContentPage>

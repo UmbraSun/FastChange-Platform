@@ -1,4 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using CommunityToolkit.Maui;
+using Core.Services;
+using Microsoft.Extensions.Logging;
+using UI.Services;
+using UI.ViewModels;
+using UI.Views;
 
 namespace Core
 {
@@ -9,14 +14,25 @@ namespace Core
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
+                .UseMauiCommunityToolkit()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-                    fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
 
+            builder.Services.AddHttpClient<IAuthService, AuthService>(client =>
+            {
+                client.BaseAddress = new Uri(DeviceInfo.Platform == DevicePlatform.Android
+                    ? "http://10.0.2.2:5000"
+                    : "https://localhost:7001");
+            });
+
+            builder.Services.AddTransient<RegisterViewModel>();
+            builder.Services.AddTransient<RegisterPage>();
+            builder.Services.AddSingleton<IAlertService, AlertService>();
+
 #if DEBUG
-    		builder.Logging.AddDebug();
+            builder.Logging.AddDebug();
 #endif
 
             return builder.Build();
