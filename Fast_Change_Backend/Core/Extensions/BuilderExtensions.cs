@@ -1,4 +1,5 @@
-﻿using Core.Infrastructure;
+﻿using Application.Common.Behaviors;
+using Core.Infrastructure;
 using FluentValidation;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +22,7 @@ public static class BuilderExtensions
         services.AddDatabase(configuration);
         services.AddApplicationServices();
         services.AddMiddlewares();
+        services.AddApplicationInfrastructure();
 
         return builder;
     }
@@ -94,5 +96,18 @@ public static class BuilderExtensions
     {
         services.AddExceptionHandler<GlobalExceptionHandler>();
         services.AddProblemDetails();
+    }
+
+    // Application infrastructure configuration
+    private static void AddApplicationInfrastructure(this IServiceCollection services)
+    {
+        var assembly = typeof(Application.AssemblyReference).Assembly;
+        services.AddMediatR(configuration =>
+        {
+            configuration.RegisterServicesFromAssembly(assembly);
+            configuration.AddOpenBehavior(typeof(ValidationBehavior<,>));
+        });
+
+        services.AddValidatorsFromAssembly(assembly);
     }
 }
