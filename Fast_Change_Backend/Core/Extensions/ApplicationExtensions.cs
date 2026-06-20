@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Core.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 using Persistence;
 using Scalar.AspNetCore;
 
@@ -13,6 +14,7 @@ public static class ApplicationExtensions
         app.ApiConfigs();
         app.SecurityConfigs();
         app.HighLoadConfigs();
+        app.UseMiddlewares();
         app.ApplyDatabaseMigrations();
 
         return app;
@@ -42,6 +44,7 @@ public static class ApplicationExtensions
     // API configuration
     private static  void ApiConfigs(this WebApplication app)
     {
+        app.MapControllers();
         app.UseCors();
     }
 
@@ -56,6 +59,12 @@ public static class ApplicationExtensions
     private static void HighLoadConfigs(this WebApplication app)
     {
         app.UseRateLimiter();
+    }
+
+    // Use middlewares
+    private static void UseMiddlewares(this WebApplication app)
+    {
+        app.UseExceptionHandler();
     }
 
     // Automatically applies pending Entity Framework Core migrations on application startup

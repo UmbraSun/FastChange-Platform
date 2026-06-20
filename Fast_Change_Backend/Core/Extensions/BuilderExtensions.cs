@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.RateLimiting;
+﻿using Core.Infrastructure;
+using FluentValidation;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
+using System.Runtime.CompilerServices;
 using System.Threading.RateLimiting;
 
 namespace Core.Extensions;
@@ -17,6 +20,7 @@ public static class BuilderExtensions
         services.RateLimiter();
         services.AddDatabase(configuration);
         services.AddApplicationServices();
+        services.AddMiddlewares();
 
         return builder;
     }
@@ -24,6 +28,7 @@ public static class BuilderExtensions
     // OpenAPI (Swagger) configuration
     private static void OpenApi(this IServiceCollection services)
     {
+        services.AddControllers();
         services.AddOpenApi();
         services.AddEndpointsApiExplorer();
     }
@@ -73,5 +78,21 @@ public static class BuilderExtensions
     // Application services adding
     private static void AddApplicationServices(this IServiceCollection services)
     {
+        services.AddMediatR(cfg =>
+            cfg.RegisterServicesFromAssembly(typeof(Application.AssemblyReference).Assembly));
+        services.AddValidatorsFromAssembly(typeof(Application.AssemblyReference).Assembly);
+
+        services.Scan(scan => scan
+            .FromAssemblyOf<ApplicationDbContext>()
+            .AddClasses(classes => classes.Where(t => t.Name.EndsWith("Repository")))
+            .AsImplementedInterfaces()
+            .WithScopedLifetime());
+    }
+
+    // Add middlewares to the DI container
+    private static void AddMiddlewares(this IServiceCollection services)
+    {
+        services.AddExceptionHandler<GlobalExceptionHandler>();
+        services.AddProblemDetails();
     }
 }

@@ -1,0 +1,46 @@
+﻿using Domain.Entities;
+using FastChange.Application.Features.Users.RegisterUser;
+using MediatR;
+
+namespace Application.Features.Users.RegisterUser;
+
+/// <summary>
+/// Command handler for registering a new user. It checks for email uniqueness, hashes the password, creates default wallets, and persists the user and wallets to the database.
+/// </summary>
+public sealed class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, Guid>
+{
+    private readonly IUserRepository _userRepository;
+
+    public RegisterUserCommandHandler(IUserRepository userRepository)
+    {
+        _userRepository = userRepository;
+    }
+
+    public async Task<Guid> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
+    {
+        var emailExists = await _userRepository.IsEmailTakenAsync(request.Email, cancellationToken);
+
+        if (emailExists)
+            throw new InvalidOperationException("User with this email already exists.");
+
+        var fakeHash = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(request.Password));
+
+        var user = new User
+        {
+            Id = Guid.NewGuid(),
+            Email = request.Email,
+            PasswordHash = fakeHash,
+            IsVerified = false
+        };
+
+        var defaultWallets = new List<Wallet>
+        {
+            new() { Id = Guid.NewGuid(), UserId = user.Id, Currency = "USD", Balance = 0.00m },
+            new() { Id = Guid.NewGuid(), UserId = user.Id, Currency = "BTC", Balance = 0.0000m }
+        };
+
+        await _userRepository.SaveUserWithWalletsAsync(user, defaultWallets, cancellationToken);
+
+        return user.Id;
+    }
+}
