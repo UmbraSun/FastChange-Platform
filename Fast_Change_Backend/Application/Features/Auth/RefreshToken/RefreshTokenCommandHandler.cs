@@ -1,6 +1,7 @@
 using Application.Common.Interfaces;
 using FastChange.Application.Features.Auth.RefreshToken;
 using MediatR;
+using Resources;
 
 namespace Application.Features.Auth.RefreshToken;
 
@@ -30,7 +31,7 @@ public sealed class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCom
         var user = await _refreshTokenRepository.GetByIdAsync(validatedToken.UserId, cancellationToken);
 
         if (user is null || user.Email != validatedToken.Email)
-            throw new UnauthorizedAccessException("Invalid refresh token.");
+            throw new UnauthorizedAccessException(Localization.InvalidRefreshToken);
 
         var tokens = _jwtTokenGenerator.GenerateTokens(user.Id, user.Email);
 
