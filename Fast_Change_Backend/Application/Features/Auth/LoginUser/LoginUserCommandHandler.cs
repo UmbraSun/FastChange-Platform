@@ -30,7 +30,7 @@ public sealed class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, 
 
         var passwordHash = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(request.Password));
 
-        if (user.PasswordHash != passwordHash)
+        if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
             throw new UnauthorizedAccessException(Localization.InvalidEmailOrPass);
 
         var tokens = _jwtTokenGenerator.GenerateTokens(user.Id, user.Email);

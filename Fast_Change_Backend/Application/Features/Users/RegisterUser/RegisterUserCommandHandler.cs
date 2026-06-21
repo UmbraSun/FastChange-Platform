@@ -30,7 +30,7 @@ public sealed class RegisterUserCommandHandler : IRequestHandler<RegisterUserCom
         {
             Id = Guid.NewGuid(),
             Email = request.Email,
-            PasswordHash = fakeHash,
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
             IsVerified = false
         };
 
