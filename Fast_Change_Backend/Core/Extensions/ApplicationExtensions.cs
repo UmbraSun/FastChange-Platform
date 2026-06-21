@@ -44,6 +44,7 @@ public static class ApplicationExtensions
     // API configuration
     private static  void ApiConfigs(this WebApplication app)
     {
+        app.UseRouting();
         app.MapControllers();
         app.UseCors();
     }
@@ -51,8 +52,8 @@ public static class ApplicationExtensions
     // Security configuration
     private static void SecurityConfigs(this WebApplication app)
     {
-        //app.UseAuthentication();
-        //app.UseAuthorization();
+        app.UseAuthentication();
+        app.UseAuthorization();
     }
 
     // High load configuration
