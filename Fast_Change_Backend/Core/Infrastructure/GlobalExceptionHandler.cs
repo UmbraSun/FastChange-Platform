@@ -24,6 +24,7 @@ public class GlobalExceptionHandler : IExceptionHandler
         var problemDetails = exception switch
         {
             ValidationException validationEx => CreateValidationProblemDetails(validationEx, httpContext),
+            UnauthorizedAccessException unauthorizedEx => CreateUnauthorizedProblemDetails(unauthorizedEx, httpContext),
             _ => CreateInternalServerErrorProblemDetails(exception, httpContext)
         };
 
@@ -49,6 +50,17 @@ public class GlobalExceptionHandler : IExceptionHandler
             Status = StatusCodes.Status422UnprocessableEntity,
             Title = "Validation Failed",
             Detail = "One or more validation errors occurred.",
+            Instance = context.Request.Path
+        };
+    }
+
+    private static ProblemDetails CreateUnauthorizedProblemDetails(UnauthorizedAccessException ex, HttpContext context)
+    {
+        return new ProblemDetails
+        {
+            Status = StatusCodes.Status401Unauthorized,
+            Title = "Unauthorized",
+            Detail = ex.Message,
             Instance = context.Request.Path
         };
     }

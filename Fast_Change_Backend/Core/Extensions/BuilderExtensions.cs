@@ -1,10 +1,15 @@
 ﻿using Application.Common.Behaviors;
+using Application.Common.Interfaces;
+using Application.Common.Settings;
 using Core.Infrastructure;
 using FluentValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Persistence;
-using System.Runtime.CompilerServices;
+using Persistence.Authentication;
+using System.Text;
 using System.Threading.RateLimiting;
 
 namespace Core.Extensions;
@@ -20,9 +25,10 @@ public static class BuilderExtensions
         services.Cors();
         services.RateLimiter();
         services.AddDatabase(configuration);
-        services.AddApplicationServices();
         services.AddMiddlewares();
         services.AddApplicationInfrastructure();
+        services.AddUserLogin(builder.Configuration);
+        services.AddApplicationServices(builder.Configuration);
 
         return builder;
     }
@@ -77,20 +83,6 @@ public static class BuilderExtensions
             }));
     }
 
-    // Application services adding
-    private static void AddApplicationServices(this IServiceCollection services)
-    {
-        services.AddMediatR(cfg =>
-            cfg.RegisterServicesFromAssembly(typeof(Application.AssemblyReference).Assembly));
-        services.AddValidatorsFromAssembly(typeof(Application.AssemblyReference).Assembly);
-
-        services.Scan(scan => scan
-            .FromAssemblyOf<ApplicationDbContext>()
-            .AddClasses(classes => classes.Where(t => t.Name.EndsWith("Repository")))
-            .AsImplementedInterfaces()
-            .WithScopedLifetime());
-    }
-
     // Add middlewares to the DI container
     private static void AddMiddlewares(this IServiceCollection services)
     {
@@ -109,5 +101,48 @@ public static class BuilderExtensions
         });
 
         services.AddValidatorsFromAssembly(assembly);
+    }
+
+    private static void AddUserLogin(this IServiceCollection services, ConfigurationManager configuration)
+    {
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(options =>
+        {
+            var jwtSettings = configuration.GetSection(JwtSettings.SectionName).Get<JwtSettings>();
+
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = jwtSettings!.Issuer,
+                ValidAudience = jwtSettings.Audience,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret))
+            };
+        });
+
+    }
+
+    // Application services adding
+    private static void AddApplicationServices(this IServiceCollection services, ConfigurationManager configuration)
+    {
+        services.AddMediatR(cfg =>
+            cfg.RegisterServicesFromAssembly(typeof(Application.AssemblyReference).Assembly));
+        services.AddValidatorsFromAssembly(typeof(Application.AssemblyReference).Assembly);
+
+        services.Scan(scan => scan
+            .FromAssemblyOf<ApplicationDbContext>()
+            .AddClasses(classes => classes.Where(t => t.Name.EndsWith("Repository")))
+            .AsImplementedInterfaces()
+            .WithScopedLifetime());
+
+        services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.SectionName));
+        services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
+        services.AddSingleton<IJwtTokenValidator, JwtTokenValidator>();
     }
 }
