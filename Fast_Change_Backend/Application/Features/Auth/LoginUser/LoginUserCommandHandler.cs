@@ -1,6 +1,7 @@
 using Application.Common.Interfaces;
 using FastChange.Application.Features.Auth.LoginUser;
 using MediatR;
+using Resources;
 
 namespace Application.Features.Auth.LoginUser;
 
@@ -25,12 +26,12 @@ public sealed class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, 
         var user = await _loginUserRepository.GetByEmailAsync(request.Email, cancellationToken);
 
         if (user is null)
-            throw new UnauthorizedAccessException("Invalid email or password.");
+            throw new UnauthorizedAccessException(Localization.InvalidEmailOrPass);
 
         var passwordHash = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(request.Password));
 
         if (user.PasswordHash != passwordHash)
-            throw new UnauthorizedAccessException("Invalid email or password.");
+            throw new UnauthorizedAccessException(Localization.InvalidEmailOrPass);
 
         var tokens = _jwtTokenGenerator.GenerateTokens(user.Id, user.Email);
 

@@ -6,6 +6,7 @@ using Application.Common.Settings;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
+using Resources;
 
 namespace Persistence.Authentication;
 
@@ -32,19 +33,19 @@ public sealed class JwtTokenValidator : IJwtTokenValidator
         }
         catch (SecurityTokenException)
         {
-            throw new UnauthorizedAccessException("Invalid refresh token.");
+            throw new UnauthorizedAccessException(Localization.InvalidRefreshToken);
         }
 
         if (!validationResult.IsValid || validationResult.SecurityToken is not JsonWebToken jsonWebToken)
-            throw new UnauthorizedAccessException("Invalid refresh token.");
+            throw new UnauthorizedAccessException(Localization.InvalidRefreshToken);
 
         var tokenType = jsonWebToken.GetClaim(JwtClaimTypes.TokenType)?.Value;
         if (tokenType != JwtClaimTypes.Refresh)
-            throw new UnauthorizedAccessException("Invalid refresh token.");
+            throw new UnauthorizedAccessException(Localization.InvalidRefreshToken);
 
         var email = jsonWebToken.GetClaim(JwtRegisteredClaimNames.Email)?.Value;
         if (!Guid.TryParse(jsonWebToken.Subject, out var userId) || string.IsNullOrWhiteSpace(email))
-            throw new UnauthorizedAccessException("Invalid refresh token.");
+            throw new UnauthorizedAccessException(Localization.InvalidRefreshToken);
 
         return new ValidatedRefreshToken(userId, email);
     }

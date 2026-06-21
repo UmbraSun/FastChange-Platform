@@ -1,7 +1,9 @@
 ﻿using FastChange.Application.Features.Auth.LoginUser;
 using FastChange.Application.Features.Auth.RefreshToken;
-using FastChange.Application.Features.Users.RegisterUser;using MediatR;
+using FastChange.Application.Features.Users.RegisterUser;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Resources;
 
 namespace Core.Controllers;
 
@@ -34,7 +36,7 @@ public class AuthController : ControllerBase
         CancellationToken cancellationToken)
     {
         var userId = await _mediator.Send(command, cancellationToken);
-        return Ok(new { UserId = userId, Message = "User registered successfully with default wallets." });
+        return Ok(new { UserId = userId, Message = Localization.UserRegisteredSuccessfully });
     }
 
     /// <summary>

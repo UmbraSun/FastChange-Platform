@@ -1,5 +1,6 @@
 using FastChange.Application.Features.Auth.RefreshToken;
 using FluentValidation;
+using Resources;
 
 namespace Application.Features.Auth.RefreshToken;
 
@@ -8,6 +9,6 @@ public sealed class RefreshTokenValidator : AbstractValidator<RefreshTokenComman
     public RefreshTokenValidator()
     {
         RuleFor(x => x.RefreshToken)
-            .NotEmpty().WithMessage("Refresh token is required.");
+            .NotEmpty().WithMessage(Localization.RefreshTokenIsRequired);
     }
 }
