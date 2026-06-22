@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="UI.Views.DashboardPage"
+             BackgroundColor="{DynamicResource ExchangeBg}"
+             NavigationPage.HasNavigationBar="False">
+
+    <Grid RowDefinitions="Auto, *, Auto" Padding="16">
+
+        <!-- Header Profile Info -->
+        <Grid Grid.Row="0" ColumnDefinitions="*, Auto" Margin="0,10,0,15">
+            <VerticalStackLayout Grid.Column="0">
+                <Label Text="Welcome back" TextColor="{DynamicResource ExchangeMuted}" FontSize="12"/>
+                <Label Text="test@fastchange.io" TextColor="{DynamicResource ExchangeText}" FontSize="15" FontAttributes="Bold"/>
+            </VerticalStackLayout>
+            <Border Grid.Column="1" BackgroundColor="{DynamicResource ExchangeCard}" StrokeShape="RoundRectangle 4" Padding="8,4" StrokeThickness="0">
+                <Label Text="Verified" TextColor="{DynamicResource ExchangeGreen}" FontSize="11" FontAttributes="Bold"/>
+            </Border>
+        </Grid>
+
+        <!-- Main Workspace -->
+        <ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
+            <VerticalStackLayout Spacing="20">
+
+                <!-- Total Balance Banner Card -->
+                <Border BackgroundColor="{DynamicResource ExchangeCard}" StrokeThickness="0" StrokeShape="RoundRectangle 12" Padding="20">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="TOTAL ESTIMATED BALANCE" TextColor="{DynamicResource ExchangeMuted}" FontSize="11" FontAttributes="Bold"/>
+                        <HorizontalStackLayout Spacing="6">
+                            <Label Text="$1,250.00" TextColor="{DynamicResource ExchangeText}" FontSize="28" FontAttributes="Bold"/>
+                            <Label Text="USD" TextColor="{DynamicResource ExchangeMuted}" FontSize="14" VerticalOptions="End" Margin="0,0,0,4"/>
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Quick Operations Row -->
+                <Grid ColumnDefinitions="*, *" ColumnSpacing="12">
+                    <Button Grid.Column="0" Text="P2P Transfer" BackgroundColor="{DynamicResource ExchangeCard}" TextColor="{DynamicResource ExchangeGreen}" HeightRequest="45" FontAttributes="Bold" CornerRadius="12"/>
+                    <Button Grid.Column="1" Text="Quick Exchange" BackgroundColor="{DynamicResource ExchangeGreen}" TextColor="{DynamicResource ExchangeBg}" HeightRequest="45" FontAttributes="Bold" CornerRadius="12"/>
+                </Grid>
+
+                <!-- Wallets Dynamic Section List -->
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="MY WALLETS" TextColor="{DynamicResource ExchangeMuted}" FontSize="11" FontAttributes="Bold"/>
+
+                    <!-- Item 1: USD -->
+                    <Border BackgroundColor="{DynamicResource ExchangeCard}" StrokeThickness="0" StrokeShape="RoundRectangle 12" Padding="15">
+                        <Grid ColumnDefinitions="Auto, *, Auto">
+                            <Border Grid.Column="0" WidthRequest="40" HeightRequest="40" BackgroundColor="{DynamicResource ExchangeBg}" StrokeThickness="0" StrokeShape="RoundRectangle 6">
+                                <Label Text="USD" TextColor="{DynamicResource ExchangeText}" HorizontalOptions="Center" VerticalOptions="Center" FontAttributes="Bold"/>
+                            </Border>
+                            <VerticalStackLayout Grid.Column="1" Margin="12,0,0,0" VerticalOptions="Center">
+                                <Label Text="United States Dollar" TextColor="{DynamicResource ExchangeText}" FontSize="14" FontAttributes="Bold"/>
+                                <Label Text="Available Asset" TextColor="{DynamicResource ExchangeMuted}" FontSize="11"/>
+                            </VerticalStackLayout>
+                            <Label Grid.Column="2" Text="$1,250.00" TextColor="{DynamicResource ExchangeText}" FontSize="16" FontAttributes="Bold" VerticalOptions="Center"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- Item 2: EUR -->
+                    <Border BackgroundColor="{DynamicResource ExchangeCard}" StrokeThickness="0" StrokeShape="RoundRectangle 12" Padding="15">
+                        <Grid ColumnDefinitions="Auto, *, Auto">
+                            <Border Grid.Column="0" WidthRequest="40" HeightRequest="40" BackgroundColor="{DynamicResource ExchangeBg}" StrokeThickness="0" StrokeShape="RoundRectangle 6">
+                                <Label Text="EUR" TextColor="{DynamicResource ExchangeText}" HorizontalOptions="Center" VerticalOptions="Center" FontAttributes="Bold"/>
+                            </Border>
+                            <VerticalStackLayout Grid.Column="1" Margin="12,0,0,0" VerticalOptions="Center">
+                                <Label Text="Euro" TextColor="{DynamicResource ExchangeText}" FontSize="14" FontAttributes="Bold"/>
+                                <Label Text="Available Asset" TextColor="{DynamicResource ExchangeMuted}" FontSize="11"/>
+                            </VerticalStackLayout>
+                            <Label Grid.Column="2" Text="€0.00" TextColor="{DynamicResource ExchangeText}" FontSize="16" FontAttributes="Bold" VerticalOptions="Center"/>
+                        </Grid>
+                    </Border>
+
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Bottom Custom App TabBar Menu Look -->
+        <Border Grid.Row="2" BackgroundColor="{DynamicResource ExchangeCard}" StrokeThickness="0" Margin="-16,0" Padding="0,8">
+            <Grid ColumnDefinitions="*, *, *">
+                <Button Grid.Column="0" Text="Home" TextColor="{DynamicResource ExchangeGreen}" BackgroundColor="Transparent" FontSize="12"/>
+                <Button Grid.Column="1" Text="P2P" TextColor="{DynamicResource ExchangeMuted}" BackgroundColor="Transparent" FontSize="12"/>
+                <Button Grid.Column="2" Text="Wallets" TextColor="{DynamicResource ExchangeMuted}" BackgroundColor="Transparent" FontSize="12"/>
+            </Grid>
+        </Border>
+    </Grid>
+
+</ContentPage>

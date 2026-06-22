@@ -1,10 +1,11 @@
-﻿namespace Core
+﻿using Microsoft.Maui.Controls;
+
+namespace Core;
+
+public partial class AppShell : Shell
 {
-    public partial class AppShell : Shell
+    public AppShell()
     {
-        public AppShell()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }
