@@ -1,68 +1,54 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 
-export const RegisterForm: React.FC = () => {
+interface RegisterFormProps {
+  onSuccess: () => void;
+}
+
+export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Action trigger goes here (e.g., dispatching to api)
-    console.log({ email, password });
+    console.log('Sending structured payload to backend:', { email, password });
+    onSuccess();
   };
 
   return (
-    <div className="min-h-screen bg-exchangeBg text-exchangeText flex flex-col justify-between p-4 font-sans">
-      {/* Top Navigation Bar Component (Mobile Native look) */}
-      <header className="flex items-center justify-between py-2 border-b border-gray-800">
-        <span className="text-xl font-bold tracking-wider text-exchangeGreen">FastChange</span>
-        <button className="text-sm text-exchangeMuted font-medium">Log In</button>
-      </header>
+    <div className="mx-auto max-w-md p-8 rounded-3xl bg-exchangeCard shadow-[0_20px_60px_-20px_rgba(0,0,0,0.55)] mt-16">
+      <h1 className="text-3xl font-semibold text-exchangeText mb-6">Create your account</h1>
+      <form onSubmit={handleSubmit} className="space-y-5">
+        <label className="block text-sm text-exchangeText/80">
+          Email
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@example.com"
+            required
+            className="mt-2 w-full rounded-2xl border border-neutral-700 bg-[#131A22] px-4 py-3 text-sm text-white outline-none transition focus:border-exchangeGreen"
+          />
+        </label>
 
-      {/* Main Form container: centered on desktop, full-width on mobile */}
-      <main className="w-full max-w-md mx-auto my-auto py-6">
-        <h1 className="text-2xl font-bold mb-2">Create Account</h1>
-        <p className="text-sm text-exchangeMuted mb-6">Register to start trading and exchanging currency.</p>
+        <label className="block text-sm text-exchangeText/80">
+          Password
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="••••••••"
+            required
+            className="mt-2 w-full rounded-2xl border border-neutral-700 bg-[#131A22] px-4 py-3 text-sm text-white outline-none transition focus:border-exchangeGreen"
+          />
+        </label>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-xs font-semibold text-exchangeMuted uppercase mb-1">Email Address</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-exchangeCard border border-gray-800 focus:border-exchangeGreen rounded px-3 py-3 text-sm focus:outline-none transition-colors"
-              placeholder="name@example.com"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-exchangeMuted uppercase mb-1">Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-exchangeCard border border-gray-800 focus:border-exchangeGreen rounded px-3 py-3 text-sm focus:outline-none transition-colors"
-              placeholder="Minimum 8 characters"
-              required
-            />
-          </div>
-
-          <div className="pt-2">
-            <button
-              type="submit"
-              className="w-full bg-exchangeGreen hover:opacity-90 text-exchangeBg font-bold py-3.5 rounded text-sm transition-opacity shadow-md"
-            >
-              Sign Up
-            </button>
-          </div>
-        </form>
-      </main>
-
-      {/* Footer for terms */}
-      <footer className="text-center text-xs text-exchangeMuted py-4">
-        By creating an account, you agree to our Terms of Service.
-      </footer>
+        <button
+          type="submit"
+          className="w-full rounded-2xl bg-exchangeGreen px-5 py-3 text-sm font-semibold text-exchangeBg transition hover:bg-[#0dbc75]"
+        >
+          Sign Up
+        </button>
+      </form>
     </div>
   );
 };
