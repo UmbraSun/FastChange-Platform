@@ -3,11 +3,30 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="UI.Styles.ExchangeStyles">
 
-    <!-- Theme Palette accessible by all pages in UI project -->
+    <!-- Theme Palette -->
     <Color x:Key="ExchangeBg">#0B0E11</Color>
     <Color x:Key="ExchangeCard">#1E2329</Color>
     <Color x:Key="ExchangeGreen">#00C087</Color>
     <Color x:Key="ExchangeText">#EAECEF</Color>
     <Color x:Key="ExchangeMuted">#848E9C</Color>
-    
+
+    <!-- Missing System Typography Keys required by modern MAUI controls under the hood -->
+    <x:String x:Key="Headline">OpenSansSemibold</x:String>
+    <x:String x:Key="SubHeadline">OpenSansRegular</x:String>
+    <x:String x:Key="Title">OpenSansSemibold</x:String>
+    <x:String x:Key="Body">OpenSansRegular</x:String>
+
+    <!-- Implicit style override to prevent implicit engine crashes -->
+    <Style TargetType="Label">
+        <Setter Property="TextColor" Value="{DynamicResource ExchangeText}" />
+        <Setter Property="FontFamily" Value="{DynamicResource Body}" />
+    </Style>
+
+    <Style TargetType="Entry">
+        <Setter Property="TextColor" Value="{DynamicResource ExchangeText}" />
+        <Setter Property="BackgroundColor" Value="{DynamicResource ExchangeCard}" />
+        <Setter Property="PlaceholderColor" Value="{DynamicResource ExchangeMuted}" />
+        <Setter Property="FontFamily" Value="{DynamicResource Body}" />
+    </Style>
+
 </ResourceDictionary>

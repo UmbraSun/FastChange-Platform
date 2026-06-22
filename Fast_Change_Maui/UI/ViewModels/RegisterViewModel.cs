@@ -25,8 +25,8 @@ public partial class RegisterViewModel : ObservableObject
         _alertService = alertService;
     }
 
-    [RelayCommand]
-    private async Task RegisterAsync()
+[RelayCommand()]
+    public async Task RegisterAsyncCommand()
     {
         if (IsBusy) return;
 
@@ -41,6 +41,9 @@ public partial class RegisterViewModel : ObservableObject
             await _alertService.ShowAlertAsync(
                 "Success",
                 "Account created with default multi-currency wallets!");
+                
+            // Navigate to dashboard after successful registration
+            // This would normally navigate using the application's navigation system
         }
         catch (ApplicationException ex)
         {

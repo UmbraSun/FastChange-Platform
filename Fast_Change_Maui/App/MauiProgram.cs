@@ -27,8 +27,10 @@ namespace Core
                     : "https://localhost:7001");
             });
 
-            builder.Services.AddTransient<RegisterViewModel>();
             builder.Services.AddTransient<RegisterPage>();
+            builder.Services.AddTransient<RegisterViewModel>();
+            builder.Services.AddTransient<DashboardPage>();
+
             builder.Services.AddSingleton<IAlertService, AlertService>();
 
 #if DEBUG
