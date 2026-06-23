@@ -150,4 +150,7 @@
   <data name="UserRegisteredSuccessfully" xml:space="preserve">
     <value>User registered successfully with default wallets.</value>
   </data>
+  <data name="UserNotFound" xml:space="preserve">
+    <value>User not found.</value>
+  </data>
 </root>

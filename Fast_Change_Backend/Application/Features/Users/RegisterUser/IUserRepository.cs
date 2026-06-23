@@ -7,6 +7,9 @@ namespace Application.Features.Users.RegisterUser;
 /// </summary>
 public interface IUserRepository
 {
+    // Retrieves a user by their unique identifier from PostgreSQL
+    Task<User> GetByIdAsync(Guid id, CancellationToken cancellationToken);
+
     // Determines if the email already exists in PostgreSQL
     Task<bool> IsEmailTakenAsync(string email, CancellationToken cancellationToken);
 

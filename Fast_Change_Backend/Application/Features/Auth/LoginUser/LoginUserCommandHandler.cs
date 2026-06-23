@@ -28,8 +28,6 @@ public sealed class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, 
         if (user is null)
             throw new UnauthorizedAccessException(Localization.InvalidEmailOrPass);
 
-        var passwordHash = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(request.Password));
-
         if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
             throw new UnauthorizedAccessException(Localization.InvalidEmailOrPass);
 
