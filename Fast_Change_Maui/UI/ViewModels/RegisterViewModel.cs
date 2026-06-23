@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Core.Dto.Auth;
+using Core.Interfaces;
 using Core.Services;
 
 namespace UI.ViewModels;
@@ -25,7 +26,7 @@ public partial class RegisterViewModel : ObservableObject
         _alertService = alertService;
     }
 
-[RelayCommand()]
+    [RelayCommand()]
     public async Task RegisterAsyncCommand()
     {
         if (IsBusy) return;

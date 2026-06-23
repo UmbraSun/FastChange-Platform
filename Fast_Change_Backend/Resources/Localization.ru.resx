@@ -150,4 +150,7 @@
   <data name="UserRegisteredSuccessfully" xml:space="preserve">
     <value>Пользователь успешно зарегистрировался в кошельке по умолчанию.</value>
   </data>
+  <data name="UserNotFound" xml:space="preserve">
+    <value>Пользователь не найден.</value>
+  </data>
 </root>

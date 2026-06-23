@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Application.Common.Exceptions;
+using Domain.Entities;
 using FastChange.Application.Features.Users.RegisterUser;
 using MediatR;
 using Resources;
@@ -22,9 +23,7 @@ public sealed class RegisterUserCommandHandler : IRequestHandler<RegisterUserCom
         var emailExists = await _userRepository.IsEmailTakenAsync(request.Email, cancellationToken);
 
         if (emailExists)
-            throw new InvalidOperationException(Localization.UserIsAlreadyExist);
-
-        var fakeHash = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(request.Password));
+            throw new BusinessException(Localization.UserIsAlreadyExist);
 
         var user = new User
         {

@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using Application.Common.Exceptions;
+using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,6 +26,7 @@ public class GlobalExceptionHandler : IExceptionHandler
         {
             ValidationException validationEx => CreateValidationProblemDetails(validationEx, httpContext),
             UnauthorizedAccessException unauthorizedEx => CreateUnauthorizedProblemDetails(unauthorizedEx, httpContext),
+            BusinessException bussinessEx => CreateBusinessProblemDetails(bussinessEx, httpContext),
             _ => CreateInternalServerErrorProblemDetails(exception, httpContext)
         };
 
@@ -34,6 +36,17 @@ public class GlobalExceptionHandler : IExceptionHandler
         await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken);
 
         return true;
+    }
+
+    private static ProblemDetails CreateBusinessProblemDetails(BusinessException ex, HttpContext context)
+    {
+        return new ProblemDetails
+        {
+            Status = StatusCodes.Status409Conflict,
+            Title = "Business Rule Violation",
+            Detail = ex.Message,
+            Instance = context.Request.Path
+        };
     }
 
     private static ProblemDetails CreateValidationProblemDetails(ValidationException ex, HttpContext context)
@@ -71,7 +84,7 @@ public class GlobalExceptionHandler : IExceptionHandler
         {
             Status = StatusCodes.Status500InternalServerError,
             Title = "Internal Server Error",
-            Detail = "An unexpected error occurred on the server.", // Hide sensitive details in production
+            Detail = "An unexpected error occurred on the server.",
             Instance = context.Request.Path
         };
     }

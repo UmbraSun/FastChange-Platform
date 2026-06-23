@@ -142,6 +142,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to User not found..
+        /// </summary>
+        public static string UserNotFound {
+            get {
+                return ResourceManager.GetString("UserNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to User registered successfully with default wallets..
         /// </summary>
         public static string UserRegisteredSuccessfully {
