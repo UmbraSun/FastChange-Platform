@@ -14,7 +14,7 @@ public sealed class RegisterUserRepository : IUserRepository
     }
 
     public async Task<User> GetByIdAsync(Guid Id, CancellationToken cancellationToken)
-        => await _context.Users.FirstOrDefaultAsync(u => u.Id == Id, cancellationToken);
+        => await _context.Users.Include(x => x.Wallets).FirstOrDefaultAsync(u => u.Id == Id, cancellationToken);
 
     public async Task<bool> IsEmailTakenAsync(string email, CancellationToken cancellationToken)
         => await _context.Users.AnyAsync(u => u.Email == email, cancellationToken);

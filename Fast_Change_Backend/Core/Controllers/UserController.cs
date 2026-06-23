@@ -1,4 +1,5 @@
 ﻿using Application.Features.Users.CurrentUser;
+using Application.Features.Wallets.GetUserWallets;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -30,5 +31,17 @@ public class UserController : ControllerBase
     {
         var response = await _mediator.Send(new GetCurrentUserQuery());
         return Ok(response);
+    }
+
+    /// <summary>
+    /// Gets the wallets associated with the currently authenticated user.
+    /// </summary>
+    /// <returns></returns>
+    [Authorize]
+    [HttpGet("wallets")]
+    public async Task<IActionResult> GetWallets()
+    {
+        var result = await _mediator.Send(new GetUserWalletsQuery());
+        return Ok(result);
     }
 }
