@@ -2,4 +2,4 @@
 
 namespace Application.Features.Wallets.GetUserWallets;
 
-public class GetUserWalletsQuery : IRequest<List<GetUserWalletsResponse>>;
+public sealed record GetUserWalletsQuery : IRequest<List<GetUserWalletsResponse>>;
