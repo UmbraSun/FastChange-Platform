@@ -1,4 +1,6 @@
-﻿namespace Domain.Entities;
+﻿using Resources;
+
+namespace Domain.Entities;
 
 public class Wallet
 {
@@ -18,7 +20,7 @@ public class Wallet
         if (amount <= 0)
             throw new ArgumentOutOfRangeException(
                 nameof(amount),
-                "Amount must be greater than zero.");
+                Localization.AmountGreaterThanZero);
 
         Balance += amount;
     }
@@ -28,12 +30,15 @@ public class Wallet
         if (amount <= 0)
             throw new ArgumentOutOfRangeException(
                 nameof(amount),
-                "Amount must be greater than zero.");
+                Localization.AmountGreaterThanZero);
 
         if (Balance < amount)
             throw new InvalidOperationException(
-                "Insufficient funds.");
+                Localization.InsufficientFunds);
 
         Balance -= amount;
     }
+
+    public ICollection<Transaction> Transactions { get; set; }
+        = new List<Transaction>();
 }

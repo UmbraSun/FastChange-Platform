@@ -153,4 +153,13 @@
   <data name="UserNotFound" xml:space="preserve">
     <value>User not found.</value>
   </data>
+  <data name="AmountGreaterThanZero" xml:space="preserve">
+    <value>Amount must be greater than zero.</value>
+  </data>
+  <data name="InsufficientFunds" xml:space="preserve">
+    <value>Insufficient funds.</value>
+  </data>
+  <data name="WalletNotFound" xml:space="preserve">
+    <value>Wallet not found</value>
+  </data>
 </root>
