@@ -1,4 +1,5 @@
 ﻿using Application.Common.Interfaces;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 namespace Core.Infrastructure;
@@ -15,9 +16,9 @@ public class CurrentUserService : ICurrentUserService
     public Guid UserId =>
         Guid.Parse(
             _httpContextAccessor.HttpContext?
-                .User.FindFirstValue("sub")!);
+                .User.FindFirstValue(JwtRegisteredClaimNames.Sub)!);
 
     public string? Email =>
         _httpContextAccessor.HttpContext?
-            .User.FindFirstValue("email");
+            .User.FindFirstValue(JwtRegisteredClaimNames.Email);
 }

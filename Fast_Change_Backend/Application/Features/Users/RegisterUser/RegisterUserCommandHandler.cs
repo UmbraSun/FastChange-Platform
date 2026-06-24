@@ -1,4 +1,5 @@
 ﻿using Application.Common.Exceptions;
+using Application.Common.Interfaces;
 using Domain.Entities;
 using FastChange.Application.Features.Users.RegisterUser;
 using MediatR;
@@ -35,8 +36,8 @@ public sealed class RegisterUserCommandHandler : IRequestHandler<RegisterUserCom
 
         var defaultWallets = new List<Wallet>
         {
-            new() { Id = Guid.NewGuid(), UserId = user.Id, Currency = "USD", Balance = 0.00m },
-            new() { Id = Guid.NewGuid(), UserId = user.Id, Currency = "BTC", Balance = 0.0000m }
+            new() { Id = Guid.NewGuid(), UserId = user.Id, Currency = "USD" },
+            new() { Id = Guid.NewGuid(), UserId = user.Id, Currency = "BTC" }
         };
 
         await _userRepository.SaveUserWithWalletsAsync(user, defaultWallets, cancellationToken);

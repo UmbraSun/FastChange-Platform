@@ -1,6 +1,5 @@
 ﻿using Application.Common.Exceptions;
 using Application.Common.Interfaces;
-using Application.Features.Users.RegisterUser;
 using MediatR;
 using Resources;
 

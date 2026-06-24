@@ -34,7 +34,7 @@ namespace Persistence.Migrations
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     Currency = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
                     Balance = table.Column<decimal>(type: "numeric(18,4)", precision: 18, scale: 4, nullable: false, defaultValue: 0.0000m),
-                    xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false)
+                    Version = table.Column<long>(type: "bigint", nullable: false, defaultValue: 0L)
                 },
                 constraints: table =>
                 {

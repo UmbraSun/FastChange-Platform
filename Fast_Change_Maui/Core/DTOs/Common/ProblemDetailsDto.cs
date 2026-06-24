@@ -1,4 +1,4 @@
-﻿namespace Core.Dto.Common;
+﻿namespace Core.DTOs.Common;
 
 /// <summary>
 /// Represents standard RFC 7807 problem details response from the backend API.

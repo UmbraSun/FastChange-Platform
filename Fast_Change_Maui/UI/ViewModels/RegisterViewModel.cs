@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Core.Dto.Auth;
+using Core.DTOs.Auth;
 using Core.Interfaces;
 using Core.Services;
 
