@@ -153,4 +153,13 @@
   <data name="UserNotFound" xml:space="preserve">
     <value>Пользователь не найден.</value>
   </data>
+  <data name="AmountGreaterThanZero" xml:space="preserve">
+    <value>Сумма должна быть больше нуля.</value>
+  </data>
+  <data name="InsufficientFunds" xml:space="preserve">
+    <value>Недостаточно средств.</value>
+  </data>
+  <data name="WalletNotFound" xml:space="preserve">
+    <value>Кошелек не найден</value>
+  </data>
 </root>

@@ -1,4 +1,5 @@
 ﻿using Application.Features.Wallets.Deposit;
+using Application.Features.Wallets.Withdraw;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,12 +22,36 @@ public class WalletController : ControllerBase
         _mediator = mediator;
     }
 
+    /// <summary>
+    /// Deposits balance into the wallet
+    /// </summary>
+    /// <param name="command"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     [HttpPost("deposit")]
     public async Task<IActionResult> Deposit(
         DepositCommand command,
         CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(command, cancellationToken);
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Withdraws balance from the wallet
+    /// </summary>
+    /// <param name="command"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    [HttpPost("withdraw")]
+    public async Task<IActionResult> Withdraw(
+        WithdrawCommand command,
+        CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(
+            command,
+            cancellationToken);
+
         return Ok(result);
     }
 }

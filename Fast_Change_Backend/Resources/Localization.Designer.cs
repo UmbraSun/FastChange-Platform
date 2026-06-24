@@ -61,6 +61,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Amount must be greater than zero..
+        /// </summary>
+        public static string AmountGreaterThanZero {
+            get {
+                return ResourceManager.GetString("AmountGreaterThanZero", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Email address is required..
         /// </summary>
         public static string EmailAddressIsRequired {
@@ -75,6 +84,15 @@ namespace Resources {
         public static string EmailAddressLength {
             get {
                 return ResourceManager.GetString("EmailAddressLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insufficient funds..
+        /// </summary>
+        public static string InsufficientFunds {
+            get {
+                return ResourceManager.GetString("InsufficientFunds", resourceCulture);
             }
         }
         
@@ -165,6 +183,15 @@ namespace Resources {
         public static string ValidEmailAddressIsRequired {
             get {
                 return ResourceManager.GetString("ValidEmailAddressIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wallet not found.
+        /// </summary>
+        public static string WalletNotFound {
+            get {
+                return ResourceManager.GetString("WalletNotFound", resourceCulture);
             }
         }
     }

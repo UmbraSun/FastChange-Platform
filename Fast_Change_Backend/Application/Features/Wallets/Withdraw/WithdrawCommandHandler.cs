@@ -5,23 +5,24 @@ using Domain.Enums;
 using MediatR;
 using Resources;
 
-namespace Application.Features.Wallets.Deposit;
+namespace Application.Features.Wallets.Withdraw;
 
-public class DepositCommandHandler : IRequestHandler<DepositCommand, DepositResponse>
+public class WithdrawCommandHandler
+    : IRequestHandler<WithdrawCommand, WithdrawResponse>
 {
     private readonly IWalletRepository _walletRepository;
     private readonly ITransactionRepository _transactionRepository;
 
-    public DepositCommandHandler(
-        IWalletRepository walletRepository, 
+    public WithdrawCommandHandler(
+        IWalletRepository walletRepository,
         ITransactionRepository transactionRepository)
     {
         _walletRepository = walletRepository;
         _transactionRepository = transactionRepository;
     }
 
-    public async Task<DepositResponse> Handle(
-        DepositCommand request,
+    public async Task<WithdrawResponse> Handle(
+        WithdrawCommand request,
         CancellationToken cancellationToken)
     {
         var wallet = await _walletRepository.GetByIdAsync(
@@ -31,23 +32,24 @@ public class DepositCommandHandler : IRequestHandler<DepositCommand, DepositResp
         if (wallet is null)
             throw new BusinessException(Localization.WalletNotFound);
 
-        wallet.Deposit(request.Amount);
+        wallet.Withdraw(request.Amount);
 
         var transaction = new Transaction
         {
             WalletId = wallet.Id,
             Currency = wallet.Currency,
             Amount = request.Amount,
-            Type = TransactionType.Deposit
+            Type = TransactionType.Withdraw
         };
 
         await _transactionRepository.AddAsync(
             transaction,
             cancellationToken);
 
-        await _walletRepository.SaveChangesAsync(cancellationToken);
+        await _walletRepository.SaveChangesAsync(
+            cancellationToken);
 
-        return new DepositResponse(
+        return new WithdrawResponse(
             wallet.Id,
             wallet.Balance);
     }
