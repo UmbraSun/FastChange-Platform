@@ -6,7 +6,9 @@ using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
 using Persistence;
 using Persistence.Authentication;
 using System.Text;
@@ -22,6 +24,7 @@ public static class BuilderExtensions
     {
         var services = builder.Services;
         services.OpenApi();
+        services.AddHttpConfiguration();
         services.Cors();
         services.RateLimiter();
         services.AddDatabase(configuration);
@@ -37,8 +40,49 @@ public static class BuilderExtensions
     private static void OpenApi(this IServiceCollection services)
     {
         services.AddControllers();
-        services.AddOpenApi();
+        services.AddOpenApi(options =>
+        {
+            options.AddDocumentTransformer((document, context, cancellationToken) =>
+            {
+                document.Components ??= new OpenApiComponents();
+
+                var bearerScheme = new OpenApiSecurityScheme
+                {
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "JWT Authorization header using the Bearer scheme."
+                };
+
+                var securitySchemes = new Dictionary<string, IOpenApiSecurityScheme>
+                {
+                    ["Bearer"] = bearerScheme
+                };
+                document.Components.SecuritySchemes = securitySchemes;
+
+                var securityRequirement = new OpenApiSecurityRequirement
+                {
+                    [new OpenApiSecuritySchemeReference("Bearer", document)] = new List<string>()
+                };
+
+                var operations = document.Paths?
+                    .Values
+                    .SelectMany(p => p.Operations?.Values ?? Enumerable.Empty<OpenApiOperation>())
+                    ?? Enumerable.Empty<OpenApiOperation>();
+
+                foreach (var operation in operations)
+                    operation.Security ??= new List<OpenApiSecurityRequirement>() { securityRequirement };
+
+                return Task.CompletedTask;
+            });
+        });
         services.AddEndpointsApiExplorer();
+    }
+
+    private static void AddHttpConfiguration(this IServiceCollection services)
+    {
+        services.AddHttpContextAccessor();
     }
 
     private static void Cors(this IServiceCollection services)
@@ -105,6 +149,7 @@ public static class BuilderExtensions
 
     private static void AddUserLogin(this IServiceCollection services, ConfigurationManager configuration)
     {
+        JsonWebTokenHandler.DefaultInboundClaimTypeMap.Clear();
         services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -142,6 +187,7 @@ public static class BuilderExtensions
             .WithScopedLifetime());
 
         services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.SectionName));
+        services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
         services.AddSingleton<IJwtTokenValidator, JwtTokenValidator>();
     }

@@ -1,4 +1,4 @@
-﻿namespace Core.Dto.Auth;
+﻿namespace Core.DTOs.Auth;
 
 /// <summary>
 /// Data transfer object representing the successful registration response.

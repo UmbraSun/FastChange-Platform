@@ -28,7 +28,8 @@ public class WalletConfiguration : IEntityTypeConfiguration<Wallet>
         // Highload Concurrency Optimization: Instructs EF Core to evaluate the 'Version' field 
         // as an optimistic locking trigger during balance writes.
         builder.Property(w => w.Version)
-            .IsRowVersion();
+            .IsConcurrencyToken()
+            .HasDefaultValue(0);
 
         builder.HasOne(w => w.User)
             .WithMany(u => u.Wallets)

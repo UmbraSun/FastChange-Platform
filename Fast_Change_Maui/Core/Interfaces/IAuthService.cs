@@ -1,4 +1,4 @@
-﻿using Core.Dto.Auth;
+﻿using Core.DTOs.Auth;
 
 namespace Core.Services;
 
