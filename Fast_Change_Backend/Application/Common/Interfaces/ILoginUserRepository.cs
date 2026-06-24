@@ -1,6 +1,6 @@
 using Domain.Entities;
 
-namespace Application.Features.Auth.LoginUser;
+namespace Application.Common.Interfaces;
 
 public interface ILoginUserRepository
 {

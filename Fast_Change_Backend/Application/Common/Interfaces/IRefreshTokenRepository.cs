@@ -1,6 +1,6 @@
 using Domain.Entities;
 
-namespace Application.Features.Auth.RefreshToken;
+namespace Application.Common.Interfaces;
 
 public interface IRefreshTokenRepository
 {

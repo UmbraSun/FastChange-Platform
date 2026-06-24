@@ -2,4 +2,4 @@
 
 namespace Application.Features.Users.CurrentUser;
 
-public class GetCurrentUserQuery : IRequest<GetCurrentUserResponse>;
+public sealed record GetCurrentUserQuery : IRequest<GetCurrentUserResponse>;

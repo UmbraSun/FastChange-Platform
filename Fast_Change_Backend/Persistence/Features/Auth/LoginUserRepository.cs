@@ -1,4 +1,4 @@
-using Application.Features.Auth.LoginUser;
+using Application.Common.Interfaces;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 

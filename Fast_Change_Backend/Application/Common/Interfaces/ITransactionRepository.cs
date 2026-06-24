@@ -16,4 +16,14 @@ public interface ITransactionRepository
     Task AddAsync(
         Transaction transaction,
         CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Get transactions by wallet id
+    /// </summary>
+    /// <param name="walletId"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<List<Transaction>> GetByWalletIdAsync(
+        Guid walletId,
+        CancellationToken cancellationToken);
 }
