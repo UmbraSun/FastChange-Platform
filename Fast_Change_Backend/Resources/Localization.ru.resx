@@ -165,4 +165,7 @@
   <data name="WalletIsNotAssociatedWithThisUser" xml:space="preserve">
     <value>Кошелек не связан с пользователем.</value>
   </data>
+  <data name="RateNotFound" xml:space="preserve">
+    <value>Курс {0}-&gt;{1} не найден.</value>
+  </data>
 </root>

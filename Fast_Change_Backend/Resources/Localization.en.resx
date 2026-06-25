@@ -165,4 +165,7 @@
   <data name="WalletIsNotAssociatedWithThisUser" xml:space="preserve">
     <value>The wallet is not associated with the user.</value>
   </data>
+  <data name="RateNotFound" xml:space="preserve">
+    <value>Rate {0}-&gt;{1} not found.</value>
+  </data>
 </root>
