@@ -22,13 +22,23 @@ public class TransactionRepository : ITransactionRepository
             cancellationToken);
     }
 
-    public async Task<List<Transaction>> GetByWalletIdAsync(
+    public async Task<(List<Transaction> Items, int TotalCount)> GetByWalletIdAsync(
         Guid walletId,
+        int page,
+        int pageSize,
         CancellationToken cancellationToken)
     {
-        return await _context.Transactions
-            .Where(x => x.WalletId == walletId)
+        var query = _context.Transactions
+            .Where(x => x.WalletId == walletId);
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var items = await query
             .OrderByDescending(x => x.CreatedAtUtc)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync(cancellationToken);
+
+        return (items, totalCount);
     }
 }
