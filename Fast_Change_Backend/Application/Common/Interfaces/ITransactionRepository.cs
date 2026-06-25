@@ -23,7 +23,9 @@ public interface ITransactionRepository
     /// <param name="walletId"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<List<Transaction>> GetByWalletIdAsync(
+    Task<(List<Transaction> Items, int TotalCount)> GetByWalletIdAsync(
         Guid walletId,
+        int page,
+        int pageSize,
         CancellationToken cancellationToken);
 }

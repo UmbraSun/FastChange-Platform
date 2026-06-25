@@ -12,13 +12,16 @@ public class WithdrawCommandHandler
 {
     private readonly IWalletRepository _walletRepository;
     private readonly ITransactionRepository _transactionRepository;
+    private readonly ICurrentUserService _currentUserService;
 
     public WithdrawCommandHandler(
         IWalletRepository walletRepository,
-        ITransactionRepository transactionRepository)
+        ITransactionRepository transactionRepository,
+        ICurrentUserService currentUserService)
     {
         _walletRepository = walletRepository;
         _transactionRepository = transactionRepository;
+        _currentUserService = currentUserService;
     }
 
     public async Task<WithdrawResponse> Handle(
@@ -31,6 +34,9 @@ public class WithdrawCommandHandler
 
         if (wallet is null)
             throw new BusinessException(Localization.WalletNotFound);
+
+        if (wallet.UserId != _currentUserService.UserId)
+            throw new BusinessException(Localization.WalletIsNotAssociatedWithThisUser);
 
         wallet.Withdraw(request.Amount);
 

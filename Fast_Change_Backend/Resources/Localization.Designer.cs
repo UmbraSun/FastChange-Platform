@@ -187,6 +187,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The wallet is not associated with the user..
+        /// </summary>
+        public static string WalletIsNotAssociatedWithThisUser {
+            get {
+                return ResourceManager.GetString("WalletIsNotAssociatedWithThisUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Wallet not found.
         /// </summary>
         public static string WalletNotFound {

@@ -162,4 +162,7 @@
   <data name="WalletNotFound" xml:space="preserve">
     <value>Wallet not found</value>
   </data>
+  <data name="WalletIsNotAssociatedWithThisUser" xml:space="preserve">
+    <value>The wallet is not associated with the user.</value>
+  </data>
 </root>
