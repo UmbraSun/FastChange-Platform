@@ -142,6 +142,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Rate {0}-&gt;{1} not found..
+        /// </summary>
+        public static string RateNotFound {
+            get {
+                return ResourceManager.GetString("RateNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Refresh token is required..
         /// </summary>
         public static string RefreshTokenIsRequired {

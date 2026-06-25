@@ -3,6 +3,7 @@ using Application.Common.Interfaces;
 using Application.Common.Settings;
 using Core.Infrastructure;
 using FluentValidation;
+using Infrastructure.ExchangeRates;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
@@ -188,7 +189,10 @@ public static class BuilderExtensions
 
         services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.SectionName));
         services.AddScoped<ICurrentUserService, CurrentUserService>();
+
         services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
         services.AddSingleton<IJwtTokenValidator, JwtTokenValidator>();
+
+        services.AddScoped<IExchangeRateProvider, FakeExchangeRateProvider>();
     }
 }
