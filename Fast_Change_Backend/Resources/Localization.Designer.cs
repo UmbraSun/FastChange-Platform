@@ -88,6 +88,33 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Empty response from exchange provider.
+        /// </summary>
+        public static string EmptyResponseFromExchangeProvider {
+            get {
+                return ResourceManager.GetString("EmptyResponseFromExchangeProvider", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exchange rate provider timeout.
+        /// </summary>
+        public static string ExchangeRateProviderTimeout {
+            get {
+                return ResourceManager.GetString("ExchangeRateProviderTimeout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exchange rate provider unavailable.
+        /// </summary>
+        public static string ExchangeRateProviderUnavailable {
+            get {
+                return ResourceManager.GetString("ExchangeRateProviderUnavailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Exchange rate response is empty..
         /// </summary>
         public static string ExchangeRateResponceIsEmpty {
@@ -165,6 +192,15 @@ namespace Resources {
         public static string RefreshTokenIsRequired {
             get {
                 return ResourceManager.GetString("RefreshTokenIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unexpected exchange rate provider error.
+        /// </summary>
+        public static string UnexpectedExchangeRateProviderError {
+            get {
+                return ResourceManager.GetString("UnexpectedExchangeRateProviderError", resourceCulture);
             }
         }
         

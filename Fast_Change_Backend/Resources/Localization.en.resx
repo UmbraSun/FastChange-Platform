@@ -171,4 +171,16 @@
   <data name="ExchangeRateResponceIsEmpty" xml:space="preserve">
     <value>Exchange rate response is empty.</value>
   </data>
+  <data name="ExchangeRateProviderUnavailable" xml:space="preserve">
+    <value>Exchange rate provider unavailable</value>
+  </data>
+  <data name="EmptyResponseFromExchangeProvider" xml:space="preserve">
+    <value>Empty response from exchange provider</value>
+  </data>
+  <data name="ExchangeRateProviderTimeout" xml:space="preserve">
+    <value>Exchange rate provider timeout</value>
+  </data>
+  <data name="UnexpectedExchangeRateProviderError" xml:space="preserve">
+    <value>Unexpected exchange rate provider error</value>
+  </data>
 </root>
