@@ -168,4 +168,7 @@
   <data name="RateNotFound" xml:space="preserve">
     <value>Курс {0}-&gt;{1} не найден.</value>
   </data>
+  <data name="ExchangeRateResponceIsEmpty" xml:space="preserve">
+    <value>Ответ с курсом валют пуст.</value>
+  </data>
 </root>

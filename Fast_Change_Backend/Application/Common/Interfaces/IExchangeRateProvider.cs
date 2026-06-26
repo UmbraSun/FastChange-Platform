@@ -1,4 +1,6 @@
-﻿namespace Application.Common.Interfaces;
+﻿using Application.Common.Models;
+
+namespace Application.Common.Interfaces;
 
 /// <summary>
 /// Exchange rate provider interface for retrieving currency exchange rates.
@@ -12,7 +14,7 @@ public interface IExchangeRateProvider
     /// <param name="toCurrency"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<decimal> GetRateAsync(
+    Task<ExchangeRate> GetRateAsync(
         string fromCurrency,
         string toCurrency,
         CancellationToken cancellationToken);

@@ -88,6 +88,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Exchange rate response is empty..
+        /// </summary>
+        public static string ExchangeRateResponceIsEmpty {
+            get {
+                return ResourceManager.GetString("ExchangeRateResponceIsEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Insufficient funds..
         /// </summary>
         public static string InsufficientFunds {

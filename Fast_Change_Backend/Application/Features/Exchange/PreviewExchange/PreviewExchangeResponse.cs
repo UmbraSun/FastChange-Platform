@@ -5,4 +5,5 @@ public sealed record PreviewExchangeResponse(
     string ToCurrency,
     decimal SourceAmount,
     decimal TargetAmount,
-    decimal Rate);
+    decimal Rate,
+    DateTime RetrievedAtUtc);

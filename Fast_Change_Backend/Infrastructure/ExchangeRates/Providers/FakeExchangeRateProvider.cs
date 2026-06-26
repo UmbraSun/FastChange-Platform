@@ -1,7 +1,8 @@
 ﻿using Application.Common.Interfaces;
+using Application.Common.Models;
 using Resources;
 
-namespace Infrastructure.ExchangeRates;
+namespace Infrastructure.ExchangeRates.Providers;
 
 public sealed class FakeExchangeRateProvider
     : IExchangeRateProvider
@@ -19,23 +20,30 @@ public sealed class FakeExchangeRateProvider
             { ("EUR", "BTC"), 0.0000099m }
         };
 
-    public Task<decimal> GetRateAsync(
+    public Task<ExchangeRate> GetRateAsync(
         string fromCurrency,
         string toCurrency,
         CancellationToken cancellationToken)
     {
         if (fromCurrency == toCurrency)
-            return Task.FromResult(1m);
+            return Task.FromResult(new ExchangeRate(
+                string.Empty,
+                string.Empty,
+                decimal.Zero,
+                DateTime.MinValue));
 
         if (!Rates.TryGetValue(
                 (fromCurrency.ToUpperInvariant(),
                  toCurrency.ToUpperInvariant()),
                 out var rate))
-        {
             throw new InvalidOperationException(
                 string.Format(Localization.RateNotFound, fromCurrency, toCurrency));
-        }
 
-        return Task.FromResult(rate);
+        return Task.FromResult(
+            new ExchangeRate(
+                fromCurrency,
+                toCurrency,
+                rate,
+                DateTime.UtcNow));
     }
 }
