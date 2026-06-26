@@ -3,8 +3,10 @@ using Application.Common.Interfaces;
 using Application.Common.Settings;
 using Core.Infrastructure;
 using FluentValidation;
+using Infrastructure.ExchangeRates.Caching;
 using Infrastructure.ExchangeRates.Clients;
 using Infrastructure.ExchangeRates.Providers;
+using Infrastructure.Redis;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +15,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Persistence;
 using Persistence.Authentication;
+using StackExchange.Redis;
 using System.Text;
 using System.Threading.RateLimiting;
 
@@ -191,12 +194,21 @@ public static class BuilderExtensions
                 ?? throw new InvalidOperationException("ExchangeRateSettings configuration section is missing.");
 
             client.BaseAddress = new Uri(exchangeSettings.BaseUrl);
-
-            client.Timeout = TimeSpan.FromSeconds(
-                exchangeSettings.TimeoutSeconds);
+            client.Timeout = TimeSpan.FromSeconds(exchangeSettings.TimeoutSeconds);
         });
 
-        services.AddScoped<IExchangeRateProvider, FrankfurterExchangeRateProvider>();
+        services.AddSingleton<IConnectionMultiplexer>(_ =>
+            ConnectionMultiplexer.Connect(configuration.GetConnectionString("Redis")!));
+        services.AddScoped<IExchangeRateCache, ExchangeRateRedisCache>();
+
+        services.AddScoped<FrankfurterExchangeRateProvider>();
+        services.AddScoped<IExchangeRateProvider>(sp =>
+        {
+            var inner = sp.GetRequiredService<FrankfurterExchangeRateProvider>();
+            var cache = sp.GetRequiredService<IExchangeRateCache>();
+
+            return new CachedExchangeRateProvider(inner, cache);
+        });
     }
 
     // Application services adding

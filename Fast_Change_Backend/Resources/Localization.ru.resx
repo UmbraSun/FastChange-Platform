@@ -171,4 +171,16 @@
   <data name="ExchangeRateResponceIsEmpty" xml:space="preserve">
     <value>Ответ с курсом валют пуст.</value>
   </data>
+  <data name="ExchangeRateProviderUnavailable" xml:space="preserve">
+    <value>Поставщик данных о курсах валют недоступен</value>
+  </data>
+  <data name="EmptyResponseFromExchangeProvider" xml:space="preserve">
+    <value>Пустой ответ от поставщика услуг обмена</value>
+  </data>
+  <data name="ExchangeRateProviderTimeout" xml:space="preserve">
+    <value>Истечение времени ожидания от поставщика курсов валют</value>
+  </data>
+  <data name="UnexpectedExchangeRateProviderError" xml:space="preserve">
+    <value>Непредвиденная ошибка поставщика данных о курсах валют</value>
+  </data>
 </root>

@@ -27,6 +27,7 @@ public class GlobalExceptionHandler : IExceptionHandler
             ValidationException validationEx => CreateValidationProblemDetails(validationEx, httpContext),
             UnauthorizedAccessException unauthorizedEx => CreateUnauthorizedProblemDetails(unauthorizedEx, httpContext),
             BusinessException bussinessEx => CreateBusinessProblemDetails(bussinessEx, httpContext),
+            ExternalServiceException externalEx => CreateExternalServiceProblemDetails(externalEx, httpContext),
             _ => CreateInternalServerErrorProblemDetails(exception, httpContext)
         };
 
@@ -36,6 +37,17 @@ public class GlobalExceptionHandler : IExceptionHandler
         await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken);
 
         return true;
+    }
+
+    private static ProblemDetails CreateExternalServiceProblemDetails(ExternalServiceException ex, HttpContext context)
+    {
+        return new ProblemDetails
+        {
+            Status = StatusCodes.Status503ServiceUnavailable,
+            Title = "External Service Error",
+            Detail = ex.Message,
+            Instance = context.Request.Path
+        };
     }
 
     private static ProblemDetails CreateBusinessProblemDetails(BusinessException ex, HttpContext context)
