@@ -25,13 +25,14 @@ public sealed class PreviewExchangeQueryHandler
             request.ToCurrency,
             cancellationToken);
 
-        var targetAmount = request.Amount * rate;
+        var targetAmount = request.Amount * rate.Rate;
 
         return new PreviewExchangeResponse(
-            request.FromCurrency,
-            request.ToCurrency,
+            rate.FromCurrency,
+            rate.ToCurrency,
             request.Amount,
             targetAmount,
-            rate);
+            rate.Rate,
+            rate.RetrievedAtUtc);
     }
 }

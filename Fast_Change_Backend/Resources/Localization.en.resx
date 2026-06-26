@@ -168,4 +168,7 @@
   <data name="RateNotFound" xml:space="preserve">
     <value>Rate {0}-&gt;{1} not found.</value>
   </data>
+  <data name="ExchangeRateResponceIsEmpty" xml:space="preserve">
+    <value>Exchange rate response is empty.</value>
+  </data>
 </root>

@@ -3,7 +3,8 @@ using Application.Common.Interfaces;
 using Application.Common.Settings;
 using Core.Infrastructure;
 using FluentValidation;
-using Infrastructure.ExchangeRates;
+using Infrastructure.ExchangeRates.Clients;
+using Infrastructure.ExchangeRates.Providers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
@@ -32,7 +33,8 @@ public static class BuilderExtensions
         services.AddMiddlewares();
         services.AddApplicationInfrastructure();
         services.AddUserLogin(builder.Configuration);
-        services.AddApplicationServices(builder.Configuration);
+        services.AddInfrastructure(builder.Configuration);
+        services.AddProjectServices(builder.Configuration);
 
         return builder;
     }
@@ -81,16 +83,19 @@ public static class BuilderExtensions
         services.AddEndpointsApiExplorer();
     }
 
+    // HTTP context configuration
     private static void AddHttpConfiguration(this IServiceCollection services)
     {
         services.AddHttpContextAccessor();
     }
 
+    // CORS configuration
     private static void Cors(this IServiceCollection services)
     {
         services.AddCors();
     }
 
+    // Rate Limiter configuration
     private static void RateLimiter(this IServiceCollection services)
     {
         // Highload optimization: Registers and configures global Rate Limiting services
@@ -148,6 +153,7 @@ public static class BuilderExtensions
         services.AddValidatorsFromAssembly(assembly);
     }
 
+    // User login configuration
     private static void AddUserLogin(this IServiceCollection services, ConfigurationManager configuration)
     {
         JsonWebTokenHandler.DefaultInboundClaimTypeMap.Clear();
@@ -171,16 +177,31 @@ public static class BuilderExtensions
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret))
             };
         });
+    }
 
+    // Infrastructure services configuration
+    private static void AddInfrastructure(this IServiceCollection services, ConfigurationManager configuration)
+    {
+        services.Configure<ExchangeRateSettings>(
+            configuration.GetSection(ExchangeRateSettings.SectionName));
+
+        services.AddHttpClient<FrankfurterClient>(client =>
+        {
+            var exchangeSettings = configuration.GetSection(ExchangeRateSettings.SectionName).Get<ExchangeRateSettings>() 
+                ?? throw new InvalidOperationException("ExchangeRateSettings configuration section is missing.");
+
+            client.BaseAddress = new Uri(exchangeSettings.BaseUrl);
+
+            client.Timeout = TimeSpan.FromSeconds(
+                exchangeSettings.TimeoutSeconds);
+        });
+
+        services.AddScoped<IExchangeRateProvider, FrankfurterExchangeRateProvider>();
     }
 
     // Application services adding
-    private static void AddApplicationServices(this IServiceCollection services, ConfigurationManager configuration)
+    private static void AddProjectServices(this IServiceCollection services, ConfigurationManager configuration)
     {
-        services.AddMediatR(cfg =>
-            cfg.RegisterServicesFromAssembly(typeof(Application.AssemblyReference).Assembly));
-        services.AddValidatorsFromAssembly(typeof(Application.AssemblyReference).Assembly);
-
         services.Scan(scan => scan
             .FromAssemblyOf<ApplicationDbContext>()
             .AddClasses(classes => classes.Where(t => t.Name.EndsWith("Repository")))
@@ -188,11 +209,10 @@ public static class BuilderExtensions
             .WithScopedLifetime());
 
         services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.SectionName));
+
         services.AddScoped<ICurrentUserService, CurrentUserService>();
 
         services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
         services.AddSingleton<IJwtTokenValidator, JwtTokenValidator>();
-
-        services.AddScoped<IExchangeRateProvider, FakeExchangeRateProvider>();
     }
 }
