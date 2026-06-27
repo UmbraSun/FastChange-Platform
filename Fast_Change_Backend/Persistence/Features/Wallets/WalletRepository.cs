@@ -23,6 +23,13 @@ public sealed class WalletRepository : IWalletRepository
                 cancellationToken);
     }
 
+    public async Task UpdateAsync(
+    Wallet wallet,
+    CancellationToken cancellationToken)
+    {
+        _context.Wallets.Update(wallet);
+    }
+
     public async Task SaveChangesAsync(
         CancellationToken cancellationToken)
     {
