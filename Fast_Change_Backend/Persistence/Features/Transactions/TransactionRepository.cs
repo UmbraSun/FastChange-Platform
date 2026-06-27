@@ -29,8 +29,7 @@ public class TransactionRepository : ITransactionRepository
         CancellationToken cancellationToken)
     {
         var query = _context.Transactions
-            .Where(x => x.FromWalletId == walletId ||
-                        x.ToWalletId == walletId);
+            .Where(x => x.WalletId == walletId);
 
         var totalCount = await query.CountAsync(cancellationToken);
 

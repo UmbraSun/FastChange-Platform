@@ -39,8 +39,11 @@ public class WithdrawCommandHandler
             throw new BusinessException(Localization.WalletIsNotAssociatedWithThisUser);
 
         wallet.Withdraw(request.Amount);
-
-        var transaction = Transaction.CreateWithdraw(wallet, request.Amount);
+        var transaction = Transaction.Create(
+            wallet,
+            request.Amount,
+            -request.Amount,
+            TransactionType.Withdraw);
 
         await _transactionRepository.AddAsync(
             transaction,

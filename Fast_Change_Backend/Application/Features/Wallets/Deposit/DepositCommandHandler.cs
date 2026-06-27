@@ -38,8 +38,11 @@ public class DepositCommandHandler : IRequestHandler<DepositCommand, DepositResp
             throw new BusinessException(Localization.WalletIsNotAssociatedWithThisUser);
 
         wallet.Deposit(request.Amount);
-
-        var transaction = Transaction.CreateDeposit(wallet, request.Amount);
+        var transaction = Transaction.Create(
+            wallet,
+            request.Amount,
+            request.Amount,
+            TransactionType.Deposit);
 
         await _transactionRepository.AddAsync(
             transaction,

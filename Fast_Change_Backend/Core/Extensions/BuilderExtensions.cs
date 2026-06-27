@@ -1,5 +1,6 @@
 ﻿using Application.Common.Behaviors;
 using Application.Common.Interfaces;
+using Application.Common.Service;
 using Application.Common.Settings;
 using Core.Infrastructure;
 using FluentValidation;
@@ -225,6 +226,7 @@ public static class BuilderExtensions
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         services.AddScoped<ICurrentUserService, CurrentUserService>();
+        services.AddScoped<IWalletOperationService, WalletOperationService>();
 
         services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
         services.AddSingleton<IJwtTokenValidator, JwtTokenValidator>();
