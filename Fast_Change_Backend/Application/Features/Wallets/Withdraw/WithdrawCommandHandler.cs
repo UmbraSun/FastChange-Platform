@@ -40,13 +40,7 @@ public class WithdrawCommandHandler
 
         wallet.Withdraw(request.Amount);
 
-        var transaction = new Transaction
-        {
-            WalletId = wallet.Id,
-            Currency = wallet.Currency,
-            Amount = request.Amount,
-            Type = TransactionType.Withdraw
-        };
+        var transaction = Transaction.CreateWithdraw(wallet, request.Amount);
 
         await _transactionRepository.AddAsync(
             transaction,

@@ -39,13 +39,7 @@ public class DepositCommandHandler : IRequestHandler<DepositCommand, DepositResp
 
         wallet.Deposit(request.Amount);
 
-        var transaction = new Transaction
-        {
-            WalletId = wallet.Id,
-            Currency = wallet.Currency,
-            Amount = request.Amount,
-            Type = TransactionType.Deposit
-        };
+        var transaction = Transaction.CreateDeposit(wallet, request.Amount);
 
         await _transactionRepository.AddAsync(
             transaction,

@@ -25,7 +25,7 @@ public sealed class ExchangeRateRedisCache : IExchangeRateCache
             return null;
 
         return JsonSerializer.Deserialize<ExchangeRate>(
-            value.ToString());
+            (ReadOnlySpan<byte>)value!);
     }
 
     public async Task SetAsync(ExchangeRate rate, TimeSpan ttl)

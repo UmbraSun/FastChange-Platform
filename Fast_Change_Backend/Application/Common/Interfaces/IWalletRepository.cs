@@ -18,6 +18,16 @@ public interface IWalletRepository
         CancellationToken cancellationToken);
 
     /// <summary>
+    /// Updates the specified wallet in the database.
+    /// </summary>
+    /// <param name="wallet"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task UpdateAsync(
+        Wallet wallet,
+        CancellationToken cancellationToken);
+
+    /// <summary>
     /// Saves changes to the database.
     /// </summary>
     /// <param name="cancellationToken"></param>

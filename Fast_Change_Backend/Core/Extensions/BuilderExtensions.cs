@@ -222,6 +222,8 @@ public static class BuilderExtensions
 
         services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.SectionName));
 
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+
         services.AddScoped<ICurrentUserService, CurrentUserService>();
 
         services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
