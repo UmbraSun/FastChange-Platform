@@ -1,9 +1,5 @@
-﻿using Application.Common.Exceptions;
-using Application.Common.Interfaces;
-using Domain.Entities;
-using Domain.Enums;
+﻿using Application.Common.Interfaces;
 using MediatR;
-using Resources;
 
 namespace Application.Features.Wallets.Withdraw;
 
@@ -12,45 +8,39 @@ public class WithdrawCommandHandler
 {
     private readonly IWalletRepository _walletRepository;
     private readonly ITransactionRepository _transactionRepository;
-    private readonly ICurrentUserService _currentUserService;
+    private readonly IWalletOperationService _walletOperationService;
+    private readonly IWalletAccessService _walletAccessService;
+    private readonly IUnitOfWork _unitOfWork;
 
     public WithdrawCommandHandler(
         IWalletRepository walletRepository,
         ITransactionRepository transactionRepository,
-        ICurrentUserService currentUserService)
+        IWalletOperationService walletOperationService,
+        IWalletAccessService walletAccessService,
+        IUnitOfWork unitOfWork)
     {
         _walletRepository = walletRepository;
         _transactionRepository = transactionRepository;
-        _currentUserService = currentUserService;
+        _walletOperationService = walletOperationService;
+        _walletAccessService = walletAccessService;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<WithdrawResponse> Handle(
         WithdrawCommand request,
         CancellationToken cancellationToken)
     {
-        var wallet = await _walletRepository.GetByIdAsync(
+        var wallet = await _walletAccessService.GetOwnedWalletAsync(
             request.WalletId,
             cancellationToken);
 
-        if (wallet is null)
-            throw new BusinessException(Localization.WalletNotFound);
+        var result = _walletOperationService.Withdraw(wallet, request.Amount);
 
-        if (wallet.UserId != _currentUserService.UserId)
-            throw new BusinessException(Localization.WalletIsNotAssociatedWithThisUser);
-
-        wallet.Withdraw(request.Amount);
-        var transaction = Transaction.Create(
-            wallet,
-            request.Amount,
-            -request.Amount,
-            TransactionType.Withdraw);
-
-        await _transactionRepository.AddAsync(
-            transaction,
-            cancellationToken);
-
-        await _walletRepository.SaveChangesAsync(
-            cancellationToken);
+        await _unitOfWork.ExecuteAsync(async ct =>
+        {
+            await _walletRepository.UpdateAsync(wallet, ct);
+            await _transactionRepository.AddAsync(result.transaction, ct);
+        }, cancellationToken);
 
         return new WithdrawResponse(
             wallet.Id,

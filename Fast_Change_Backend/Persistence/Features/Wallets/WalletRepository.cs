@@ -23,9 +23,19 @@ public sealed class WalletRepository : IWalletRepository
                 cancellationToken);
     }
 
+    public async Task<IReadOnlyList<Wallet>> GetByUserIdAsync(
+        Guid userId,
+        CancellationToken cancellationToken)
+    {
+        return await _context.Wallets
+            .Where(w => w.UserId == userId)
+            .OrderBy(w => w.Currency)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task UpdateAsync(
-    Wallet wallet,
-    CancellationToken cancellationToken)
+        Wallet wallet,
+        CancellationToken cancellationToken)
     {
         _context.Wallets.Update(wallet);
     }

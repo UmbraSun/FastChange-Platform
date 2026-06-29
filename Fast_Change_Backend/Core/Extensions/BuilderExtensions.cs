@@ -1,6 +1,6 @@
 ﻿using Application.Common.Behaviors;
 using Application.Common.Interfaces;
-using Application.Common.Service;
+using Application.Common.Services;
 using Application.Common.Settings;
 using Core.Infrastructure;
 using FluentValidation;
@@ -191,7 +191,7 @@ public static class BuilderExtensions
 
         services.AddHttpClient<FrankfurterClient>(client =>
         {
-            var exchangeSettings = configuration.GetSection(ExchangeRateSettings.SectionName).Get<ExchangeRateSettings>() 
+            var exchangeSettings = configuration.GetSection(ExchangeRateSettings.SectionName).Get<ExchangeRateSettings>()
                 ?? throw new InvalidOperationException("ExchangeRateSettings configuration section is missing.");
 
             client.BaseAddress = new Uri(exchangeSettings.BaseUrl);
@@ -227,6 +227,7 @@ public static class BuilderExtensions
 
         services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddScoped<IWalletOperationService, WalletOperationService>();
+        services.AddScoped<IWalletAccessService, WalletAccessService>();
 
         services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
         services.AddSingleton<IJwtTokenValidator, JwtTokenValidator>();

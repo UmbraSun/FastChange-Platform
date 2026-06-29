@@ -1,41 +1,33 @@
-﻿using Application.Common.Exceptions;
-using Application.Common.Interfaces;
+﻿using Application.Common.Interfaces;
 using Application.Common.Models;
 using Mapster;
 using MediatR;
-using Resources;
 
 namespace Application.Features.Transactions.GetTransactionHistory;
 
-public class GetTransactionHistoryQueryHandler 
+public class GetTransactionHistoryQueryHandler
     : IRequestHandler<
         GetTransactionHistoryQuery,
         PagedResult<GetTransactionHistoryResponse>>
 {
     private readonly ITransactionRepository _transactionRepository;
-    private readonly ICurrentUserService _currentUserService;
-    private readonly IWalletRepository _walletRepository;
+    private readonly IWalletAccessService _walletAccessService;
 
     public GetTransactionHistoryQueryHandler(
-        ITransactionRepository transactionRepository, 
-        IWalletRepository walletRepository,
-        ICurrentUserService currentUserService)
+        ITransactionRepository transactionRepository,
+        IWalletAccessService walletAccessService)
     {
         _transactionRepository = transactionRepository;
-        _walletRepository = walletRepository;
-        _currentUserService = currentUserService;
+        _walletAccessService = walletAccessService;
     }
 
     public async Task<PagedResult<GetTransactionHistoryResponse>> Handle(
         GetTransactionHistoryQuery request,
         CancellationToken cancellationToken)
     {
-        var wallet = await _walletRepository.GetByIdAsync(request.WalletId, cancellationToken);
-        if(wallet is null)
-            throw new BusinessException(Localization.WalletNotFound);
-
-        if (wallet.UserId != _currentUserService.UserId)
-            throw new BusinessException(Localization.WalletIsNotAssociatedWithThisUser);
+        await _walletAccessService.GetOwnedWalletAsync(
+            request.WalletId,
+            cancellationToken);
 
         var transactions =
            await _transactionRepository.GetByWalletIdAsync(

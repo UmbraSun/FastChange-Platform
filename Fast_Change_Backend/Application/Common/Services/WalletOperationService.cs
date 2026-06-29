@@ -2,7 +2,7 @@
 using Domain.Entities;
 using Domain.Enums;
 
-namespace Application.Common.Service;
+namespace Application.Common.Services;
 
 public sealed class WalletOperationService : IWalletOperationService
 {

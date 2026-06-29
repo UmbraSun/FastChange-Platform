@@ -1,59 +1,49 @@
-﻿using Application.Common.Exceptions;
-using Application.Common.Interfaces;
-using Application.Common.Service;
-using Domain.Entities;
-using Domain.Enums;
+﻿using Application.Common.Interfaces;
 using MediatR;
-using Resources;
 
 namespace Application.Features.Exchange.Exchange;
 
 public sealed class ExchangeCommandHandler
-: IRequestHandler<ExchangeCommand, ExchangeResponse>
+    : IRequestHandler<ExchangeCommand, ExchangeResponse>
 {
     private readonly IWalletRepository _walletRepository;
     private readonly ITransactionRepository _transactionRepository;
     private readonly IExchangeRateProvider _exchangeRateProvider;
-    private readonly ICurrentUserService _currentUserService;
     private readonly IWalletOperationService _walletOperationService;
+    private readonly IWalletAccessService _walletAccessService;
     private readonly IUnitOfWork _unitOfWork;
 
     public ExchangeCommandHandler(
         IWalletRepository walletRepository,
         ITransactionRepository transactionRepository,
         IExchangeRateProvider rateProvider,
-        ICurrentUserService currentUser,
         IWalletOperationService walletOperationService,
+        IWalletAccessService walletAccessService,
         IUnitOfWork unitOfWork)
     {
         _walletRepository = walletRepository;
         _transactionRepository = transactionRepository;
         _exchangeRateProvider = rateProvider;
-        _currentUserService = currentUser;
         _walletOperationService = walletOperationService;
+        _walletAccessService = walletAccessService;
         _unitOfWork = unitOfWork;
     }
 
     public async Task<ExchangeResponse> Handle(
-    ExchangeCommand request,
-    CancellationToken cancellationToken)
+        ExchangeCommand request,
+        CancellationToken cancellationToken)
     {
         ExchangeResponse? response = null;
 
         await _unitOfWork.ExecuteAsync(async ct =>
         {
-            var fromWallet = await _walletRepository.GetByIdAsync(request.FromWalletId, ct);
-            var toWallet = await _walletRepository.GetByIdAsync(request.ToWalletId, ct);
+            var fromWallet = await _walletAccessService.GetOwnedWalletAsync(
+                request.FromWalletId,
+                cancellationToken);
 
-            if (fromWallet is null || toWallet is null)
-                throw new BusinessException(Localization.WalletNotFound);
-
-            if (fromWallet.UserId != _currentUserService.UserId ||
-                toWallet.UserId != _currentUserService.UserId)
-                throw new BusinessException(Localization.WalletIsNotAssociatedWithThisUser);
-
-            if (fromWallet.Balance < request.Amount)
-                throw new BusinessException(Localization.InsufficientFunds);
+            var toWallet = await _walletAccessService.GetOwnedWalletAsync(
+                request.ToWalletId,
+                cancellationToken);
 
             var rate = await _exchangeRateProvider.GetRateAsync(
                 fromWallet.Currency,
