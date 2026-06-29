@@ -1,12 +1,14 @@
-﻿using Resources;
+﻿using Domain.Common;
+using Resources;
 
 namespace Domain.Entities;
 
-public class Wallet
+public class Wallet : IHasDomainEvents
 {
     public Guid Id { get; set; } = Guid.NewGuid();
     public Guid UserId { get; set; }
     public string Currency { get; set; } = string.Empty;
+
     public decimal Balance { get; private set; }
 
     // Concurrency token for Optimistic Locking under high concurrent write loads
@@ -14,6 +16,9 @@ public class Wallet
 
     // Navigation property
     public User User { get; set; } = null!;
+    public ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
+
+    public List<DomainEvent> DomainEvents { get; } = new();
 
     public void Deposit(decimal amount)
     {
@@ -39,6 +44,5 @@ public class Wallet
         Balance -= amount;
     }
 
-    public ICollection<Transaction> Transactions { get; set; }
-        = new List<Transaction>();
+    public void ClearDomainEvents() => DomainEvents.Clear();
 }

@@ -7,6 +7,8 @@ using FluentValidation;
 using Infrastructure.ExchangeRates.Caching;
 using Infrastructure.ExchangeRates.Clients;
 using Infrastructure.ExchangeRates.Providers;
+using Infrastructure.Messaging.RabbitMq.Configuration;
+using Infrastructure.Messaging.RabbitMq.Publishers;
 using Infrastructure.Redis;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
@@ -16,6 +18,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Persistence;
 using Persistence.Authentication;
+using Persistence.Repositories;
 using StackExchange.Redis;
 using System.Text;
 using System.Threading.RateLimiting;
@@ -186,6 +189,13 @@ public static class BuilderExtensions
     // Infrastructure services configuration
     private static void AddInfrastructure(this IServiceCollection services, ConfigurationManager configuration)
     {
+        services.AddCacheProvider(configuration);
+        services.AddRabbitMq(configuration);
+    }
+
+    // Cache provider configuration
+    private static void AddCacheProvider(this IServiceCollection services, ConfigurationManager configuration)
+    {
         services.Configure<ExchangeRateSettings>(
             configuration.GetSection(ExchangeRateSettings.SectionName));
 
@@ -210,6 +220,17 @@ public static class BuilderExtensions
 
             return new CachedExchangeRateProvider(inner, cache);
         });
+    }
+
+    // RabbitMQ configuration
+    private static void AddRabbitMq(this IServiceCollection services, ConfigurationManager configuration)
+    {
+        services.Configure<RabbitMqSettings>(
+            configuration.GetSection(RabbitMqSettings.SectionName));
+
+        services.AddSingleton<IRabbitMqPublisher, RabbitMqPublisher>();
+
+        services.AddScoped<IOutboxRepository, OutboxRepository>();
     }
 
     // Application services adding
