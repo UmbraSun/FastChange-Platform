@@ -18,6 +18,16 @@ public interface IWalletRepository
         CancellationToken cancellationToken);
 
     /// <summary>
+    /// Gets all wallets associated with a specific user by their unique identifier.
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<IReadOnlyList<Wallet>> GetByUserIdAsync(
+        Guid userId, 
+        CancellationToken cancellationToken);
+
+    /// <summary>
     /// Updates the specified wallet in the database.
     /// </summary>
     /// <param name="wallet"></param>
