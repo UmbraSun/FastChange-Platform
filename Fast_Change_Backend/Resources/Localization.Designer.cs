@@ -97,6 +97,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Exchange rate not found..
+        /// </summary>
+        public static string ExchangeRateNotFound {
+            get {
+                return ResourceManager.GetString("ExchangeRateNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Exchange rate provider timeout.
         /// </summary>
         public static string ExchangeRateProviderTimeout {
@@ -192,6 +201,15 @@ namespace Resources {
         public static string RefreshTokenIsRequired {
             get {
                 return ResourceManager.GetString("RefreshTokenIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Source and destination wallets must be different..
+        /// </summary>
+        public static string SourceAndDestinationWalletsMustBeDifferent {
+            get {
+                return ResourceManager.GetString("SourceAndDestinationWalletsMustBeDifferent", resourceCulture);
             }
         }
         

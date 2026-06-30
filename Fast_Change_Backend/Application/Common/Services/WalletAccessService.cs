@@ -37,10 +37,21 @@ public sealed class WalletAccessService : IWalletAccessService
     }
 
     public async Task<IReadOnlyList<Wallet>> GetOwnedWalletsAsync(
-    CancellationToken cancellationToken)
+        CancellationToken cancellationToken)
     {
         return await _walletRepository.GetByUserIdAsync(
             _currentUserService.UserId,
             cancellationToken);
+    }
+
+    public Task EnsureAccessAsync(
+        Wallet wallet,
+        CancellationToken cancellationToken = default)
+    {
+        if (wallet.UserId != _currentUserService.UserId)
+            throw new BusinessException(
+                Localization.WalletIsNotAssociatedWithThisUser);
+
+        return Task.CompletedTask;
     }
 }

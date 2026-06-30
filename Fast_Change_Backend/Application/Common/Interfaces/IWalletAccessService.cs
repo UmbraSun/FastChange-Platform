@@ -17,4 +17,14 @@ public interface IWalletAccessService
     /// </summary>
     Task<IReadOnlyList<Wallet>> GetOwnedWalletsAsync(
         CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Ensures that the specified wallet belongs to the current authenticated user.
+    /// </summary>
+    /// <param name="wallet"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task EnsureAccessAsync(
+        Wallet wallet,
+        CancellationToken cancellationToken = default);
 }

@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace Application.Features.Exchange.Exchange;
+namespace Application.Features.Exchange.ExchangeCurrency;
 
 public sealed record ExchangeCommand(
     Guid FromWalletId,

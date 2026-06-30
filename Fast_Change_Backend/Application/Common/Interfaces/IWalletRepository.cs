@@ -36,12 +36,4 @@ public interface IWalletRepository
     Task UpdateAsync(
         Wallet wallet,
         CancellationToken cancellationToken);
-
-    /// <summary>
-    /// Saves changes to the database.
-    /// </summary>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    Task SaveChangesAsync(
-        CancellationToken cancellationToken);
 }

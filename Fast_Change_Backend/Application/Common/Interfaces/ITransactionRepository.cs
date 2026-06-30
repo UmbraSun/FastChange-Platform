@@ -18,6 +18,16 @@ public interface ITransactionRepository
         CancellationToken cancellationToken);
 
     /// <summary>
+    /// Add a range of transactions to the database
+    /// </summary>
+    /// <param name="transactions"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task AddRangeAsync(
+        IEnumerable<Transaction> transactions,
+        CancellationToken cancellationToken);
+
+    /// <summary>
     /// Get transactions by wallet id
     /// </summary>
     /// <param name="walletId"></param>

@@ -22,6 +22,15 @@ public class TransactionRepository : ITransactionRepository
             cancellationToken);
     }
 
+    public async Task AddRangeAsync(
+        IEnumerable<Transaction> transactions,
+        CancellationToken cancellationToken)
+    {
+        await _context.Transactions.AddRangeAsync(
+            transactions,
+            cancellationToken);
+    }
+
     public async Task<(List<Transaction> Items, int TotalCount)> GetByWalletIdAsync(
         Guid walletId,
         int page,

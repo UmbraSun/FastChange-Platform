@@ -39,10 +39,4 @@ public sealed class WalletRepository : IWalletRepository
     {
         _context.Wallets.Update(wallet);
     }
-
-    public async Task SaveChangesAsync(
-        CancellationToken cancellationToken)
-    {
-        await _context.SaveChangesAsync(cancellationToken);
-    }
 }
