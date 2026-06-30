@@ -249,6 +249,7 @@ public static class BuilderExtensions
         services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddScoped<IWalletOperationService, WalletOperationService>();
         services.AddScoped<IWalletAccessService, WalletAccessService>();
+        services.AddScoped<IExchangeService, ExchangeService>();
 
         services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
         services.AddSingleton<IJwtTokenValidator, JwtTokenValidator>();

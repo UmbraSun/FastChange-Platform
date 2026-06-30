@@ -7,14 +7,6 @@ public sealed class PreviewExchangeQueryValidator
 {
     public PreviewExchangeQueryValidator()
     {
-        RuleFor(x => x.FromCurrency)
-            .NotEmpty()
-            .MaximumLength(10);
-
-        RuleFor(x => x.ToCurrency)
-            .NotEmpty()
-            .MaximumLength(10);
-
         RuleFor(x => x.Amount)
             .GreaterThan(0);
     }

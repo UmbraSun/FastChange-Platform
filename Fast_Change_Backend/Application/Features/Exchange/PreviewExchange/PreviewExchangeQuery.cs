@@ -3,7 +3,7 @@
 namespace Application.Features.Exchange.PreviewExchange;
 
 public sealed record PreviewExchangeQuery(
-    string FromCurrency,
-    string ToCurrency,
+    Guid FromWalletId,
+    Guid ToWalletId,
     decimal Amount)
     : IRequest<PreviewExchangeResponse>;

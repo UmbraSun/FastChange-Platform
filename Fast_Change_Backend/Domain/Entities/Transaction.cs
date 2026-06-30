@@ -18,6 +18,8 @@ public class Transaction
 
     public decimal BalanceAfter { get; private set; }
 
+    public decimal? ExchangeRate { get; private set; }
+
     public TransactionType Type { get; private set; }
 
     public DateTime CreatedAtUtc { get; private set; }
@@ -32,18 +34,20 @@ public class Transaction
         decimal signedAmount,
         decimal balanceAfter,
         TransactionType type,
-        Guid? operationId = null)
+        Guid? operationId = null,
+        decimal? exchangeRate = null)
     {
         return new Transaction
         {
             Id = Guid.NewGuid(),
             WalletId = wallet.Id,
-            OperationId = operationId,
             Currency = wallet.Currency,
             Amount = amount,
             SignedAmount = signedAmount,
             BalanceAfter = balanceAfter,
             Type = type,
+            OperationId = operationId,
+            ExchangeRate = exchangeRate,
             CreatedAtUtc = DateTime.UtcNow
         };
     }

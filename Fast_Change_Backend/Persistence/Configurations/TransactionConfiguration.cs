@@ -21,6 +21,9 @@ public class TransactionConfiguration
         builder.Property(x => x.Amount)
             .HasPrecision(18, 4);
 
+        builder.Property(t => t.ExchangeRate)
+            .HasPrecision(18, 8);
+
         builder.Property(x => x.CreatedAtUtc)
             .IsRequired();
 
