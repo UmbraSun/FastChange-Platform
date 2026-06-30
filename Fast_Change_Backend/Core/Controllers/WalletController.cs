@@ -64,11 +64,11 @@ public class WalletController : ControllerBase
     /// <returns></returns>
     [HttpGet("{walletId:guid}/transactions")]
     public async Task<IActionResult> GetTransactions(
-        Guid walletId,
+        GetTransactionHistoryQuery query,
         CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(
-            new GetTransactionHistoryQuery(walletId),
+            query,
             cancellationToken);
 
         return Ok(result);

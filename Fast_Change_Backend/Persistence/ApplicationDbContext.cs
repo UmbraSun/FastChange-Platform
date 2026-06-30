@@ -1,7 +1,7 @@
-﻿using Domain.Common;
+﻿using Application.Common.Models;
+using Domain.Common;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using Persistence.Outbox;
 using System.Text.Json;
 
 namespace Persistence;

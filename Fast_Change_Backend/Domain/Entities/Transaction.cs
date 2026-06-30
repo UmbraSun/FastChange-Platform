@@ -8,6 +8,8 @@ public class Transaction
 
     public Guid WalletId { get; private set; }
 
+    public Guid? OperationId { get; private set; }
+
     public string Currency { get; private set; } = string.Empty;
 
     public decimal Amount { get; private set; }
@@ -28,16 +30,19 @@ public class Transaction
         Wallet wallet,
         decimal amount,
         decimal signedAmount,
-        TransactionType type)
+        decimal balanceAfter,
+        TransactionType type,
+        Guid? operationId = null)
     {
         return new Transaction
         {
             Id = Guid.NewGuid(),
             WalletId = wallet.Id,
+            OperationId = operationId,
             Currency = wallet.Currency,
             Amount = amount,
             SignedAmount = signedAmount,
-            BalanceAfter = wallet.Balance,
+            BalanceAfter = balanceAfter,
             Type = type,
             CreatedAtUtc = DateTime.UtcNow
         };

@@ -183,4 +183,10 @@
   <data name="UnexpectedExchangeRateProviderError" xml:space="preserve">
     <value>Непредвиденная ошибка поставщика данных о курсах валют</value>
   </data>
+  <data name="SourceAndDestinationWalletsMustBeDifferent" xml:space="preserve">
+    <value>Кошельки отправителя и получателя должны различаться.</value>
+  </data>
+  <data name="ExchangeRateNotFound" xml:space="preserve">
+    <value>Курс обмена не найден.</value>
+  </data>
 </root>

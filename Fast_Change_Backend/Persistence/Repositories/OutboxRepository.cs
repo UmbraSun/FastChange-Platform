@@ -1,7 +1,6 @@
-﻿using Application.Common.DTOs;
-using Application.Common.Interfaces;
+﻿using Application.Common.Interfaces;
+using Application.Common.Models;
 using Microsoft.EntityFrameworkCore;
-using Persistence.Outbox;
 
 namespace Persistence.Repositories;
 
@@ -14,7 +13,7 @@ public class OutboxRepository : IOutboxRepository
         _db = db;
     }
 
-    public async Task<List<OutboxMessageDto>> GetUnprocessedAsync(int take, CancellationToken ct)
+    public async Task<List<OutboxMessage>> GetUnprocessedAsync(int take, CancellationToken ct)
     {
         var entities = await _db.Set<OutboxMessage>()  
             .Where(x => x.ProcessedOnUtc == null)
@@ -22,7 +21,7 @@ public class OutboxRepository : IOutboxRepository
             .Take(take)
             .ToListAsync(ct);
 
-        return entities.Select(x => new OutboxMessageDto
+        return entities.Select(x => new OutboxMessage
         {
             Id = x.Id,
             Type = x.Type,

@@ -183,4 +183,10 @@
   <data name="UnexpectedExchangeRateProviderError" xml:space="preserve">
     <value>Unexpected exchange rate provider error</value>
   </data>
+  <data name="SourceAndDestinationWalletsMustBeDifferent" xml:space="preserve">
+    <value>Source and destination wallets must be different.</value>
+  </data>
+  <data name="ExchangeRateNotFound" xml:space="preserve">
+    <value>Exchange rate not found.</value>
+  </data>
 </root>
