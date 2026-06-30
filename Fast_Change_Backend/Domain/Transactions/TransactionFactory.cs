@@ -8,24 +8,28 @@ public static class TransactionFactory
     public static Transaction CreateDeposit(
         Wallet wallet,
         decimal amount,
-        Guid? operationId = null)
+        Guid? operationId = null,
+        decimal? exchangeRate = null)
         => Transaction.Create(
             wallet,
             amount,
             amount,
             wallet.Balance,
             TransactionType.Deposit,
-            operationId);
+            operationId,
+            exchangeRate);
 
     public static Transaction CreateWithdraw(
-        Wallet wallet, 
+        Wallet wallet,
         decimal amount,
-        Guid? operationId = null)
+        Guid? operationId = null,
+        decimal? exchangeRate = null)
         => Transaction.Create(
             wallet,
             amount,
             -amount,
             wallet.Balance,
             TransactionType.Withdraw,
-            operationId);
+            operationId,
+            exchangeRate);
 }
