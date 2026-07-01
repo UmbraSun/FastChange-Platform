@@ -39,9 +39,4 @@ public class OutboxRepository : IOutboxRepository
             entity.ProcessedOnUtc = DateTime.UtcNow;
         }
     }
-
-    public Task SaveChangesAsync(CancellationToken ct)
-    {
-        return _db.SaveChangesAsync(ct);
-    }
 }

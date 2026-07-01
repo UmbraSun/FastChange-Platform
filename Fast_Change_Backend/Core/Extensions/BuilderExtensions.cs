@@ -2,17 +2,22 @@
 using Application.Common.Interfaces;
 using Application.Common.Services;
 using Application.Common.Settings;
+using Confluent.Kafka;
 using Core.Infrastructure;
 using FluentValidation;
+using Infrastructure.BackgroundServices.Outbox;
 using Infrastructure.ExchangeRates.Caching;
 using Infrastructure.ExchangeRates.Clients;
 using Infrastructure.ExchangeRates.Providers;
+using Infrastructure.Messaging.Kafka;
+using Infrastructure.Messaging.Kafka.Consumers;
 using Infrastructure.Messaging.RabbitMq.Configuration;
 using Infrastructure.Messaging.RabbitMq.Publishers;
 using Infrastructure.Redis;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
@@ -41,6 +46,7 @@ public static class BuilderExtensions
         services.AddApplicationInfrastructure();
         services.AddUserLogin(builder.Configuration);
         services.AddInfrastructure(builder.Configuration);
+        services.AddHostedServices(builder.Configuration);
         services.AddProjectServices(builder.Configuration);
 
         return builder;
@@ -191,6 +197,7 @@ public static class BuilderExtensions
     {
         services.AddCacheProvider(configuration);
         services.AddRabbitMq(configuration);
+        services.AddKafka(configuration);
     }
 
     // Cache provider configuration
@@ -231,6 +238,63 @@ public static class BuilderExtensions
         services.AddSingleton<IRabbitMqPublisher, RabbitMqPublisher>();
 
         services.AddScoped<IOutboxRepository, OutboxRepository>();
+    }
+
+    // Kafka configuration
+    private static void AddKafka(this IServiceCollection services, ConfigurationManager configuration)
+    {
+        services.Configure<KafkaSettings>(
+            configuration.GetSection(KafkaSettings.SectionName));
+
+        services.AddSingleton<KafkaProducerFactory>();
+
+        services.AddSingleton<IProducer<string, string>>(sp =>
+        {
+            var settings =
+                sp.GetRequiredService<IOptions<KafkaSettings>>().Value;
+
+            var config = new ProducerConfig
+            {
+                BootstrapServers = settings.BootstrapServers,
+                ClientId = settings.ClientId,
+
+                Acks = settings.Acks,
+
+                EnableIdempotence = settings.EnableIdempotence,
+
+                CompressionType = settings.CompressionType,
+
+                MessageTimeoutMs = settings.MessageTimeoutMs
+            };
+
+            return new ProducerBuilder<string, string>(config)
+                .Build();
+        });
+
+        services.AddSingleton<IEventBus, KafkaEventBus>();
+
+        services.AddSingleton<IConsumer<string, string>>(sp =>
+        {
+            var config = new ConsumerConfig
+            {
+                BootstrapServers = "localhost:9092",
+                GroupId = "fastchange-group",
+                AutoOffsetReset = AutoOffsetReset.Earliest,
+                EnableAutoCommit = false
+            };
+
+            return new ConsumerBuilder<string, string>(config).Build();
+        });
+
+        services.AddHostedService<BaseKafkaConsumer>();
+    }
+
+    // Add background hosted service
+    private static void AddHostedServices(this IServiceCollection services, ConfigurationManager configuration)
+    {
+        services.AddHostedService<OutboxDispatcher>();
+        services.Configure<OutboxDispatcherOptions>(
+            configuration.GetSection(OutboxDispatcherOptions.SectionName));
     }
 
     // Application services adding
