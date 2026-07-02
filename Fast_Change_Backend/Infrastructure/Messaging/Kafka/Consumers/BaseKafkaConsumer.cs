@@ -1,7 +1,6 @@
 ﻿using Application.Common.Interfaces;
 using Application.Features.Exchange.Events;
 using Confluent.Kafka;
-using Domain.Entities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -38,44 +37,27 @@ public sealed class BaseKafkaConsumer : BackgroundService
                 {
                     var result = _consumer.Consume(stoppingToken);
 
-                    var eventIdHeader =
-                        result.Message.Headers
-                            .FirstOrDefault(h => h.Key == "event-id");
+                    var header = result.Message.Headers
+                        .FirstOrDefault(h => h.Key == "event-id") ?? throw new Exception("Missing event-id header");
 
                     var eventId = Guid.Parse(
-                        Encoding.UTF8.GetString(eventIdHeader.Value));
+                        Encoding.UTF8.GetString(header.GetValueBytes()));
 
                     using var scope = _scopeFactory.CreateScope();
 
-                    var processedRepo =
-                        scope.ServiceProvider.GetRequiredService<IProcessedEventRepository>();
+                    var handler = scope.ServiceProvider.GetRequiredService<IEventHandler<ExchangeCompletedEvent>>();
 
-                    var alreadyProcessed =
-                        await processedRepo.ExistsAsync(eventId, stoppingToken);
+                    var store = scope.ServiceProvider.GetRequiredService<IProcessedEventStore>();
 
-                    if (alreadyProcessed)
-                    {
-                        _consumer.Commit(result);
-                        continue;
-                    }
+                    var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
 
-                    var @event =
-                        JsonSerializer.Deserialize<ExchangeCompletedEvent>(
-                            result.Message.Value)!;
-
-                    var handler =
-                        scope.ServiceProvider
-                            .GetRequiredService<IEventHandler<ExchangeCompletedEvent>>();
+                    var @event = JsonSerializer.Deserialize<ExchangeCompletedEvent>(result.Message.Value)!;
 
                     await handler.HandleAsync(@event, stoppingToken);
 
-                    await processedRepo.AddAsync(
-                        new ProcessedEvent
-                        {
-                            EventId = eventId,
-                            ProcessedAtUtc = DateTime.UtcNow
-                        },
-                        stoppingToken);
+                    await store.MarkProcessedAsync(eventId, stoppingToken);
+
+                    await unitOfWork.SaveChangesAsync(stoppingToken);
 
                     _consumer.Commit(result);
                 }

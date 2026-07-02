@@ -1,4 +1,4 @@
-﻿namespace Domain.Entities;
+﻿namespace Persistence.Entities;
 
 public class ProcessedEvent
 {
