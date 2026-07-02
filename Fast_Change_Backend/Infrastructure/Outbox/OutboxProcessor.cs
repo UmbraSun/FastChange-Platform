@@ -52,8 +52,6 @@ public sealed class OutboxProcessor : BackgroundService
                         _logger.LogError(ex, "Failed to publish outbox message {MessageId}", message.Id);
                     }
                 }
-
-                await outboxRepo.SaveChangesAsync(stoppingToken);
             }
             catch (Exception ex)
             {
