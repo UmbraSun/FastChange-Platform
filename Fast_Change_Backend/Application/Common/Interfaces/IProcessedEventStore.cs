@@ -11,7 +11,7 @@ public interface IProcessedEventStore
     /// <param name="eventId"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task MarkProcessedAsync(
+    Task<bool> TryMarkProcessedAsync(
         Guid eventId,
         CancellationToken cancellationToken);
 }

@@ -29,43 +29,56 @@ public sealed class BaseKafkaConsumer : BackgroundService
     {
         _consumer.Subscribe("exchange-events");
 
-        return Task.Run(async () =>
-        {
-            while (!stoppingToken.IsCancellationRequested)
-            {
-                try
-                {
-                    var result = _consumer.Consume(stoppingToken);
-
-                    var header = result.Message.Headers
-                        .FirstOrDefault(h => h.Key == "event-id") ?? throw new Exception("Missing event-id header");
-
-                    var eventId = Guid.Parse(
-                        Encoding.UTF8.GetString(header.GetValueBytes()));
-
-                    using var scope = _scopeFactory.CreateScope();
-
-                    var handler = scope.ServiceProvider.GetRequiredService<IEventHandler<ExchangeCompletedEvent>>();
-
-                    var store = scope.ServiceProvider.GetRequiredService<IProcessedEventStore>();
-
-                    var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
-
-                    var @event = JsonSerializer.Deserialize<ExchangeCompletedEvent>(result.Message.Value)!;
-
-                    await handler.HandleAsync(@event, stoppingToken);
-
-                    await store.MarkProcessedAsync(eventId, stoppingToken);
-
-                    await unitOfWork.SaveChangesAsync(stoppingToken);
-
-                    _consumer.Commit(result);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Kafka consumer error");
-                }
-            }
-        }, stoppingToken);
+        return Task.Run(() => ConsumeLoop(stoppingToken), stoppingToken);
     }
+
+    private async Task ConsumeLoop(CancellationToken stoppingToken)
+    {
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            try
+            {
+                var result = _consumer.Consume(stoppingToken);
+
+                var eventId = ExtractEventId(result);
+
+                using var scope = _scopeFactory.CreateScope();
+
+                var store = scope.ServiceProvider.GetRequiredService<IProcessedEventStore>();
+
+                var wasProcessed = await store.TryMarkProcessedAsync(eventId, stoppingToken);
+
+                if (!wasProcessed)
+                {
+                    _consumer.Commit(result);
+                    continue;
+                }
+
+                var handler = scope.ServiceProvider
+                    .GetRequiredService<IEventHandler<ExchangeCompletedEvent>>();
+
+                var @event = Deserialize(result.Message.Value);
+
+                await handler.HandleAsync(@event, stoppingToken);
+
+                _consumer.Commit(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Kafka consumer error");
+            }
+        }
+    }
+
+    private static Guid ExtractEventId(ConsumeResult<string, string> result)
+    {
+        var header = result.Message.Headers
+            .FirstOrDefault(h => h.Key == "event-id")
+            ?? throw new Exception("Missing event-id header");
+
+        return Guid.Parse(Encoding.UTF8.GetString(header.GetValueBytes()));
+    }
+
+    private static ExchangeCompletedEvent Deserialize(string message)
+        => JsonSerializer.Deserialize<ExchangeCompletedEvent>(message)!;
 }
