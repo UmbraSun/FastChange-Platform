@@ -1,4 +1,5 @@
 ﻿using Application.Common.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using Persistence.Entities;
 
 namespace Persistence;
@@ -12,14 +13,21 @@ public sealed class ProcessedEventStore : IProcessedEventStore
         _db = db;
     }
 
-    public async Task MarkProcessedAsync(Guid eventId, CancellationToken cancellationToken)
+    public async Task<bool> TryMarkProcessedAsync(Guid eventId, CancellationToken ct)
     {
+        var exists = await _db.ProcessedEvents
+            .AnyAsync(x => x.EventId == eventId, ct);
+
+        if (exists)
+            return false;
+
         _db.ProcessedEvents.Add(new ProcessedEvent
         {
             EventId = eventId,
             ProcessedAtUtc = DateTime.UtcNow
         });
 
-        await _db.SaveChangesAsync(cancellationToken);
+        await _db.SaveChangesAsync(ct);
+        return true;
     }
 }

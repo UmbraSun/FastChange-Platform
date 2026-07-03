@@ -12,6 +12,7 @@ using Infrastructure.ExchangeRates.Providers;
 using Infrastructure.Messaging.Kafka;
 using Infrastructure.Messaging.Kafka.Consumers;
 using Infrastructure.Messaging.RabbitMq.Configuration;
+using Infrastructure.Messaging.RabbitMq.Connection;
 using Infrastructure.Messaging.RabbitMq.Publishers;
 using Infrastructure.Redis;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -23,6 +24,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Persistence;
 using Persistence.Authentication;
+using Persistence.Outbox;
 using Persistence.Repositories;
 using StackExchange.Redis;
 using System.Text;
@@ -236,8 +238,7 @@ public static class BuilderExtensions
             configuration.GetSection(RabbitMqSettings.SectionName));
 
         services.AddSingleton<IRabbitMqPublisher, RabbitMqPublisher>();
-
-        services.AddScoped<IOutboxRepository, OutboxRepository>();
+        services.AddSingleton<RabbitMqConnectionFactory>();
     }
 
     // Kafka configuration
@@ -309,6 +310,9 @@ public static class BuilderExtensions
         services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.SectionName));
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+        services.AddScoped<IOutboxRepository, OutboxRepository>();
+        services.AddScoped<IOutboxStore, OutboxStore>();
 
         services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddScoped<IWalletOperationService, WalletOperationService>();
