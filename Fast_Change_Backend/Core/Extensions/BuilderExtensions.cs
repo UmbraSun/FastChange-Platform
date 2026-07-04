@@ -248,44 +248,17 @@ public static class BuilderExtensions
             configuration.GetSection(KafkaSettings.SectionName));
 
         services.AddSingleton<KafkaProducerFactory>();
+        services.AddSingleton<KafkaConsumerFactory>();
 
-        services.AddSingleton<IProducer<string, string>>(sp =>
-        {
-            var settings =
-                sp.GetRequiredService<IOptions<KafkaSettings>>().Value;
+        services.AddSingleton<IProducer<string, string>>(
+            sp => sp.GetRequiredService<KafkaProducerFactory>().Producer);
 
-            var config = new ProducerConfig
-            {
-                BootstrapServers = settings.BootstrapServers,
-                ClientId = settings.ClientId,
+        services.AddSingleton<IConsumer<string, string>>(
+            sp => sp.GetRequiredService<KafkaConsumerFactory>().Consumer);
 
-                Acks = settings.Acks,
-
-                EnableIdempotence = settings.EnableIdempotence,
-
-                CompressionType = settings.CompressionType,
-
-                MessageTimeoutMs = settings.MessageTimeoutMs
-            };
-
-            return new ProducerBuilder<string, string>(config)
-                .Build();
-        });
+        services.AddSingleton<IKafkaProducer, KafkaProducer>();
 
         services.AddSingleton<IEventBus, KafkaEventBus>();
-
-        services.AddSingleton<IConsumer<string, string>>(sp =>
-        {
-            var config = new ConsumerConfig
-            {
-                BootstrapServers = "localhost:9092",
-                GroupId = "fastchange-group",
-                AutoOffsetReset = AutoOffsetReset.Earliest,
-                EnableAutoCommit = false
-            };
-
-            return new ConsumerBuilder<string, string>(config).Build();
-        });
 
         services.AddHostedService<BaseKafkaConsumer>();
     }
