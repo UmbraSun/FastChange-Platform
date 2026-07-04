@@ -7,13 +7,17 @@ public sealed class ExchangeCompletedHandler
     : IEventHandler<ExchangeCompletedEvent>
 {
     private readonly ILogger<ExchangeCompletedHandler> _logger;
+    private readonly IWalletNotificationService _notificationService;
 
-    public ExchangeCompletedHandler(ILogger<ExchangeCompletedHandler> logger)
+    public ExchangeCompletedHandler(
+        ILogger<ExchangeCompletedHandler> logger,
+        IWalletNotificationService notificationService)
     {
         _logger = logger;
+        _notificationService = notificationService;
     }
 
-    public Task HandleAsync(
+    public async Task HandleAsync(
         ExchangeCompletedEvent @event,
         CancellationToken cancellationToken)
     {
@@ -21,6 +25,12 @@ public sealed class ExchangeCompletedHandler
             "Exchange completed: {OperationId}",
             @event.OperationId);
 
-        return Task.CompletedTask;
+        await _notificationService.WalletUpdatedAsync(
+            @event.FromWalletId,
+            cancellationToken);
+
+        await _notificationService.WalletUpdatedAsync(
+            @event.ToWalletId,
+            cancellationToken);
     }
 }

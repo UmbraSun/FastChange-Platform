@@ -15,8 +15,13 @@ using Infrastructure.Messaging.RabbitMq.Configuration;
 using Infrastructure.Messaging.RabbitMq.Connection;
 using Infrastructure.Messaging.RabbitMq.Publishers;
 using Infrastructure.Redis;
+using Infrastructure.SignalR;
+using Infrastructure.SignalR.Hubs;
+using Infrastructure.SignalR.Interfaces;
+using Infrastructure.SignalR.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
@@ -200,6 +205,7 @@ public static class BuilderExtensions
         services.AddCacheProvider(configuration);
         services.AddRabbitMq(configuration);
         services.AddKafka(configuration);
+        services.AddSignalRConf();
     }
 
     // Cache provider configuration
@@ -263,6 +269,15 @@ public static class BuilderExtensions
         services.AddHostedService<BaseKafkaConsumer>();
     }
 
+    // SignalR configuration
+    private static void AddSignalRConf(this IServiceCollection services)
+    {
+        services.AddSignalR();
+        services.AddSingleton<
+            IWalletNotificationService, 
+            WalletNotificationService>();
+    }
+
     // Add background hosted service
     private static void AddHostedServices(this IServiceCollection services, ConfigurationManager configuration)
     {
@@ -286,6 +301,8 @@ public static class BuilderExtensions
 
         services.AddScoped<IOutboxRepository, OutboxRepository>();
         services.AddScoped<IOutboxStore, OutboxStore>();
+
+        services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
 
         services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddScoped<IWalletOperationService, WalletOperationService>();

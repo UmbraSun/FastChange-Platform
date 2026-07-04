@@ -1,4 +1,5 @@
 ﻿using Core.Infrastructure;
+using Infrastructure.SignalR.Hubs;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 using Scalar.AspNetCore;
@@ -15,6 +16,7 @@ public static class ApplicationExtensions
         app.SecurityConfigs();
         app.HighLoadConfigs();
         app.UseMiddlewares();
+        app.AddHubs();
         app.ApplyDatabaseMigrations();
 
         return app;
@@ -66,6 +68,12 @@ public static class ApplicationExtensions
     private static void UseMiddlewares(this WebApplication app)
     {
         app.UseExceptionHandler();
+    }
+
+    // Add SignalR hubs to the application
+    private static void AddHubs(this WebApplication app)
+    {
+        app.MapHub<WalletHub>("/hubs/wallet");
     }
 
     // Automatically applies pending Entity Framework Core migrations on application startup
