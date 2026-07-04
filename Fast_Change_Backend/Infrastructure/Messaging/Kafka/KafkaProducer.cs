@@ -8,9 +8,9 @@ public sealed class KafkaProducer : IKafkaProducer
 {
     private readonly IProducer<string, string> _producer;
 
-    public KafkaProducer(IProducer<string, string> producer)
+    public KafkaProducer(KafkaProducerFactory factory)
     {
-        _producer = producer;
+        _producer = factory.Producer;
     }
 
     public async Task PublishAsync(
@@ -27,10 +27,14 @@ public sealed class KafkaProducer : IKafkaProducer
             Headers = BuildHeaders(headers)
         };
 
-        await _producer.ProduceAsync(topic, message, cancellationToken);
+        await _producer.ProduceAsync(
+            topic,
+            message,
+            cancellationToken);
     }
 
-    private static Headers BuildHeaders(IReadOnlyDictionary<string, string>? headers)
+    private static Headers BuildHeaders(
+        IReadOnlyDictionary<string, string>? headers)
     {
         var kafkaHeaders = new Headers();
 
@@ -38,9 +42,11 @@ public sealed class KafkaProducer : IKafkaProducer
             return kafkaHeaders;
 
         foreach (var header in headers)
+        {
             kafkaHeaders.Add(
                 header.Key,
                 Encoding.UTF8.GetBytes(header.Value));
+        }
 
         return kafkaHeaders;
     }
