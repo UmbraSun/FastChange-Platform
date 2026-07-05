@@ -2,6 +2,7 @@
 using Application.Common.Interfaces;
 using Application.Common.Services;
 using Application.Common.Settings;
+using Application.Features.Wallets.GetWalletHistory;
 using Confluent.Kafka;
 using Core.Infrastructure;
 using FluentValidation;
@@ -14,10 +15,10 @@ using Infrastructure.Messaging.Kafka.Consumers;
 using Infrastructure.Messaging.RabbitMq.Configuration;
 using Infrastructure.Messaging.RabbitMq.Connection;
 using Infrastructure.Messaging.RabbitMq.Publishers;
+using Infrastructure.Mongo;
+using Infrastructure.Mongo.Repositories;
 using Infrastructure.Redis;
 using Infrastructure.SignalR;
-using Infrastructure.SignalR.Hubs;
-using Infrastructure.SignalR.Interfaces;
 using Infrastructure.SignalR.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
@@ -27,6 +28,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
+using MongoDB.Driver;
 using Persistence;
 using Persistence.Authentication;
 using Persistence.Outbox;
@@ -206,6 +208,7 @@ public static class BuilderExtensions
         services.AddRabbitMq(configuration);
         services.AddKafka(configuration);
         services.AddSignalRConf();
+        services.AddMongoDb(configuration);
     }
 
     // Cache provider configuration
@@ -274,8 +277,35 @@ public static class BuilderExtensions
     {
         services.AddSignalR();
         services.AddSingleton<
-            IWalletNotificationService, 
+            IWalletNotificationService,
             WalletNotificationService>();
+    }
+
+    // MongoDB configuration
+    private static void AddMongoDb(this IServiceCollection services, ConfigurationManager configuration)
+    {
+        services.Configure<MongoSettings>(
+            configuration.GetSection(MongoSettings.SectionName));
+
+        services.AddSingleton<IMongoClient>(sp =>
+        {
+            var settings =
+                sp.GetRequiredService<IOptions<MongoSettings>>().Value;
+
+            return new MongoClient(settings.ConnectionString);
+        });
+
+        services.AddSingleton(sp =>
+        {
+            var settings =
+                sp.GetRequiredService<IOptions<MongoSettings>>().Value;
+
+            return sp.GetRequiredService<IMongoClient>()
+                .GetDatabase(settings.DatabaseName);
+        });
+
+        services.AddScoped<IWalletHistoryReader, WalletHistoryRepository>();
+        services.AddScoped<GetWalletHistoryHandler>();
     }
 
     // Add background hosted service

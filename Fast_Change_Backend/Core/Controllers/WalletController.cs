@@ -1,5 +1,6 @@
 ﻿using Application.Features.Transactions.GetTransactionHistory;
 using Application.Features.Wallets.Deposit;
+using Application.Features.Wallets.GetWalletHistory;
 using Application.Features.Wallets.Withdraw;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -17,10 +18,14 @@ namespace Core.Controllers;
 public class WalletController : ControllerBase
 {
     private readonly IMediator _mediator;
+    private readonly GetWalletHistoryHandler _handler;
 
-    public WalletController(IMediator mediator)
+    public WalletController(
+        IMediator mediator, 
+        GetWalletHistoryHandler handler)
     {
         _mediator = mediator;
+        _handler = handler;
     }
 
     /// <summary>
@@ -70,6 +75,26 @@ public class WalletController : ControllerBase
         var result = await _mediator.Send(
             query,
             cancellationToken);
+
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="walletId"></param>
+    /// <param name="take"></param>
+    /// <param name="ct"></param>
+    /// <returns></returns>
+    [HttpGet("{walletId}/history")]
+    public async Task<IActionResult> GetHistory(
+        Guid walletId,
+        int take = 50,
+        CancellationToken ct = default)
+    {
+        var result = await _handler.Handle(
+            new GetWalletHistoryQuery(walletId, take),
+            ct);
 
         return Ok(result);
     }

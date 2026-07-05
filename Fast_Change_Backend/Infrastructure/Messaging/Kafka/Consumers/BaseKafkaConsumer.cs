@@ -1,6 +1,6 @@
 ﻿using Application.Common.Interfaces;
-using Application.Features.Exchange.Events;
 using Confluent.Kafka;
+using Contracts.Events;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;

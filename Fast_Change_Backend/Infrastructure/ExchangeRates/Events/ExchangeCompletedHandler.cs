@@ -1,20 +1,23 @@
 ﻿using Application.Common.Interfaces;
+using Contracts.Events;
 using Microsoft.Extensions.Logging;
 
-namespace Application.Features.Exchange.Events;
+namespace Infrastructure.ExchangeRates.Events;
 
 public sealed class ExchangeCompletedHandler
-    : IEventHandler<ExchangeCompletedEvent>
 {
     private readonly ILogger<ExchangeCompletedHandler> _logger;
     private readonly IWalletNotificationService _notificationService;
+    private readonly IWalletHistoryWriter _historyWriter;
 
     public ExchangeCompletedHandler(
         ILogger<ExchangeCompletedHandler> logger,
-        IWalletNotificationService notificationService)
+        IWalletNotificationService notificationService,
+        IWalletHistoryWriter historyWriter)
     {
         _logger = logger;
         _notificationService = notificationService;
+        _historyWriter = historyWriter;
     }
 
     public async Task HandleAsync(
@@ -24,6 +27,8 @@ public sealed class ExchangeCompletedHandler
         _logger.LogInformation(
             "Exchange completed: {OperationId}",
             @event.OperationId);
+
+        await _historyWriter.AddExchangeAsync(@event, cancellationToken);
 
         await _notificationService.WalletUpdatedAsync(
             @event.FromWalletId,
