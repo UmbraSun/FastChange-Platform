@@ -1,4 +1,4 @@
-﻿namespace Application.Features.Exchange.Events;
+﻿namespace Contracts.Events;
 
 public sealed record ExchangeCompletedEvent(
     Guid OperationId,
