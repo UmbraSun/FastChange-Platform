@@ -1,6 +1,8 @@
 <Solution>
   <Project Path="Application/Application.csproj" Id="a4a24fd7-fa5e-4a20-9fab-a8cb74fa60d7" />
-  <Project Path="Contracts/Contracts.csproj" Id="6ccebfc0-e739-4224-b301-6e82b9d774a2" />
+  <Project Path="Contracts/Contracts.csproj" Id="6ccebfc0-e739-4224-b301-6e82b9d774a2">
+    <Build Solution="Debug|*" Project="false" />
+  </Project>
   <Project Path="Core/Core.csproj" />
   <Project Path="Domain/Domain.csproj" Id="2d89d267-9ac8-4f97-bcaa-8f871500d1cf" />
   <Project Path="Infrastructure/Infrastructure.csproj" Id="35ae9ddd-bf6e-4dba-92c9-eab4a1b0c246" />
