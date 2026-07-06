@@ -7,16 +7,16 @@ namespace Infrastructure.ExchangeRates.Events;
 public sealed class ExchangeCompletedHandler
 {
     private readonly ILogger<ExchangeCompletedHandler> _logger;
-    private readonly IWalletNotificationService _notificationService;
+    private readonly INotificationDispatcher _dispatcher;
     private readonly IWalletHistoryWriter _historyWriter;
 
     public ExchangeCompletedHandler(
         ILogger<ExchangeCompletedHandler> logger,
-        IWalletNotificationService notificationService,
+        INotificationDispatcher dispatcher,
         IWalletHistoryWriter historyWriter)
     {
         _logger = logger;
-        _notificationService = notificationService;
+        _dispatcher = dispatcher;
         _historyWriter = historyWriter;
     }
 
@@ -28,14 +28,12 @@ public sealed class ExchangeCompletedHandler
             "Exchange completed: {OperationId}",
             @event.OperationId);
 
-        await _historyWriter.AddExchangeAsync(@event, cancellationToken);
-
-        await _notificationService.WalletUpdatedAsync(
-            @event.FromWalletId,
+        await _historyWriter.AddExchangeAsync(
+            @event,
             cancellationToken);
 
-        await _notificationService.WalletUpdatedAsync(
-            @event.ToWalletId,
+        await _dispatcher.DispatchExchangeCompletedAsync(
+            @event,
             cancellationToken);
     }
 }

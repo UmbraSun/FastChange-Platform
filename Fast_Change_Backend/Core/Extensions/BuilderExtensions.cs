@@ -3,21 +3,20 @@ using Application.Common.Interfaces;
 using Application.Common.Services;
 using Application.Common.Settings;
 using Application.Features.Wallets.GetWalletHistory;
-using Confluent.Kafka;
+using Contracts.Notifications;
 using Core.Infrastructure;
 using FluentValidation;
 using Infrastructure.BackgroundServices.Outbox;
 using Infrastructure.ExchangeRates.Caching;
 using Infrastructure.ExchangeRates.Clients;
 using Infrastructure.ExchangeRates.Providers;
-using Infrastructure.Messaging.Kafka;
-using Infrastructure.Messaging.Kafka.Consumers;
 using Infrastructure.Messaging.Kafka.DI;
 using Infrastructure.Messaging.RabbitMq.Configuration;
 using Infrastructure.Messaging.RabbitMq.Connection;
 using Infrastructure.Messaging.RabbitMq.Publishers;
 using Infrastructure.Mongo;
 using Infrastructure.Mongo.Repositories;
+using Infrastructure.Notifications;
 using Infrastructure.Redis;
 using Infrastructure.SignalR;
 using Infrastructure.SignalR.Services;
@@ -317,6 +316,10 @@ public static class BuilderExtensions
         services.AddScoped<IWalletOperationService, WalletOperationService>();
         services.AddScoped<IWalletAccessService, WalletAccessService>();
         services.AddScoped<IExchangeService, ExchangeService>();
+
+        services.AddScoped<IWalletNotificationService, WalletNotificationService>();
+        services.AddSingleton<INotificationDispatcher, NotificationDispatcher>();
+        services.AddSingleton<IExchangeNotificationChannel, SignalRNotificationChannel>();
 
         services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
         services.AddSingleton<IJwtTokenValidator, JwtTokenValidator>();
