@@ -12,6 +12,7 @@ using Infrastructure.ExchangeRates.Clients;
 using Infrastructure.ExchangeRates.Providers;
 using Infrastructure.Messaging.Kafka;
 using Infrastructure.Messaging.Kafka.Consumers;
+using Infrastructure.Messaging.Kafka.DI;
 using Infrastructure.Messaging.RabbitMq.Configuration;
 using Infrastructure.Messaging.RabbitMq.Connection;
 using Infrastructure.Messaging.RabbitMq.Publishers;
@@ -248,28 +249,6 @@ public static class BuilderExtensions
 
         services.AddSingleton<IRabbitMqPublisher, RabbitMqPublisher>();
         services.AddSingleton<RabbitMqConnectionFactory>();
-    }
-
-    // Kafka configuration
-    private static void AddKafka(this IServiceCollection services, ConfigurationManager configuration)
-    {
-        services.Configure<KafkaSettings>(
-            configuration.GetSection(KafkaSettings.SectionName));
-
-        services.AddSingleton<KafkaProducerFactory>();
-        services.AddSingleton<KafkaConsumerFactory>();
-
-        services.AddSingleton<IProducer<string, string>>(
-            sp => sp.GetRequiredService<KafkaProducerFactory>().Producer);
-
-        services.AddSingleton<IConsumer<string, string>>(
-            sp => sp.GetRequiredService<KafkaConsumerFactory>().Consumer);
-
-        services.AddSingleton<IKafkaProducer, KafkaProducer>();
-
-        services.AddSingleton<IEventBus, KafkaEventBus>();
-
-        services.AddHostedService<BaseKafkaConsumer>();
     }
 
     // SignalR configuration
