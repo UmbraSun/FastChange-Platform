@@ -1,21 +1,16 @@
-﻿using AIService.AI.Options;
-using Microsoft.Extensions.Options;
-using OpenAI;
+﻿using OpenAI.Chat;
 
 namespace AIService.Providers.OpenAI;
 
 public sealed class OpenAiChatProvider
     : IChatProvider
 {
-    private readonly OpenAIClient _client;
-    private readonly OpenAiOptions _options;
+    private readonly ChatClient _client;
 
     public OpenAiChatProvider(
-        OpenAIClient client,
-        IOptions<OpenAiOptions> options)
+        ChatClient client)
     {
         _client = client;
-        _options = options.Value;
     }
 
     public async Task<string> AskAsync(
@@ -23,6 +18,17 @@ public sealed class OpenAiChatProvider
         string userPrompt,
         CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var messages = new List<ChatMessage>
+        {
+            new SystemChatMessage(systemPrompt),
+            new UserChatMessage(userPrompt)
+        };
+
+        ChatCompletion completion =
+            await _client.CompleteChatAsync(
+                messages,
+                cancellationToken: cancellationToken);
+
+        return completion.Content[0].Text;
     }
 }

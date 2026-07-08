@@ -1,27 +1,27 @@
-﻿using AIService.AI.Options;
-using Microsoft.Extensions.Options;
-using OpenAI;
+﻿using OpenAI.Embeddings;
 
 namespace AIService.Providers.OpenAI;
 
 public sealed class OpenAiEmbeddingProvider
     : IEmbeddingProvider
 {
-    private readonly OpenAIClient _client;
-    private readonly OpenAiOptions _options;
+    private readonly EmbeddingClient _client;
 
     public OpenAiEmbeddingProvider(
-        OpenAIClient client,
-        IOptions<OpenAiOptions> options)
+        EmbeddingClient client)
     {
         _client = client;
-        _options = options.Value;
     }
 
-    public Task<float[]> CreateEmbeddingAsync(
+    public async Task<float[]> CreateEmbeddingAsync(
         string text,
         CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        OpenAIEmbedding embedding =
+            await _client.GenerateEmbeddingAsync(
+                text,
+                cancellationToken: cancellationToken);
+
+        return embedding.ToFloats().ToArray();
     }
 }

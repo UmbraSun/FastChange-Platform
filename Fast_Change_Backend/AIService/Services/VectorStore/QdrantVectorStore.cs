@@ -1,6 +1,5 @@
 ﻿using AIService.AI.Options;
 using AIService.Models.Knowledge;
-using AIService.Services.Knowledge;
 using Microsoft.Extensions.Options;
 using Qdrant.Client;
 using Qdrant.Client.Grpc;
@@ -40,9 +39,10 @@ public sealed class QdrantVectorStore
 
                     Payload =
                     {
-                    ["document"] = x.DocumentName,
-                    ["heading"] = x.Heading,
-                    ["content"] = x.Content
+                        ["document"] = x.DocumentName,
+                        ["hash"] = x.DocumentHash,
+                        ["heading"] = x.Heading,
+                        ["content"] = x.Content
                     }
                 })
             .ToList();
@@ -52,5 +52,74 @@ public sealed class QdrantVectorStore
             _options.CollectionName,
             points,
             cancellationToken: cancellationToken);
+    }
+
+    public async Task<IReadOnlyCollection<KnowledgeSearchResult>> SearchAsync(
+        float[] embedding,
+        int limit,
+        CancellationToken cancellationToken)
+    {
+        var result = await _client.SearchAsync(
+            collectionName: _options.CollectionName,
+            vector: embedding,
+            limit: (ulong)limit,
+            cancellationToken: cancellationToken);
+
+        return result
+            .Select(x => new KnowledgeSearchResult(
+                Guid.Parse(x.Id.Uuid),
+                x.Payload["document"].StringValue,
+                x.Payload["heading"].StringValue,
+                x.Payload["content"].StringValue,
+                x.Score))
+            .ToList();
+    }
+
+    public async Task<bool> ExistsAsync(
+        string documentName,
+        string hash,
+        CancellationToken cancellationToken)
+    {
+        var result =
+            await _client.ScrollAsync(
+                _options.CollectionName,
+                filter: new Filter
+                {
+                    Must =
+                    {
+                        new Condition
+                        {
+                            Field =
+                            new FieldCondition
+                            {
+                                Key = "document",
+                                Match =
+                                new Match
+                                {
+                                    Keyword = documentName
+                                }
+                            }
+                        },
+                        new Condition
+                        {
+                            Field =
+                            new FieldCondition
+                            {
+                                Key = "hash",
+                                Match =
+                                new Match
+                                {
+                                    Keyword = hash
+                                }
+                            }
+                        }
+                    }
+                },
+                limit: 1,
+                cancellationToken:
+                    cancellationToken);
+
+
+        return result.Result.Count > 0;
     }
 }

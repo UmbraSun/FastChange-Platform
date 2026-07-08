@@ -1,4 +1,6 @@
 ﻿using AIService.Models.Knowledge;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace AIService.Services.Knowledge;
 
@@ -29,13 +31,19 @@ public sealed class FileKnowledgeLoader
                      "*.md",
                      SearchOption.AllDirectories))
         {
-            var content =
-                await File.ReadAllTextAsync(file, cancellationToken);
+            var content = await File.ReadAllTextAsync(
+                    file,
+                    cancellationToken);
+
+            var hash = Convert.ToHexString(
+                    SHA256.HashData(
+                        Encoding.UTF8.GetBytes(content)));
 
             documents.Add(
                 new KnowledgeDocument(
                     Path.GetFileName(file),
-                    content));
+                    content,
+                    hash));
         }
 
         return documents;

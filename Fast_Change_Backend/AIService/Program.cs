@@ -1,3 +1,4 @@
+using AIService.Background;
 using AIService.Extensions;
 using AIService.Infrastructure;
 
@@ -24,5 +25,4 @@ using (var scope = app.Services.CreateScope())
     await initializer.InitializeAsync(
         CancellationToken.None);
 }
-
 app.Run();
