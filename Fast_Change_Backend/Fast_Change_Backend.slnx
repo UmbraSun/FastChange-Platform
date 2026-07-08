@@ -1,5 +1,7 @@
 <Solution>
-  <Project Path="AIService/AIService.csproj" Id="d805a753-fa6f-4743-bbdf-473101bc8d6e" />
+  <Project Path="AIService/AIService.csproj" Id="d805a753-fa6f-4743-bbdf-473101bc8d6e">
+    <Build Solution="Debug|*" Project="false" />
+  </Project>
   <Project Path="Application/Application.csproj" Id="a4a24fd7-fa5e-4a20-9fab-a8cb74fa60d7" />
   <Project Path="Contracts/Contracts.csproj" Id="6ccebfc0-e739-4224-b301-6e82b9d774a2">
     <Build Solution="Debug|*" Project="false" />

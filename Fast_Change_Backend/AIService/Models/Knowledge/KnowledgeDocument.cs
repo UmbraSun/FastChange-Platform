@@ -2,4 +2,5 @@
 
 public sealed record KnowledgeDocument(
     string Name,
-    string Content);
+    string Content,
+    string Hash);

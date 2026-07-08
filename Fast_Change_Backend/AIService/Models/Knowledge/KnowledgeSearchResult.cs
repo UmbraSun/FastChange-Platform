@@ -1,9 +1,8 @@
 ﻿namespace AIService.Models.Knowledge;
 
-public sealed record KnowledgeVector(
+public sealed record KnowledgeSearchResult(
     Guid Id,
     string DocumentName,
-    string DocumentHash,
     string Heading,
     string Content,
-    float[] Vector);
+    float Score);

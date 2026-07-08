@@ -1,7 +1,9 @@
 ﻿using AIService.AI.Options;
+using AIService.Background;
 using AIService.Infrastructure;
 using AIService.Providers.OpenAI;
 using AIService.Services.Knowledge;
+using AIService.Services.Retrieval;
 using Microsoft.Extensions.Options;
 using OpenAI;
 using Qdrant.Client;
@@ -30,6 +32,22 @@ public static class ServiceCollectionExtensions
 
         services.AddSingleton(sp =>
         {
+            var client = sp.GetRequiredService<OpenAIClient>();
+            var options = sp.GetRequiredService<IOptions<OpenAiOptions>>().Value;
+
+            return client.GetChatClient(options.ChatModel);
+        });
+
+        services.AddSingleton(sp =>
+        {
+            var client = sp.GetRequiredService<OpenAIClient>();
+            var options = sp.GetRequiredService<IOptions<OpenAiOptions>>().Value;
+
+            return client.GetEmbeddingClient(options.EmbeddingModel);
+        });
+
+        services.AddSingleton(sp =>
+        {
             var options =
                 sp.GetRequiredService<IOptions<QdrantOptions>>()
                     .Value;
@@ -45,6 +63,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IKnowledgeLoader, FileKnowledgeLoader>();
         services.AddScoped<IChunkingService, MarkdownChunkingService>();
         services.AddScoped<IKnowledgeIndexer, KnowledgeIndexer>();
+        services.AddScoped<IRetrievalService, RetrievalService>();
+
+        services.AddHostedService<KnowledgeIndexWorker>();
 
         return services;
     }
