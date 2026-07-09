@@ -5,5 +5,7 @@ public sealed record KnowledgeVector(
     string DocumentName,
     string DocumentHash,
     string Heading,
+    int ChunkIndex,
     string Content,
+    DateTime IndexedAtUtc,
     float[] Vector);

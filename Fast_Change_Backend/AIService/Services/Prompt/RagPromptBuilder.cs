@@ -10,9 +10,35 @@ public sealed class RagPromptBuilder
         string question,
         IReadOnlyCollection<KnowledgeSearchResult> chunks)
     {
-        var sb = new StringBuilder();
+        var context = new StringBuilder();
 
-        sb.AppendLine(
+
+        foreach (var chunk in chunks)
+        {
+            context.AppendLine("--------------------------------");
+
+            context.AppendLine(
+                $"Document: {chunk.DocumentName}");
+
+            context.AppendLine(
+                $"Heading: {chunk.Heading}");
+
+            context.AppendLine(
+                $"Chunk: {chunk.ChunkIndex}");
+
+            context.AppendLine();
+
+            context.AppendLine(
+                chunk.Content);
+
+            context.AppendLine();
+        }
+
+
+        context.AppendLine("--------------------------------");
+
+
+        var systemPrompt =
             """
             You are an assistant for the FastChange project.
 
@@ -20,29 +46,23 @@ public sealed class RagPromptBuilder
 
             If the answer cannot be found in the context,
             say that the documentation does not contain the answer.
+            """;
 
+
+        var userPrompt =
+            $"""
             Context:
-            """);
 
-        foreach (var chunk in chunks)
-        {
-            sb.AppendLine("--------------------------------");
+            {context}
 
-            sb.AppendLine(
-                $"Document: {chunk.DocumentName}");
+            Question:
 
-            sb.AppendLine(
-                $"Heading: {chunk.Heading}");
+            {question}
+            """;
 
-            sb.AppendLine(chunk.Content);
 
-            sb.AppendLine();
-        }
-
-        sb.AppendLine("--------------------------------");
-
-        sb.AppendLine($"Question: {question}");
-
-        return new ChatPrompt(sb.ToString(), question);
+        return new ChatPrompt(
+            systemPrompt,
+            userPrompt);
     }
 }
