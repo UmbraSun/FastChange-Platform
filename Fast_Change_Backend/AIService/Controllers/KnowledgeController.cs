@@ -1,4 +1,6 @@
-﻿using AIService.Services.Knowledge;
+﻿using AIService.Contracts.Knowledge;
+using AIService.Services.Knowledge;
+using AIService.Services.Retrieval;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AIService.Controllers;
@@ -12,11 +14,14 @@ public sealed class KnowledgeController
     : ControllerBase
 {
     private readonly IKnowledgeIndexer _indexer;
+    private readonly IRetrievalService _retrievalService;
 
     public KnowledgeController(
-        IKnowledgeIndexer indexer)
+        IKnowledgeIndexer indexer,
+        IRetrievalService retrievalService)
     {
         _indexer = indexer;
+        _retrievalService = retrievalService;
     }
 
     /// <summary>
@@ -36,5 +41,35 @@ public sealed class KnowledgeController
             {
                 Message = "Knowledge indexing completed"
             });
+    }
+
+    /// <summary>
+    /// Search the knowledge base for relevant documents based on the provided query and return the top results.
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    [HttpPost("search")]
+    public async Task<ActionResult<SearchKnowledgeResponse>> Search(
+    SearchKnowledgeRequest request,
+    CancellationToken cancellationToken)
+    {
+        var result =
+            await _retrievalService.SearchAsync(
+                request.Query,
+                request.Top,
+                cancellationToken);
+
+        return Ok(
+            new SearchKnowledgeResponse(
+                result
+                    .Select(x =>
+                        new SearchKnowledgeItem(
+                            x.DocumentName,
+                            x.Heading,
+                            x.ChunkIndex,
+                            x.Score,
+                            x.Content))
+                    .ToList()));
     }
 }

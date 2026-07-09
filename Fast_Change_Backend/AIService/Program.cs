@@ -1,6 +1,7 @@
 using AIService.Background;
 using AIService.Extensions;
 using AIService.Infrastructure;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,4 +26,14 @@ using (var scope = app.Services.CreateScope())
     await initializer.InitializeAsync(
         CancellationToken.None);
 }
+
+app.MapHealthChecks("/health");
+app.MapHealthChecks("/health/live",
+    new HealthCheckOptions
+    {
+        Predicate = _ => false
+    });
+app.MapHealthChecks("/health/ready");
+
+
 app.Run();

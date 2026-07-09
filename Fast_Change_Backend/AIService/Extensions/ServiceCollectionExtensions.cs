@@ -1,8 +1,10 @@
 ﻿using AIService.AI.Options;
 using AIService.Background;
 using AIService.Infrastructure;
+using AIService.Infrastructure.HealthChecks;
 using AIService.Providers.OpenAI;
 using AIService.Services.Knowledge;
+using AIService.Services.Prompt;
 using AIService.Services.Retrieval;
 using Microsoft.Extensions.Options;
 using OpenAI;
@@ -64,8 +66,13 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IChunkingService, MarkdownChunkingService>();
         services.AddScoped<IKnowledgeIndexer, KnowledgeIndexer>();
         services.AddScoped<IRetrievalService, RetrievalService>();
+        services.AddScoped<IPromptBuilder, RagPromptBuilder>();
 
         services.AddHostedService<KnowledgeIndexWorker>();
+
+        services.AddHealthChecks()
+            .AddCheck<QdrantHealthCheck>("qdrant")
+            .AddCheck<OpenAiHealthCheck>("openai");
 
         return services;
     }

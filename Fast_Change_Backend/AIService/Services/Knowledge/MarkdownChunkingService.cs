@@ -7,13 +7,12 @@ public sealed class MarkdownChunkingService
     : IChunkingService
 {
     public IReadOnlyCollection<KnowledgeChunk> Chunk(
-        KnowledgeDocument document)
+    KnowledgeDocument document)
     {
         var chunks = new List<KnowledgeChunk>();
-
-        string heading = document.Name;
-
+        var heading = document.Name;
         var builder = new StringBuilder();
+        var chunkIndex = 0;
 
         foreach (var line in document.Content.Split('\n'))
         {
@@ -42,11 +41,13 @@ public sealed class MarkdownChunkingService
                 return;
             }
 
-            chunks.Add(new KnowledgeChunk(
-                Guid.NewGuid(),
-                document.Name,
-                heading,
-                content));
+            chunks.Add(
+                new KnowledgeChunk(
+                    Guid.NewGuid(),
+                    document.Name,
+                    heading,
+                    chunkIndex++,
+                    content));
 
             builder.Clear();
         }

@@ -42,6 +42,8 @@ public sealed class QdrantVectorStore
                         ["document"] = x.DocumentName,
                         ["hash"] = x.DocumentHash,
                         ["heading"] = x.Heading,
+                        ["chunkIndex"] = x.ChunkIndex,
+                        ["indexedAtUtc"] = x.IndexedAtUtc.ToString("O"),
                         ["content"] = x.Content
                     }
                 })
@@ -65,13 +67,13 @@ public sealed class QdrantVectorStore
             limit: (ulong)limit,
             cancellationToken: cancellationToken);
 
-        return result
-            .Select(x => new KnowledgeSearchResult(
-                Guid.Parse(x.Id.Uuid),
-                x.Payload["document"].StringValue,
-                x.Payload["heading"].StringValue,
-                x.Payload["content"].StringValue,
-                x.Score))
+        return result.Select(point => new KnowledgeSearchResult(
+                Guid.Parse(point.Id.Uuid),
+                point.Payload["document"].StringValue,
+                point.Payload["heading"].StringValue,
+                (int)point.Payload["chunkIndex"].IntegerValue,
+                point.Payload["content"].StringValue,
+                point.Score))
             .ToList();
     }
 
@@ -89,8 +91,7 @@ public sealed class QdrantVectorStore
                     {
                         new Condition
                         {
-                            Field =
-                            new FieldCondition
+                            Field = new FieldCondition
                             {
                                 Key = "document",
                                 Match =
@@ -102,8 +103,7 @@ public sealed class QdrantVectorStore
                         },
                         new Condition
                         {
-                            Field =
-                            new FieldCondition
+                            Field = new FieldCondition
                             {
                                 Key = "hash",
                                 Match =
