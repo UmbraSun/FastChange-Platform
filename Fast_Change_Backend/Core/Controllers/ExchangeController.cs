@@ -1,4 +1,5 @@
-﻿using Application.Features.Exchange.PreviewExchange;
+﻿using Application.Features.Exchange.ExchangeCurrency;
+using Application.Features.Exchange.PreviewExchange;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -34,6 +35,22 @@ public sealed class ExchangeController : ControllerBase
         var result = await _mediator.Send(
             query,
             cancellationToken);
+
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Performs currency exchange operation.
+    /// </summary>
+    [HttpPost]
+    public async Task<IActionResult> Exchange(
+        ExchangeCommand command,
+        CancellationToken cancellationToken)
+    {
+        var result =
+            await _mediator.Send(
+                command,
+                cancellationToken);
 
         return Ok(result);
     }
