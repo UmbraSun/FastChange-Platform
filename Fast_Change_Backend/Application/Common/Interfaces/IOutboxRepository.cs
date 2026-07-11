@@ -8,6 +8,11 @@ namespace Application.Common.Interfaces;
 public interface IOutboxRepository
 {
     /// <summary>
+    /// Adds a new outbox message.
+    /// </summary>
+    Task AddAsync(OutboxMessage message, CancellationToken ct);
+
+    /// <summary>
     /// Gets a list of unprocessed outbox messages from the database, limited by the specified take parameter.
     /// </summary>
     /// <param name="take"></param>

@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Application.Common.Models;
+using Domain.Entities;
 
 namespace Application.Common.Interfaces;
 
@@ -15,7 +16,7 @@ public interface IExchangeService
     /// <param name="amount"></param>
     /// <param name="exchangeRate"></param>
     /// <returns></returns>
-    (Transaction withdrawTransaction, Transaction depositTransaction, decimal receivedAmount) Exchange(
+    ExchangeResult Exchange(
         Wallet fromWallet,
         Wallet toWallet,
         decimal amount,

@@ -1,4 +1,5 @@
 ﻿using Application.Common.Interfaces;
+using Application.Common.Models;
 using Domain.Entities;
 using Domain.Transactions;
 
@@ -6,7 +7,7 @@ namespace Application.Common.Services;
 
 public sealed class ExchangeService : IExchangeService
 {
-    public (Transaction withdrawTransaction, Transaction depositTransaction, decimal receivedAmount) Exchange(
+    public ExchangeResult Exchange(
         Wallet fromWallet,
         Wallet toWallet,
         decimal amount,
@@ -37,7 +38,7 @@ public sealed class ExchangeService : IExchangeService
                 operationId,
                 exchangeRate);
 
-        return (
+        return new ExchangeResult(
             withdrawTransaction,
             depositTransaction,
             receivedAmount);

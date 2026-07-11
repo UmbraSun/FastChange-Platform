@@ -13,6 +13,15 @@ public class OutboxRepository : IOutboxRepository
         _db = db;
     }
 
+    public Task AddAsync(
+        OutboxMessage message,
+        CancellationToken ct)
+    {
+        return _db.OutboxMessages
+            .AddAsync(message, ct)
+            .AsTask();
+    }
+
     public async Task<List<OutboxMessage>> GetUnprocessedAsync(int take, CancellationToken ct)
     {
         var entities = await _db.Set<OutboxMessage>()  
@@ -33,10 +42,7 @@ public class OutboxRepository : IOutboxRepository
 
     public async Task MarkAsProcessedAsync(Guid messageId, CancellationToken ct)
     {
-        var entity = await _db.Set<OutboxMessage>().FindAsync(new object[] { messageId }, ct);
-        if (entity != null)
-        {
-            entity.ProcessedOnUtc = DateTime.UtcNow;
-        }
+        var entity = await _db.Set<OutboxMessage>().FindAsync([messageId], ct);
+        entity?.ProcessedOnUtc = DateTime.UtcNow;
     }
 }
