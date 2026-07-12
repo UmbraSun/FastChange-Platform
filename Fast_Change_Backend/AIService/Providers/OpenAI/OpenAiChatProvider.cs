@@ -1,4 +1,6 @@
-﻿using OpenAI.Chat;
+﻿using Infrastructure.Observability;
+using OpenAI.Chat;
+using System.Diagnostics;
 
 namespace AIService.Providers.OpenAI;
 
@@ -18,17 +20,42 @@ public sealed class OpenAiChatProvider
         string userPrompt,
         CancellationToken cancellationToken)
     {
+        using var activity = FastChangeTelemetry.ActivitySource.StartActivity(
+                "OpenAI Chat",
+                ActivityKind.Client);
+
+        activity?.SetTag(
+            "ai.provider",
+            "openai");
+
+
         var messages = new List<ChatMessage>
+    {
+        new SystemChatMessage(systemPrompt),
+        new UserChatMessage(userPrompt)
+    };
+
+        try
         {
-            new SystemChatMessage(systemPrompt),
-            new UserChatMessage(userPrompt)
-        };
+            ChatCompletion completion =
+                await _client.CompleteChatAsync(
+                    messages,
+                    cancellationToken: cancellationToken);
 
-        ChatCompletion completion =
-            await _client.CompleteChatAsync(
-                messages,
-                cancellationToken: cancellationToken);
+            activity?.SetTag(
+                "ai.success",
+                true);
 
-        return completion.Content[0].Text;
+            return completion.Content[0].Text;
+        }
+        catch (Exception ex)
+        {
+            activity?.SetStatus(
+                ActivityStatusCode.Error);
+
+            activity?.AddException(ex);
+
+            throw;
+        }
     }
 }

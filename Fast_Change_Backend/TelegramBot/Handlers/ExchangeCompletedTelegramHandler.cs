@@ -1,9 +1,11 @@
-﻿using Contracts.Events;
+﻿using BuildingBlocks.Messaging;
+using Contracts.Events;
 using TelegramBot.Services;
 
 namespace TelegramBot.Handlers;
 
 public sealed class ExchangeCompletedTelegramHandler
+    : IIntegrationEventHandler<ExchangeCompletedEvent>
 {
     private readonly TelegramNotificationService _notification;
 

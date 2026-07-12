@@ -214,6 +214,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to deserialize Kafka event..
+        /// </summary>
+        public static string UnableToDeserializeKafkaEvent {
+            get {
+                return ResourceManager.GetString("UnableToDeserializeKafkaEvent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unexpected exchange rate provider error.
         /// </summary>
         public static string UnexpectedExchangeRateProviderError {

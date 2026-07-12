@@ -189,4 +189,7 @@
   <data name="ExchangeRateNotFound" xml:space="preserve">
     <value>Курс обмена не найден.</value>
   </data>
+  <data name="UnableToDeserializeKafkaEvent" xml:space="preserve">
+    <value>Не удалось десериализовать событие Kafka</value>
+  </data>
 </root>

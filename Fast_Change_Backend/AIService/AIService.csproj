@@ -12,4 +12,8 @@
     <PackageReference Include="Qdrant.Client" Version="1.18.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
+  </ItemGroup>
+	
 </Project>
