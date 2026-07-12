@@ -3,6 +3,8 @@ using Application.Common.Interfaces;
 using Application.Common.Services;
 using Application.Common.Settings;
 using Application.Features.Wallets.GetWalletHistory;
+using BuildingBlocks.Messaging;
+using Contracts.Events;
 using Contracts.Notifications;
 using Core.Infrastructure;
 using FluentValidation;
@@ -10,6 +12,8 @@ using Infrastructure.BackgroundServices.Outbox;
 using Infrastructure.ExchangeRates.Caching;
 using Infrastructure.ExchangeRates.Clients;
 using Infrastructure.ExchangeRates.Providers;
+using Infrastructure.Messaging.Handlers;
+using Infrastructure.Messaging.Kafka.Consumers;
 using Infrastructure.Messaging.Kafka.DI;
 using Infrastructure.Messaging.RabbitMq.Configuration;
 using Infrastructure.Messaging.RabbitMq.Connection;
@@ -17,6 +21,7 @@ using Infrastructure.Messaging.RabbitMq.Publishers;
 using Infrastructure.Mongo;
 using Infrastructure.Mongo.Repositories;
 using Infrastructure.Notifications;
+using Infrastructure.Observability;
 using Infrastructure.Redis;
 using Infrastructure.SignalR;
 using Infrastructure.SignalR.Services;
@@ -29,6 +34,9 @@ using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using MongoDB.Driver;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using Persistence;
 using Persistence.Authentication;
 using Persistence.Outbox;
@@ -56,6 +64,7 @@ public static class BuilderExtensions
         services.AddUserLogin(builder.Configuration);
         services.AddInfrastructure(builder.Configuration);
         services.AddHostedServices(builder.Configuration);
+        services.AddObservability(builder.Configuration);
         services.AddProjectServices(builder.Configuration);
 
         return builder;
@@ -254,9 +263,7 @@ public static class BuilderExtensions
     private static void AddSignalRConf(this IServiceCollection services)
     {
         services.AddSignalR();
-        services.AddSingleton<
-            IWalletNotificationService,
-            WalletNotificationService>();
+        services.AddSingleton<IWalletNotificationService, WalletNotificationService>();
     }
 
     // MongoDB configuration
@@ -290,8 +297,43 @@ public static class BuilderExtensions
     private static void AddHostedServices(this IServiceCollection services, ConfigurationManager configuration)
     {
         services.AddHostedService<OutboxDispatcher>();
+        services.AddHostedService<ExchangeCompletedConsumer>();
         services.Configure<OutboxDispatcherOptions>(
             configuration.GetSection(OutboxDispatcherOptions.SectionName));
+    }
+
+    // Observability configuration
+    private static void AddObservability(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.Configure<TelemetryOptions>(
+            configuration.GetSection(
+                TelemetryOptions.SectionName));
+
+        var settings = configuration
+            .GetSection(TelemetryOptions.SectionName)
+            .Get<TelemetryOptions>()!;
+
+        services.AddOpenTelemetry()
+            .ConfigureResource(resource =>
+            {
+                resource.AddService(
+                    settings.ServiceName,
+                    serviceVersion: settings.ServiceVersion);
+            })
+            .WithTracing(builder =>
+            {
+                builder.AddSource(FastChangeTelemetry.SourceName)
+                    .AddAspNetCoreInstrumentation()
+                    .AddHttpClientInstrumentation()
+                    .AddConsoleExporter();
+            })
+            .WithMetrics(builder =>
+            {
+                builder.AddAspNetCoreInstrumentation()
+                    .AddHttpClientInstrumentation()
+                    .AddRuntimeInstrumentation()
+                    .AddConsoleExporter();
+            });
     }
 
     // Application services adding
@@ -311,6 +353,8 @@ public static class BuilderExtensions
         services.AddScoped<IOutboxStore, OutboxStore>();
 
         services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
+
+        services.AddScoped<IIntegrationEventHandler<ExchangeCompletedEvent>, ExchangeCompletedHandler>();
 
         services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddScoped<IWalletOperationService, WalletOperationService>();

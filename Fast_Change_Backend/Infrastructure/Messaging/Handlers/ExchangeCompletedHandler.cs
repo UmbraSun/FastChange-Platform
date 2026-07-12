@@ -1,10 +1,12 @@
 ﻿using Application.Common.Interfaces;
+using BuildingBlocks.Messaging;
 using Contracts.Events;
 using Microsoft.Extensions.Logging;
 
-namespace Infrastructure.ExchangeRates.Events;
+namespace Infrastructure.Messaging.Handlers;
 
 public sealed class ExchangeCompletedHandler
+    : IIntegrationEventHandler<ExchangeCompletedEvent>
 {
     private readonly ILogger<ExchangeCompletedHandler> _logger;
     private readonly INotificationDispatcher _dispatcher;

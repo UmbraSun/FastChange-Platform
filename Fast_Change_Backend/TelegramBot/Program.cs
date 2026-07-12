@@ -1,7 +1,9 @@
+using BuildingBlocks.Messaging;
+using Contracts.Events;
+using Infrastructure.Messaging.Kafka.Consumers;
 using Infrastructure.Messaging.Kafka.DI;
 using Microsoft.Extensions.Options;
 using Telegram.Bot;
-using TelegramBot.Consumers;
 using TelegramBot.Handlers;
 using TelegramBot.Options;
 using TelegramBot.Services;
@@ -18,7 +20,7 @@ builder.Services.AddSingleton(sp =>
 });
 
 builder.Services.AddSingleton<TelegramNotificationService>();
-builder.Services.AddSingleton<ExchangeCompletedTelegramHandler>();
+builder.Services.AddScoped<IIntegrationEventHandler<ExchangeCompletedEvent>, ExchangeCompletedTelegramHandler>();
 builder.Services.AddKafka(builder.Configuration);
 
 builder.Services.AddHostedService<ExchangeCompletedConsumer>();

@@ -189,4 +189,7 @@
   <data name="ExchangeRateNotFound" xml:space="preserve">
     <value>Exchange rate not found.</value>
   </data>
+  <data name="UnableToDeserializeKafkaEvent" xml:space="preserve">
+    <value>Unable to deserialize Kafka event.</value>
+  </data>
 </root>
