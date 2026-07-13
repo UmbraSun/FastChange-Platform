@@ -3,7 +3,9 @@
     <Build Solution="Debug|*" Project="false" />
   </Project>
   <Project Path="Application/Application.csproj" Id="a4a24fd7-fa5e-4a20-9fab-a8cb74fa60d7" />
-  <Project Path="BuildingBlocks/BuildingBlocks.csproj" Id="2658db7f-7b82-415d-8d5e-1063cf3db841" />
+  <Project Path="BuildingBlocks/BuildingBlocks.csproj" Id="2658db7f-7b82-415d-8d5e-1063cf3db841">
+    <Build Solution="Debug|*" Project="false" />
+  </Project>
   <Project Path="Contracts/Contracts.csproj" Id="6ccebfc0-e739-4224-b301-6e82b9d774a2">
     <Build Solution="Debug|*" Project="false" />
   </Project>

@@ -15,6 +15,7 @@ using Infrastructure.ExchangeRates.Providers;
 using Infrastructure.Messaging.Handlers;
 using Infrastructure.Messaging.Kafka.Consumers;
 using Infrastructure.Messaging.Kafka.DI;
+using Infrastructure.Messaging.Outbox;
 using Infrastructure.Messaging.RabbitMq.Configuration;
 using Infrastructure.Messaging.RabbitMq.Connection;
 using Infrastructure.Messaging.RabbitMq.Publishers;
@@ -298,6 +299,7 @@ public static class BuilderExtensions
     {
         services.AddHostedService<OutboxDispatcher>();
         services.AddHostedService<ExchangeCompletedConsumer>();
+        services.AddHostedService<OutboxProcessor>();
         services.Configure<OutboxDispatcherOptions>(
             configuration.GetSection(OutboxDispatcherOptions.SectionName));
     }
@@ -350,6 +352,7 @@ public static class BuilderExtensions
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         services.AddScoped<IOutboxRepository, OutboxRepository>();
+        services.AddScoped<IOutboxWriter, OutboxWriter>();
         services.AddScoped<IOutboxStore, OutboxStore>();
 
         services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();

@@ -1,9 +1,12 @@
 ﻿using BuildingBlocks.Messaging;
 using Confluent.Kafka;
+using Infrastructure.Observability;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Resources;
+using System.Diagnostics;
+using System.Text;
 using System.Text.Json;
 
 namespace Infrastructure.Messaging.Kafka;
@@ -37,6 +40,36 @@ public abstract class BaseKafkaConsumer<TEvent>
             try
             {
                 var result = _consumer.Consume(stoppingToken);
+
+                var parent = result.Message.Headers
+                    .FirstOrDefault(h => h.Key == "traceparent");
+
+                var parentContext = parent != null
+                    ? ActivityContext.Parse(
+                        Encoding.UTF8.GetString(parent.GetValueBytes()),
+                        null)
+                    : default;
+
+                using var activity = FastChangeTelemetry.ActivitySource.StartActivity(
+                    $"Kafka Consume {typeof(TEvent).Name}",
+                    ActivityKind.Consumer,
+                    parentContext);
+
+                activity?.SetTag(
+                    "messaging.system",
+                    "kafka");
+
+                activity?.SetTag(
+                    "messaging.destination.name",
+                    Topic);
+
+                activity?.SetTag(
+                    "messaging.kafka.partition",
+                    result.Partition.Value);
+
+                activity?.SetTag(
+                    "messaging.kafka.offset",
+                    result.Offset.Value);
 
                 var @event = Deserialize(result.Message.Value);
 
