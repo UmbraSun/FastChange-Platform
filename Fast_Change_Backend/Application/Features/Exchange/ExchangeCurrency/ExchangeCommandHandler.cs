@@ -1,10 +1,8 @@
 ﻿using Application.Common.Exceptions;
 using Application.Common.Interfaces;
-using Application.Common.Models;
 using Contracts.Events;
 using MediatR;
 using Resources;
-using System.Text.Json;
 
 namespace Application.Features.Exchange.ExchangeCurrency;
 
@@ -15,7 +13,7 @@ public sealed class ExchangeCommandHandler
     private readonly IWalletAccessService _walletAccessService;
     private readonly IExchangeRateProvider _exchangeRateProvider;
     private readonly ITransactionRepository _transactionRepository;
-    private readonly IOutboxRepository _outboxRepository;
+    private readonly IOutboxWriter _outboxWriter;
     private readonly IExchangeService _exchangeService;
     private readonly IUnitOfWork _unitOfWork;
 
@@ -24,7 +22,7 @@ public sealed class ExchangeCommandHandler
         IWalletAccessService walletAccessService,
         IExchangeRateProvider exchangeRateProvider,
         ITransactionRepository transactionRepository,
-        IOutboxRepository outboxRepository,
+        IOutboxWriter outboxWriter,
         IExchangeService exchangeService,
         IUnitOfWork unitOfWork)
     {
@@ -32,7 +30,7 @@ public sealed class ExchangeCommandHandler
         _walletAccessService = walletAccessService;
         _exchangeRateProvider = exchangeRateProvider;
         _transactionRepository = transactionRepository;
-        _outboxRepository = outboxRepository;
+        _outboxWriter = outboxWriter;
         _exchangeService = exchangeService;
         _unitOfWork = unitOfWork;
     }
@@ -81,15 +79,7 @@ public sealed class ExchangeCommandHandler
             rate.Rate,
             result.ReceivedAmount);
 
-        await _outboxRepository.AddAsync(
-            new OutboxMessage
-            {
-                Id = Guid.NewGuid(),
-                Type = typeof(ExchangeCompletedEvent).FullName!,
-                Payload = JsonSerializer.Serialize(integrationEvent),
-                OccurredOnUtc = DateTime.UtcNow
-            },
-            cancellationToken);
+        await _outboxWriter.AddAsync(integrationEvent, cancellationToken);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 

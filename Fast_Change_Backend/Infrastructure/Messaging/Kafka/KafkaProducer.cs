@@ -39,11 +39,18 @@ public sealed class KafkaProducer : IKafkaProducer
             "messaging.message.key",
             key);
 
+        var kafkaHeaders = new Dictionary<string, string>(
+            headers ?? new Dictionary<string, string>());
+
+
+        if (Activity.Current is not null)
+            kafkaHeaders["traceparent"] = Activity.Current.Id!;
+
         var message = new Message<string, string>
         {
             Key = key,
             Value = value,
-            Headers = BuildHeaders(headers)
+            Headers = BuildHeaders(kafkaHeaders)
         };
 
         try
@@ -75,11 +82,9 @@ public sealed class KafkaProducer : IKafkaProducer
             return kafkaHeaders;
 
         foreach (var header in headers)
-        {
             kafkaHeaders.Add(
                 header.Key,
                 Encoding.UTF8.GetBytes(header.Value));
-        }
 
         return kafkaHeaders;
     }

@@ -38,12 +38,10 @@ public sealed class KafkaConsumerWorker : BackgroundService
 
                     using var scope = _scopeFactory.CreateScope();
 
-                    var handler =
-                        scope.ServiceProvider
-                            .GetRequiredService<IEventHandler<ExchangeCompletedEvent>>();
+                    var handler = scope.ServiceProvider
+                        .GetRequiredService<IEventHandler<ExchangeCompletedEvent>>();
 
-                    var @event =
-                        JsonSerializer.Deserialize<ExchangeCompletedEvent>(result.Message.Value)!;
+                    var @event = JsonSerializer.Deserialize<ExchangeCompletedEvent>(result.Message.Value)!;
 
                     handler.HandleAsync(@event, stoppingToken).GetAwaiter().GetResult();
 

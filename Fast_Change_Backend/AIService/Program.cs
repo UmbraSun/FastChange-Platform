@@ -1,4 +1,3 @@
-using AIService.Background;
 using AIService.Extensions;
 using AIService.Infrastructure;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
