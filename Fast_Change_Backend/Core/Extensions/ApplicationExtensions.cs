@@ -1,5 +1,7 @@
 ﻿using Core.Infrastructure;
+using HealthChecks.UI.Client;
 using Infrastructure.SignalR.Hubs;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 using Scalar.AspNetCore;
@@ -17,6 +19,7 @@ public static class ApplicationExtensions
         app.HighLoadConfigs();
         app.UseMiddlewares();
         app.AddHubs();
+        app.UseHealthChecks();
         app.ApplyDatabaseMigrations();
 
         return app;
@@ -74,6 +77,16 @@ public static class ApplicationExtensions
     private static void AddHubs(this WebApplication app)
     {
         app.MapHub<WalletHub>("/hubs/wallet");
+    }
+
+    // Use health checks for monitoring the application's health status
+    private static void UseHealthChecks(this WebApplication app)
+    {
+        app.MapHealthChecks("/health",
+            new HealthCheckOptions
+            {
+                ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+            });
     }
 
     // Automatically applies pending Entity Framework Core migrations on application startup

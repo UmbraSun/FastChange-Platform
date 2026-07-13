@@ -1,8 +1,7 @@
-﻿using Application.Common.Interfaces;
-using Confluent.Kafka;
-using Infrastructure.Messaging.Kafka.Consumers;
+﻿using Confluent.Kafka;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace Infrastructure.Messaging.Kafka.DI;
 
@@ -45,6 +44,18 @@ public static class KafkaServiceCollectionExtensions
             };
 
             return new ConsumerBuilder<string, string>(config).Build();
+        });
+
+        services.AddSingleton<IAdminClient>(sp =>
+        {
+            var settings = sp.GetRequiredService<IOptions<KafkaSettings>>().Value;
+
+            var config = new AdminClientConfig
+            {
+                BootstrapServers = settings.BootstrapServers
+            };
+
+            return new AdminClientBuilder(config).Build();
         });
 
         return services;

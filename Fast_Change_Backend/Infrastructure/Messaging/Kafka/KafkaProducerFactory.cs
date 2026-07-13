@@ -22,9 +22,12 @@ public sealed class KafkaProducerFactory : IDisposable
         };
 
         _producer = new ProducerBuilder<string, string>(config).Build();
+        AdminClient = new AdminClientBuilder(config).Build();
     }
 
     public IProducer<string, string> Producer => _producer;
+    
+    public IAdminClient AdminClient { get; }
 
     public void Dispose()
     {
