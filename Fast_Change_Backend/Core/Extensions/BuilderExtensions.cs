@@ -12,6 +12,7 @@ using Infrastructure.BackgroundServices.Outbox;
 using Infrastructure.ExchangeRates.Caching;
 using Infrastructure.ExchangeRates.Clients;
 using Infrastructure.ExchangeRates.Providers;
+using Infrastructure.HealthChecks;
 using Infrastructure.Messaging.Handlers;
 using Infrastructure.Messaging.Kafka.Consumers;
 using Infrastructure.Messaging.Kafka.DI;
@@ -66,6 +67,7 @@ public static class BuilderExtensions
         services.AddInfrastructure(builder.Configuration);
         services.AddHostedServices(builder.Configuration);
         services.AddObservability(builder.Configuration);
+        services.AddHealthChecksForServices(builder.Configuration);
         services.AddProjectServices(builder.Configuration);
 
         return builder;
@@ -275,9 +277,7 @@ public static class BuilderExtensions
 
         services.AddSingleton<IMongoClient>(sp =>
         {
-            var settings =
-                sp.GetRequiredService<IOptions<MongoSettings>>().Value;
-
+            var settings = sp.GetRequiredService<IOptions<MongoSettings>>().Value;
             return new MongoClient(settings.ConnectionString);
         });
 
@@ -336,6 +336,17 @@ public static class BuilderExtensions
                     .AddRuntimeInstrumentation()
                     .AddConsoleExporter();
             });
+    }
+
+    private static void AddHealthChecksForServices(this IServiceCollection services, ConfigurationManager configuration)
+    {
+        var healthChecks = services.AddHealthChecks()
+            .AddNpgSql(configuration.GetConnectionString("DefaultConnection")!, name: "PostgreSQL")
+            .AddRedis(configuration.GetConnectionString("Redis")!, name: "Redis")
+            .AddMongoDb(sp => sp.GetRequiredService<IMongoClient>(), name: "MongoDb");
+
+        healthChecks.AddCheck<KafkaHealthCheck>("Kafka");
+        healthChecks.AddCheck<QdrantHealthCheck>("Qdrant");
     }
 
     // Application services adding
