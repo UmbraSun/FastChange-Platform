@@ -31,6 +31,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Http.Resilience;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
@@ -43,7 +44,9 @@ using Persistence;
 using Persistence.Authentication;
 using Persistence.Outbox;
 using Persistence.Repositories;
+using Polly;
 using StackExchange.Redis;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.RateLimiting;
 
@@ -59,11 +62,11 @@ public static class BuilderExtensions
         services.OpenApi();
         services.AddHttpConfiguration();
         services.Cors();
-        services.RateLimiter();
         services.AddDatabase(configuration);
         services.AddMiddlewares();
         services.AddApplicationInfrastructure();
         services.AddUserLogin(builder.Configuration);
+        services.AddRateLimiting();
         services.AddInfrastructure(builder.Configuration);
         services.AddHostedServices(builder.Configuration);
         services.AddObservability(builder.Configuration);
@@ -130,22 +133,47 @@ public static class BuilderExtensions
     }
 
     // Rate Limiter configuration
-    private static void RateLimiter(this IServiceCollection services)
+    private static void AddRateLimiting(this IServiceCollection services)
     {
-        // Highload optimization: Registers and configures global Rate Limiting services
         services.AddRateLimiter(options =>
         {
-            // Global policy: Fixed window of 10 seconds, max 100 requests per IP address
-            options.AddFixedWindowLimiter(policyName: "GlobalFixedWindow", fixedOptions =>
-            {
-                fixedOptions.PermitLimit = 100;
-                fixedOptions.Window = TimeSpan.FromSeconds(10);
-                fixedOptions.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
-                fixedOptions.QueueLimit = 2;
-            });
+            options.AddFixedWindowLimiter("GlobalFixedWindow",
+                fixedOptions =>
+                {
+                    fixedOptions.PermitLimit = 100;
+                    fixedOptions.Window = TimeSpan.FromSeconds(10);
+                    fixedOptions.QueueLimit = 2;
+                    fixedOptions.QueueProcessingOrder =
+                        QueueProcessingOrder.OldestFirst;
+                });
 
-            // Returns a strict 429 Too Many Requests status code when a user floods the API
-            options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+            options.AddPolicy("ExchangePolicy",
+                httpContext =>
+                {
+                    var userId = httpContext.User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value 
+                        ?? httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                    if (string.IsNullOrWhiteSpace(userId))
+                        return RateLimitPartition.GetFixedWindowLimiter(
+                            "anonymous",
+                            _ => new FixedWindowRateLimiterOptions
+                            {
+                                PermitLimit = 5,
+                                Window = TimeSpan.FromMinutes(1),
+                                QueueLimit = 0
+                            });
+
+                    return RateLimitPartition.GetFixedWindowLimiter(userId,
+                        _ => new FixedWindowRateLimiterOptions
+                        {
+                            PermitLimit = 10,
+                            Window = TimeSpan.FromMinutes(1),
+                            QueueLimit = 0
+                        });
+                });
+
+            options.RejectionStatusCode =
+                StatusCodes.Status429TooManyRequests;
         });
     }
 
@@ -235,7 +263,24 @@ public static class BuilderExtensions
                 ?? throw new InvalidOperationException("ExchangeRateSettings configuration section is missing.");
 
             client.BaseAddress = new Uri(exchangeSettings.BaseUrl);
-            client.Timeout = TimeSpan.FromSeconds(exchangeSettings.TimeoutSeconds);
+        }).AddResilienceHandler("Frankfurter", pipeline =>
+        {
+            pipeline.AddRetry(new HttpRetryStrategyOptions
+            {
+                MaxRetryAttempts = 3,
+                Delay = TimeSpan.FromSeconds(2),
+                BackoffType = DelayBackoffType.Exponential
+            });
+
+            pipeline.AddTimeout(TimeSpan.FromSeconds(15));
+
+            pipeline.AddCircuitBreaker(new HttpCircuitBreakerStrategyOptions
+            {
+                FailureRatio = 0.5, 
+                MinimumThroughput = 10,
+                SamplingDuration = TimeSpan.FromSeconds(30),
+                BreakDuration = TimeSpan.FromSeconds(20)
+            });
         });
 
         services.AddSingleton<IConnectionMultiplexer>(_ =>
