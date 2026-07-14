@@ -3,6 +3,7 @@ using Application.Features.Exchange.PreviewExchange;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace Core.Controllers;
 
@@ -12,6 +13,7 @@ namespace Core.Controllers;
 [ApiController]
 [Route("api/exchange")]
 [Authorize]
+[EnableRateLimiting("ExchangePolicy")]
 public sealed class ExchangeController : ControllerBase
 {
     private readonly IMediator _mediator;
