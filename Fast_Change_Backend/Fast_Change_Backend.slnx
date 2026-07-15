@@ -3,6 +3,7 @@
     <Build Solution="Debug|*" Project="false" />
   </Project>
   <Project Path="Application/Application.csproj" Id="a4a24fd7-fa5e-4a20-9fab-a8cb74fa60d7" />
+  <Project Path="ArchitectureTests/ArchitectureTests.csproj" Id="962a694a-b399-4cc2-8876-66118d24c73d" />
   <Project Path="BuildingBlocks/BuildingBlocks.csproj" Id="2658db7f-7b82-415d-8d5e-1063cf3db841">
     <Build Solution="Debug|*" Project="false" />
   </Project>
