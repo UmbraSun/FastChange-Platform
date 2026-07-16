@@ -10,7 +10,8 @@ namespace Application.Features.Users.RegisterUser;
 /// <summary>
 /// Command handler for registering a new user. It checks for email uniqueness, hashes the password, creates default wallets, and persists the user and wallets to the database.
 /// </summary>
-public sealed class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, Guid>
+public sealed class RegisterUserCommandHandler 
+    : IRequestHandler<RegisterUserCommand, Guid>
 {
     private readonly IUserRepository _userRepository;
 

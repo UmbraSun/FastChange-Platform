@@ -17,15 +17,11 @@ namespace Core.Controllers;
 [Authorize]
 public class WalletController : ControllerBase
 {
-    private readonly IMediator _mediator;
-    private readonly GetWalletHistoryHandler _handler;
+    private readonly ISender _sender;
 
-    public WalletController(
-        IMediator mediator, 
-        GetWalletHistoryHandler handler)
+    public WalletController(ISender sender)
     {
-        _mediator = mediator;
-        _handler = handler;
+        _sender = sender;
     }
 
     /// <summary>
@@ -39,7 +35,7 @@ public class WalletController : ControllerBase
         DepositCommand command,
         CancellationToken cancellationToken)
     {
-        var result = await _mediator.Send(command, cancellationToken);
+        var result = await _sender.Send(command, cancellationToken);
         return Ok(result);
     }
 
@@ -54,10 +50,7 @@ public class WalletController : ControllerBase
         WithdrawCommand command,
         CancellationToken cancellationToken)
     {
-        var result = await _mediator.Send(
-            command,
-            cancellationToken);
-
+        var result = await _sender.Send(command, cancellationToken);
         return Ok(result);
     }
 
@@ -72,10 +65,7 @@ public class WalletController : ControllerBase
         GetTransactionHistoryQuery query,
         CancellationToken cancellationToken)
     {
-        var result = await _mediator.Send(
-            query,
-            cancellationToken);
-
+        var result = await _sender.Send(query, cancellationToken);
         return Ok(result);
     }
 
@@ -92,10 +82,7 @@ public class WalletController : ControllerBase
         int take = 50,
         CancellationToken ct = default)
     {
-        var result = await _handler.Handle(
-            new GetWalletHistoryQuery(walletId, take),
-            ct);
-
+        var result = await _sender.Send(new GetWalletHistoryQuery(walletId, take), ct);
         return Ok(result);
     }
 }

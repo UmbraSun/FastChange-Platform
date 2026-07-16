@@ -5,10 +5,8 @@ using MediatR;
 
 namespace Application.Features.Transactions.GetTransactionHistory;
 
-public class GetTransactionHistoryQueryHandler
-    : IRequestHandler<
-        GetTransactionHistoryQuery,
-        PagedResult<GetTransactionHistoryResponse>>
+public sealed class GetTransactionHistoryQueryHandler
+    : IRequestHandler<GetTransactionHistoryQuery, PagedResult<GetTransactionHistoryResponse>>
 {
     private readonly ITransactionRepository _transactionRepository;
     private readonly IWalletAccessService _walletAccessService;

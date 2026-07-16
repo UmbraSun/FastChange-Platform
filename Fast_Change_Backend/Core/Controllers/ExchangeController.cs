@@ -16,11 +16,11 @@ namespace Core.Controllers;
 [EnableRateLimiting("ExchangePolicy")]
 public sealed class ExchangeController : ControllerBase
 {
-    private readonly IMediator _mediator;
+    private readonly ISender _sender;
 
-    public ExchangeController(IMediator mediator)
+    public ExchangeController(ISender sender)
     {
-        _mediator = mediator;
+        _sender = sender;
     }
 
     /// <summary>
@@ -34,7 +34,7 @@ public sealed class ExchangeController : ControllerBase
         [FromQuery] PreviewExchangeQuery query,
         CancellationToken cancellationToken)
     {
-        var result = await _mediator.Send(
+        var result = await _sender.Send(
             query,
             cancellationToken);
 
@@ -50,7 +50,7 @@ public sealed class ExchangeController : ControllerBase
         CancellationToken cancellationToken)
     {
         var result =
-            await _mediator.Send(
+            await _sender.Send(
                 command,
                 cancellationToken);
 

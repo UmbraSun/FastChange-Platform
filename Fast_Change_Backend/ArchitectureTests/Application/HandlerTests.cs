@@ -1,4 +1,5 @@
 ﻿using Application;
+using Application.Common.Interfaces;
 using FluentAssertions;
 using NetArchTest.Rules;
 
@@ -35,11 +36,29 @@ public sealed class HandlerTests
     [Fact]
     public void Validators_Should_Reside_In_Features()
     {
-        var result = Types.InAssembly(typeof(AssemblyReference).Assembly)
+        var result = Types.InAssembly(typeof(IUnitOfWork).Assembly)
             .That()
             .HaveNameEndingWith("Validator")
+            .And()
+            .AreNotInterfaces()
             .Should()
             .ResideInNamespaceStartingWith("Application.Features")
+            .GetResult();
+
+        result.IsSuccessful.Should().BeTrue();
+    }
+
+    [Fact]
+    public void Application_Should_Not_Depend_On_External_Libraries()
+    {
+        var result = Types.InAssembly(typeof(AssemblyReference).Assembly)
+            .ShouldNot()
+            .HaveDependencyOnAny(
+                "Confluent.Kafka",
+                "MongoDB.Driver",
+                "StackExchange.Redis",
+                "Qdrant.Client",
+                "OpenAI")
             .GetResult();
 
         result.IsSuccessful.Should().BeTrue();
