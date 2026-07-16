@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Application.Features.Wallets.Withdraw;
 
-public class WithdrawCommandHandler
+public sealed class WithdrawCommandHandler
     : IRequestHandler<WithdrawCommand, WithdrawResponse>
 {
     private readonly IWalletRepository _walletRepository;

@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Application.Features.Wallets.Deposit;
 
-public class DepositCommandHandler 
+public sealed class DepositCommandHandler 
     : IRequestHandler<DepositCommand, DepositResponse>
 {
     private readonly IWalletRepository _walletRepository;

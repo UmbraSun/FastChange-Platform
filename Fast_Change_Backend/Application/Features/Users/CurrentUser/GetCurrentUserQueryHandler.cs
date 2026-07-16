@@ -8,7 +8,8 @@ namespace Application.Features.Users.CurrentUser;
 /// <summary>
 /// Handler for retrieving the currently authenticated user's information.
 /// </summary>
-public class GetCurrentUserQueryHandler : IRequestHandler<GetCurrentUserQuery, GetCurrentUserResponse>
+public sealed class GetCurrentUserQueryHandler 
+    : IRequestHandler<GetCurrentUserQuery, GetCurrentUserResponse>
 {
     private readonly IUserRepository _userRepository;
     private readonly ICurrentUserService _currentUser;

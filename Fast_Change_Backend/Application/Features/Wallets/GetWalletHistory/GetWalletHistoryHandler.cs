@@ -1,9 +1,11 @@
 ﻿using Application.Common.Interfaces;
 using Application.Common.Models;
+using MediatR;
 
 namespace Application.Features.Wallets.GetWalletHistory;
 
 public sealed class GetWalletHistoryHandler
+    : IRequestHandler<GetWalletHistoryQuery, IReadOnlyList<WalletHistoryItem>>
 {
     private readonly IWalletHistoryReader _reader;
 
