@@ -4,14 +4,14 @@ namespace IntegrationTests.Infrastructure;
 
 public sealed class PostgreSqlFixture : IAsyncLifetime
 {
-    public PostgreSqlContainer Container { get; }
+    public PostgreSqlContainer Container { get; } 
         = new PostgreSqlBuilder("postgres:18")
             .WithDatabase("FastChange")
             .WithUsername("postgres")
             .WithPassword("postgres")
             .Build();
 
-    public string ConnectionString
+    public string ConnectionString 
         => Container.GetConnectionString();
 
     public async Task InitializeAsync()
