@@ -6,3 +6,5 @@ builder.AddInfrastructureServices(builder.Configuration)
     .Build()
     .UseInfrastructurePipeline()
     .Run();
+
+public partial class Program;

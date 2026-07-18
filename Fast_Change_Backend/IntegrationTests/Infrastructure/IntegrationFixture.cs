@@ -8,11 +8,15 @@ public sealed class IntegrationFixture : IAsyncLifetime
 
     public KafkaFixture Kafka { get; } = new();
 
+    public DatabaseReset DatabaseReset { get; private set; } = null!;
+
     public async Task InitializeAsync()
     {
         await PostgreSql.InitializeAsync();
         await Mongo.InitializeAsync();
         await Kafka.InitializeAsync();
+        DatabaseReset = new DatabaseReset(PostgreSql.ConnectionString);
+        await DatabaseReset.InitializeAsync();
     }
 
     public async Task DisposeAsync()
