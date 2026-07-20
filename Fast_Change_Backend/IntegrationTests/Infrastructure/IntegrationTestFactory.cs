@@ -1,10 +1,14 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Application.Common.Interfaces;
+using BuildingBlocks.Messaging;
+using Contracts.Events;
+using Infrastructure.Messaging.Handlers;
+using IntegrationTests.Infrastructure.Fakes;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
 
 namespace IntegrationTests.Infrastructure;
 
@@ -20,24 +24,25 @@ public sealed class IntegrationTestFactory
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        builder.UseEnvironment("IntegrationTests");
+        builder.UseEnvironment(nameof(IntegrationTests));
 
         builder.ConfigureAppConfiguration(configuration =>
         {
             configuration.AddInMemoryCollection(
                 new Dictionary<string, string?>
                 {
-                    ["ConnectionStrings:PostgreSQL"] = _fixture.PostgreSql.ConnectionString,
-                    ["ConnectionStrings:MongoDb"] = _fixture.Mongo.Container.GetConnectionString(),
+                    ["ConnectionStrings:DefaultConnection"] = _fixture.PostgreSql.ConnectionString,
+                    ["Mongo:ConnectionStrings"] = _fixture.Mongo.Container.GetConnectionString(),
+                    ["Mongo:DatabaseName"] = "FastChange",
                     ["Kafka:BootstrapServers"] = _fixture.Kafka.BootstrapServers
                 });
         });
 
-        builder.ConfigureServices(services => RemoveHostedServices(services));
-    }
-
-    private static void RemoveHostedServices(IServiceCollection services)
-    {
-        services.RemoveAll<IHostedService>();
+        builder.ConfigureServices(services =>
+        {
+            services.RemoveAll<IIntegrationEventHandler<ExchangeCompletedEvent>>();
+            services.AddScoped<IIntegrationEventHandler<ExchangeCompletedEvent>, ExchangeCompletedHandler>();
+            services.AddScoped<IIntegrationEventHandler<ExchangeCompletedEvent>, FakeExchangeCompletedHandler>();
+        });
     }
 }

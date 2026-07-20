@@ -14,9 +14,9 @@ public abstract class IntegrationTestBase : IAsyncLifetime
     protected IntegrationTestBase(IntegrationFixture fixture)
     {
         Fixture = fixture;
-        var factory = new IntegrationTestFactory(fixture);
-        Client = factory.CreateClient();
+
         Factory = new IntegrationTestFactory(fixture);
+        Client = Factory.CreateClient();
     }
 
     protected async Task ExecuteScopeAsync(

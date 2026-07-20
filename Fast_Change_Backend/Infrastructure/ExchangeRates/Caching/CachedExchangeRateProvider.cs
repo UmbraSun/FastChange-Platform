@@ -22,17 +22,10 @@ public sealed class CachedExchangeRateProvider : IExchangeRateProvider
         CancellationToken cancellationToken)
     {
         var cached = await _cache.GetAsync(fromCurrency, toCurrency);
-
-        if (cached is not null)
-            return cached;
-
-        var rate = await _inner.GetRateAsync(
-            fromCurrency,
-            toCurrency,
-            cancellationToken);
-
+        if (cached is not null) return cached;
+        
+        var rate = await _inner.GetRateAsync(fromCurrency, toCurrency, cancellationToken);
         await _cache.SetAsync(rate, TimeSpan.FromMinutes(1));
-
         return rate;
     }
 }

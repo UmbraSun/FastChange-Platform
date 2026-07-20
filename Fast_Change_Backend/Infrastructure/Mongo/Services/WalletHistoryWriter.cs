@@ -1,6 +1,7 @@
 ﻿using Application.Common.Interfaces;
 using Contracts.Events;
 using Infrastructure.Mongo.Documents;
+using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
 namespace Infrastructure.Mongo.Services;
@@ -9,9 +10,12 @@ public sealed class WalletHistoryWriter : IWalletHistoryWriter
 {
     private readonly IMongoCollection<WalletHistoryDocument> _collection;
 
-    public WalletHistoryWriter(IMongoDatabase db)
+    public WalletHistoryWriter(
+        IMongoDatabase db, 
+        IOptions<MongoSettings> options)
     {
-        _collection = db.GetCollection<WalletHistoryDocument>("wallet-history");
+        _collection = db.GetCollection<WalletHistoryDocument>(
+            options.Value.WalletHistoryCollection);
     }
 
     public async Task AddExchangeAsync(
@@ -19,8 +23,7 @@ public sealed class WalletHistoryWriter : IWalletHistoryWriter
         CancellationToken ct)
     {
         await _collection.InsertManyAsync(
-            new[]
-            {
+            [
                 new WalletHistoryDocument
                 {
                     OperationId = @event.OperationId,
@@ -41,8 +44,8 @@ public sealed class WalletHistoryWriter : IWalletHistoryWriter
                     ReceivedAmount = @event.ReceivedAmount,
                     CreatedAtUtc = DateTime.UtcNow
                 }
-            },
-            options: new InsertManyOptions { IsOrdered = false },
-            cancellationToken: ct);
+            ],
+            new InsertManyOptions { IsOrdered = false },
+            ct);
     }
 }
