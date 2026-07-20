@@ -1,10 +1,7 @@
 ﻿using FastChange.Application.Features.Users.RegisterUser;
 using FluentAssertions;
-using IntegrationTests.Extensions;
 using IntegrationTests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Persistence;
 using System.Net;
 using System.Net.Http.Json;
 
@@ -37,6 +34,7 @@ public sealed class RegisterTests : IntegrationTestBase
 
             user.Should().NotBeNull();
             user.PasswordHash.Should().NotBe(command.Password);
+            user.PasswordHash.Should().NotBeNullOrWhiteSpace();
             user.Wallets.Should().NotBeEmpty();
         });
     }
@@ -54,7 +52,7 @@ public sealed class RegisterTests : IntegrationTestBase
         first.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var second = await Client.PostAsJsonAsync("/api/auth/register", command);
-        second.StatusCode.Should().Be(HttpStatusCode.UnprocessableEntity);
+        second.StatusCode.Should().Be(HttpStatusCode.Conflict);
 
         await ExecuteScopeAsync(async db =>
         {

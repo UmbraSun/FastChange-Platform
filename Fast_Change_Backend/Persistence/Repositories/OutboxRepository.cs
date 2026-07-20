@@ -35,6 +35,8 @@ public class OutboxRepository : IOutboxRepository
             Id = x.Id,
             Type = x.Type,
             Payload = x.Payload,
+            Topic = x.Topic,
+            Key = x.Key,
             OccurredOnUtc = x.OccurredOnUtc,
             ProcessedOnUtc = x.ProcessedOnUtc
         }).ToList();

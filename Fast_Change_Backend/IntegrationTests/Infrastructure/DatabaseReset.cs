@@ -23,7 +23,8 @@ public sealed class DatabaseReset
             new RespawnerOptions
             {
                 DbAdapter = DbAdapter.Postgres,
-                SchemasToInclude = ["public"]
+                SchemasToInclude = ["public"],
+                TablesToIgnore = [ "__EFMigrationsHistory" ]
             });
     }
 
@@ -32,5 +33,6 @@ public sealed class DatabaseReset
         ArgumentNullException.ThrowIfNull(_respawner);
         await using var connection = new NpgsqlConnection(_connectionString);
         await connection.OpenAsync();
+        await _respawner.ResetAsync(connection);
     }
 }

@@ -2,6 +2,7 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Core.Infrastructure;
 
@@ -28,6 +29,7 @@ public class GlobalExceptionHandler : IExceptionHandler
             UnauthorizedAccessException unauthorizedEx => CreateUnauthorizedProblemDetails(unauthorizedEx, httpContext),
             BusinessException bussinessEx => CreateBusinessProblemDetails(bussinessEx, httpContext),
             ExternalServiceException externalEx => CreateExternalServiceProblemDetails(externalEx, httpContext),
+            DbUpdateConcurrencyException concurrencyEx => CreateConcurrencyProblemDetails(concurrencyEx, httpContext),
             _ => CreateInternalServerErrorProblemDetails(exception, httpContext)
         };
 
@@ -97,6 +99,17 @@ public class GlobalExceptionHandler : IExceptionHandler
             Status = StatusCodes.Status500InternalServerError,
             Title = "Internal Server Error",
             Detail = "An unexpected error occurred on the server.",
+            Instance = context.Request.Path
+        };
+    }
+
+    private static ProblemDetails CreateConcurrencyProblemDetails(DbUpdateConcurrencyException ex, HttpContext context)
+    {
+        return new ProblemDetails
+        {
+            Status = StatusCodes.Status409Conflict,
+            Title = "Concurrency Conflict",
+            Detail = "The resource was modified by another request.",
             Instance = context.Request.Path
         };
     }
