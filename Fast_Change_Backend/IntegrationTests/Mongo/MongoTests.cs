@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
+using Infrastructure.Mongo.Documents;
 using IntegrationTests.Infrastructure;
-using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace IntegrationTests.Mongo;
@@ -16,16 +16,34 @@ public sealed class MongoTests
     }
 
     [Fact]
-    public async Task Mongo_Should_Insert_Document()
+    public async Task Mongo_Should_Insert_Wallet_History()
     {
-        var collection = _fixture.Mongo.Database.GetCollection<BsonDocument>("health");
-        var document = new BsonDocument
+        // Arrange
+        var operationId = Guid.NewGuid();
+        var document = new WalletHistoryDocument
         {
-            ["value"] = "ok"
+            OperationId = operationId,
+            WalletId = Guid.NewGuid(),
+            SignedAmount = -100,
+            OperationType = "Exchange",
+            ExchangeRate = 10,
+            ReceivedAmount = 1000,
+            CreatedAtUtc = DateTime.UtcNow
         };
 
+        var collection = _fixture.Mongo.Database.GetCollection<WalletHistoryDocument>("wallet-history");
+
+        // Act
         await collection.InsertOneAsync(document);
-        var count = await collection.CountDocumentsAsync(FilterDefinition<BsonDocument>.Empty);
-        count.Should().Be(1);
+        var result = await collection.Find(x => x.OperationId == operationId).SingleAsync();
+
+        // Assert
+        result.Should().NotBeNull();
+        result.OperationId.Should().Be(operationId);
+        result.WalletId.Should().Be(document.WalletId);
+        result.SignedAmount.Should().Be(-100);
+        result.OperationType.Should().Be("Exchange");
+        result.ExchangeRate.Should().Be(10);
+        result.ReceivedAmount.Should().Be(1000);
     }
 }

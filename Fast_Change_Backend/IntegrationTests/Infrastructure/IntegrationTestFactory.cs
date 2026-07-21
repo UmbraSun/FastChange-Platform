@@ -12,7 +12,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace IntegrationTests.Infrastructure;
 
-public sealed class IntegrationTestFactory
+public class IntegrationTestFactory 
     : WebApplicationFactory<Program>
 {
     private readonly IntegrationFixture _fixture;
@@ -43,6 +43,15 @@ public sealed class IntegrationTestFactory
             services.RemoveAll<IIntegrationEventHandler<ExchangeCompletedEvent>>();
             services.AddScoped<IIntegrationEventHandler<ExchangeCompletedEvent>, ExchangeCompletedHandler>();
             services.AddScoped<IIntegrationEventHandler<ExchangeCompletedEvent>, FakeExchangeCompletedHandler>();
+            
+            RemoveHostedServices(services);
+            services.RemoveAll<IKafkaProducer>();
+            services.AddSingleton<IKafkaProducer, FailingKafkaProducer>();
         });
+    }
+
+    private static void RemoveHostedServices(IServiceCollection services)
+    {
+        services.RemoveAll<IHostedService>();
     }
 }

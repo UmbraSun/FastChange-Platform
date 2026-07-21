@@ -65,9 +65,9 @@ public sealed class ExchangeTests : IntegrationTestBase
 
         await ExecuteScopeAsync(async db =>
         {
-            var wallets = await db.Wallets
-                .Where(x => x.Id == fromWalletId 
-                         || x.Id == toWalletId)
+            var wallets = await db.Wallets.Where(x => 
+                x.Id == fromWalletId ||
+                x.Id == toWalletId)
                 .ToListAsync();
 
             var transactions = await db.Transactions.ToListAsync();
@@ -79,17 +79,24 @@ public sealed class ExchangeTests : IntegrationTestBase
             sourceWallet.Balance.Should().Be(900);
             destinationWallet.Balance.Should().Be(1000);
             transactions.Should().HaveCount(2);
+
+            var operationIds = transactions.Select(x => x.OperationId).Distinct().ToList();
+            operationIds.Should().ContainSingle();
+            operationIds[0].Should().NotBeNull();
+
             transactions.Should().Contain(x =>
-                x.OperationId != null &&
                 x.SignedAmount == -100 &&
                 x.ExchangeRate == 10);
             transactions.Should().Contain(x =>
-                x.OperationId != null &&
                 x.SignedAmount == 1000 &&
                 x.ExchangeRate == 10);
 
             outboxMessages.Should().ContainSingle();
-            outboxMessages[0].Type.Should().Contain(nameof(ExchangeCompletedEvent));
+            
+            var outbox = outboxMessages.Single();
+            outbox.Type.Should().Contain(nameof(ExchangeCompletedEvent));
+            outbox.Payload.Should().NotBeNullOrWhiteSpace();
+            outbox.ProcessedOnUtc.Should().BeNull();
         });
     }
 }
