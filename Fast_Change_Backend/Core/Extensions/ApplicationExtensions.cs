@@ -1,5 +1,4 @@
-﻿using Core.Infrastructure;
-using HealthChecks.UI.Client;
+﻿using HealthChecks.UI.Client;
 using Infrastructure.SignalR.Hubs;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
@@ -47,7 +46,7 @@ public static class ApplicationExtensions
     }
 
     // API configuration
-    private static  void ApiConfigs(this WebApplication app)
+    private static void ApiConfigs(this WebApplication app)
     {
         app.UseRouting();
         app.MapControllers();

@@ -42,6 +42,7 @@ public abstract class IntegrationTestBase : IAsyncLifetime
 
     public virtual Task DisposeAsync()
     {
+        Client.Dispose();
         return Task.CompletedTask;
     }
 }

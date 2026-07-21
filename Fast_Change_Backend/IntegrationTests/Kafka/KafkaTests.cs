@@ -17,40 +17,41 @@ public sealed class KafkaTests
     [Fact]
     public async Task Kafka_Should_Produce_And_Consume_Message()
     {
-        const string topic = "integration-tests";
+        // Arrange
+        var topic = $"test-topic-{Guid.NewGuid()}";
+        var key = Guid.NewGuid().ToString();
+        var value = "{\"message\":\"test\"}";
 
-        var producer = new ProducerBuilder<string, string>(
-            new ProducerConfig
-            {
-                BootstrapServers = _fixture.Kafka.BootstrapServers
-            })
-            .Build();
+        var producerConfig = new ProducerConfig
+        {
+            BootstrapServers = _fixture.Kafka.BootstrapServers
+        };
 
+        using var producer = new ProducerBuilder<string, string>(producerConfig).Build();
+        var consumerConfig = new ConsumerConfig
+        {
+            BootstrapServers = _fixture.Kafka.BootstrapServers,
+            GroupId = $"test-group-{Guid.NewGuid()}",
+            AutoOffsetReset = AutoOffsetReset.Earliest
+        };
+
+        using var consumer = new ConsumerBuilder<string, string>(consumerConfig).Build();
+        consumer.Subscribe(topic);
+
+        // Act
         await producer.ProduceAsync(topic,
             new Message<string, string>
             {
-                Key = "1",
-                Value = "Hello Kafka"
+                Key = key,
+                Value = value
             });
-
-        producer.Flush(TimeSpan.FromSeconds(5));
-
-        var consumer = new ConsumerBuilder<string, string>(
-            new ConsumerConfig
-            {
-                BootstrapServers = _fixture.Kafka.BootstrapServers,
-                GroupId = Guid.NewGuid().ToString(),
-                AutoOffsetReset = AutoOffsetReset.Earliest
-            })
-            .Build();
-
-        consumer.Subscribe(topic);
 
         var result = consumer.Consume(TimeSpan.FromSeconds(10));
 
+        // Assert
         result.Should().NotBeNull();
-        result!.Message.Value.Should().Be("Hello Kafka");
-
+        result!.Message.Key.Should().Be(key);
+        result.Message.Value.Should().Be(value);
         consumer.Close();
     }
 }
