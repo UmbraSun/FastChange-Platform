@@ -2,9 +2,12 @@
 using BuildingBlocks.Messaging;
 using Contracts.Events;
 using Infrastructure.Messaging.Handlers;
+using IntegrationTests.Authentication;
 using IntegrationTests.Infrastructure.Fakes;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -40,13 +43,33 @@ public class IntegrationTestFactory
 
         builder.ConfigureServices(services =>
         {
+            RemoveHostedServices(services);
+            
             services.RemoveAll<IIntegrationEventHandler<ExchangeCompletedEvent>>();
             services.AddScoped<IIntegrationEventHandler<ExchangeCompletedEvent>, ExchangeCompletedHandler>();
             services.AddScoped<IIntegrationEventHandler<ExchangeCompletedEvent>, FakeExchangeCompletedHandler>();
             
-            RemoveHostedServices(services);
             services.RemoveAll<IKafkaProducer>();
             services.AddSingleton<IKafkaProducer, FailingKafkaProducer>();
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = TestAuthenticationHandler.Scheme;
+                options.DefaultChallengeScheme = TestAuthenticationHandler.Scheme;
+            })
+            .AddScheme<AuthenticationSchemeOptions, TestAuthenticationHandler>(TestAuthenticationHandler.Scheme, _ => { });
+        });
+
+        builder.ConfigureTestServices(services =>
+        {
+            services.PostConfigure<AuthenticationOptions>(options =>
+            {
+                options.DefaultAuthenticateScheme = TestAuthenticationHandler.Scheme;
+                options.DefaultChallengeScheme = TestAuthenticationHandler.Scheme;
+            });
+
+            services.RemoveAll<IExchangeRateProvider>();
+            services.AddScoped<IExchangeRateProvider, TestExchangeRateProvider>();
         });
     }
 
