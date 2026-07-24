@@ -26,7 +26,7 @@ public sealed class ExchangeCompletedConsumerTests
         var toWalletId = Guid.NewGuid();
 
         var @event = new ExchangeCompletedEvent(operationId, fromWalletId, toWalletId, 100m, 10m, 1000m);
-        var producer = Services.GetRequiredService<IKafkaProducer>();
+        var producer = Factory.Services.GetRequiredService<IKafkaProducer>();
 
         // Act
         await producer.PublishAsync(
@@ -37,7 +37,7 @@ public sealed class ExchangeCompletedConsumerTests
             cancellationToken: CancellationToken.None);
 
         // Assert
-        var database = Fixture.Mongo.Database;
+        var database = Factory.Services.GetRequiredService<IMongoDatabase>();
         var collection = database.GetCollection<WalletHistoryDocument>("wallet-history");
         var documents = new List<WalletHistoryDocument>();
         var timeout = DateTime.UtcNow.AddSeconds(10);

@@ -1,9 +1,11 @@
 ﻿using Application.Common.Models;
 using Contracts.Events;
 using FluentAssertions;
+using Infrastructure.BackgroundServices.Outbox;
 using IntegrationTests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Persistence;
 using System.Text.Json;
 
@@ -21,12 +23,10 @@ public sealed class OutboxDispatcherTests
     [Fact]
     public async Task OutboxDispatcher_Should_Publish_Message_To_Kafka()
     {
-        // Arrange
         var eventId = Guid.NewGuid();
 
-        await using (var scope = Services.CreateAsyncScope())
+        await ExecuteScopeAsync(async db =>
         {
-            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             db.OutboxMessages.Add(new OutboxMessage
             {
                 Id = eventId,
@@ -45,15 +45,12 @@ public sealed class OutboxDispatcherTests
             });
 
             await db.SaveChangesAsync();
-        }
+        });
 
         using var consumer = new KafkaTestConsumer(Fixture.Kafka.BootstrapServers);
         consumer.Subscribe("exchange-events");
 
-        // Act
         var message = consumer.Consume(TimeSpan.FromSeconds(10));
-
-        // Assert
         message.Should().NotBeNull();
         message!.Message.Key.Should().Be(eventId.ToString());
         message.Message.Value.Should().Contain(nameof(ExchangeCompletedEvent));
@@ -63,5 +60,18 @@ public sealed class OutboxDispatcherTests
             var outbox = await db.OutboxMessages.SingleAsync(x => x.Id == eventId);
             outbox.ProcessedOnUtc.Should().NotBeNull();
         });
+    }
+
+    [Fact]
+    public void OutboxDispatcher_Should_Be_Registered()
+    {
+        // Arrange
+        using var scope = Factory.Services.CreateScope();
+
+        // Act
+        var hostedServices = scope.ServiceProvider.GetServices<IHostedService>();
+
+        // Assert
+        hostedServices.Should().ContainSingle(x => x is OutboxDispatcher);
     }
 }

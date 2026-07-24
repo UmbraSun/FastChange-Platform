@@ -11,11 +11,12 @@ public abstract class IntegrationTestBase : IAsyncLifetime
     protected readonly IntegrationFixture Fixture;
     protected readonly IntegrationTestFactory Factory;
 
-    protected IntegrationTestBase(IntegrationFixture fixture)
+    protected IntegrationTestBase(
+        IntegrationFixture fixture,
+        IntegrationTestFactory? factory = null)
     {
         Fixture = fixture;
-
-        Factory = new IntegrationTestFactory(fixture);
+        Factory = factory ?? new IntegrationTestFactory(fixture);
         Client = Factory.CreateClient();
     }
 

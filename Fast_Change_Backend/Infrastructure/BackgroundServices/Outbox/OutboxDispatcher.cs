@@ -39,10 +39,7 @@ public sealed class OutboxDispatcher : BackgroundService
                             message.Topic,
                             message.Key,
                             message.Payload,
-                            new Dictionary<string, string>
-                            {
-                                ["event-id"] = message.Id.ToString()
-                            },
+                            new Dictionary<string, string> { ["event-id"] = message.Id.ToString() },
                             stoppingToken);
 
                         await store.MarkAsProcessedAsync(
