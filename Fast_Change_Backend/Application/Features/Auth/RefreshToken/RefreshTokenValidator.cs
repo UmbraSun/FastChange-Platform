@@ -1,4 +1,3 @@
-using FastChange.Application.Features.Auth.RefreshToken;
 using FluentValidation;
 using Resources;
 

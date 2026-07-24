@@ -2,6 +2,7 @@
 using BuildingBlocks.Messaging;
 using Contracts.Events;
 using Infrastructure.Messaging.Handlers;
+using IntegrationTests.Api.Exchange;
 using IntegrationTests.Authentication;
 using IntegrationTests.Infrastructure.Fakes;
 using Microsoft.AspNetCore.Authentication;

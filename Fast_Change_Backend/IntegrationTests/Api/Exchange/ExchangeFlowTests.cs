@@ -1,5 +1,5 @@
-﻿using Application.Features.Exchange.ExchangeCurrency;
-using FastChange.Application.Features.Auth.LoginUser;
+﻿using Application.Features.Auth.LoginUser;
+using Application.Features.Exchange.ExchangeCurrency;
 using FastChange.Application.Features.Users.RegisterUser;
 using FluentAssertions;
 using Infrastructure.Mongo.Documents;

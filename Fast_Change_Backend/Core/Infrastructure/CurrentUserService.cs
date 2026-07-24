@@ -13,12 +13,9 @@ public class CurrentUserService : ICurrentUserService
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public Guid UserId =>
-        Guid.Parse(
-            _httpContextAccessor.HttpContext?
-                .User.FindFirstValue(JwtRegisteredClaimNames.Sub)!);
+    public Guid UserId => Guid.Parse(_httpContextAccessor.HttpContext?
+        .User.FindFirstValue(JwtRegisteredClaimNames.Sub)!);
 
-    public string? Email =>
-        _httpContextAccessor.HttpContext?
-            .User.FindFirstValue(JwtRegisteredClaimNames.Email);
+    public string? Email => _httpContextAccessor.HttpContext?
+        .User.FindFirstValue(JwtRegisteredClaimNames.Email);
 }
