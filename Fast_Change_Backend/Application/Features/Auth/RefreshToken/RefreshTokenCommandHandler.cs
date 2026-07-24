@@ -1,5 +1,4 @@
 using Application.Common.Interfaces;
-using FastChange.Application.Features.Auth.RefreshToken;
 using MediatR;
 using Resources;
 

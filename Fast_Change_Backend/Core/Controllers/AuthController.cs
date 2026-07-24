@@ -1,5 +1,5 @@
-﻿using FastChange.Application.Features.Auth.LoginUser;
-using FastChange.Application.Features.Auth.RefreshToken;
+﻿using Application.Features.Auth.LoginUser;
+using Application.Features.Auth.RefreshToken;
 using FastChange.Application.Features.Users.RegisterUser;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

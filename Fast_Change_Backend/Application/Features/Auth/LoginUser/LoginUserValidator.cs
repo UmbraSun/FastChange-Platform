@@ -1,4 +1,3 @@
-using FastChange.Application.Features.Auth.LoginUser;
 using FluentValidation;
 using Resources;
 
