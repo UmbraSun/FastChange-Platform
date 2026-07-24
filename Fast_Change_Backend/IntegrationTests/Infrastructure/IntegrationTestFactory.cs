@@ -19,7 +19,7 @@ namespace IntegrationTests.Infrastructure;
 public class IntegrationTestFactory 
     : WebApplicationFactory<Program>
 {
-    private readonly IntegrationFixture _fixture;
+    protected readonly IntegrationFixture _fixture;
 
     public IntegrationTestFactory(IntegrationFixture fixture)
     {
@@ -44,8 +44,8 @@ public class IntegrationTestFactory
 
         builder.ConfigureServices(services =>
         {
-            RemoveHostedServices(services);
-            
+            ConfigureHostedServices(services);
+
             services.RemoveAll<IIntegrationEventHandler<ExchangeCompletedEvent>>();
             services.AddScoped<IIntegrationEventHandler<ExchangeCompletedEvent>, ExchangeCompletedHandler>();
             services.AddScoped<IIntegrationEventHandler<ExchangeCompletedEvent>, FakeExchangeCompletedHandler>();
@@ -74,7 +74,7 @@ public class IntegrationTestFactory
         });
     }
 
-    private static void RemoveHostedServices(IServiceCollection services)
+    protected virtual void ConfigureHostedServices(IServiceCollection services)
     {
         services.RemoveAll<IHostedService>();
     }

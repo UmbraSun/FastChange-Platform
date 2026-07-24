@@ -1,4 +1,5 @@
-﻿using Testcontainers.Kafka;
+﻿using Confluent.Kafka;
+using Testcontainers.Kafka;
 
 namespace IntegrationTests.Infrastructure;
 
@@ -18,5 +19,18 @@ public sealed class KafkaFixture : IAsyncLifetime
     public async Task DisposeAsync()
     {
         await Container.DisposeAsync();
+    }
+
+    public IConsumer<string, string> CreateConsumer(string groupId)
+    {
+        var config = new ConsumerConfig
+        {
+            BootstrapServers = BootstrapServers,
+            GroupId = groupId,
+            AutoOffsetReset = AutoOffsetReset.Earliest,
+            EnableAutoCommit = true
+        };
+
+        return new ConsumerBuilder<string, string>(config).Build();
     }
 }
