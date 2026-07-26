@@ -3,17 +3,17 @@
 namespace Contracts.Notifications;
 
 /// <summary>
-/// Exchange notification channel interface for sending notifications related to exchange events.
+/// Transaction notification channel interface for sending notifications related to transaction events.
 /// </summary>
-public interface IExchangeNotificationChannel
+public interface ITransactionNotificationChannel
 {
     /// <summary>
-    /// Notifies the channel about an exchange completed event.
+    /// Notifies the channel about a transaction completed event.
     /// </summary>
     /// <param name="event"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task NotifyAsync(
-        ExchangeCompletedEvent @event,
+        TransactionCompletedEvent @event,
         CancellationToken cancellationToken);
 }

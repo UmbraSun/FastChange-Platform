@@ -7,7 +7,8 @@ namespace Application.Features.Auth.RefreshToken;
 /// <summary>
 /// Validates a refresh token and issues a new access and refresh token pair.
 /// </summary>
-public sealed class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, RefreshTokenResponse>
+public sealed class RefreshTokenCommandHandler 
+    : IRequestHandler<RefreshTokenCommand, RefreshTokenResponse>
 {
     private readonly IJwtTokenValidator _jwtTokenValidator;
     private readonly IJwtTokenGenerator _jwtTokenGenerator;

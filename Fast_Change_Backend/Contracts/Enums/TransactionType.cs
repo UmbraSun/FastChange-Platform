@@ -1,8 +1,9 @@
-﻿namespace Domain.Enums;
+﻿namespace Contracts.Enums;
 
 public enum TransactionType
 {
     Deposit = 1,
     Withdraw = 2,
     Exchange = 3,
+    Transfer = 4,
 }

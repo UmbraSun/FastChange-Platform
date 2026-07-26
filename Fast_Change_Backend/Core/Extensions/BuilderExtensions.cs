@@ -343,7 +343,7 @@ public static class BuilderExtensions
     private static void AddHostedServices(this IServiceCollection services, ConfigurationManager configuration)
     {
         services.AddHostedService<OutboxDispatcher>();
-        services.AddHostedService<ExchangeCompletedConsumer>();
+        services.AddHostedService<TransactionCompletedConsumer>();
         services.AddHostedService<OutboxProcessor>();
         services.Configure<OutboxDispatcherOptions>(
             configuration.GetSection(OutboxDispatcherOptions.SectionName));
@@ -413,7 +413,7 @@ public static class BuilderExtensions
 
         services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
 
-        services.AddScoped<IIntegrationEventHandler<ExchangeCompletedEvent>, ExchangeCompletedHandler>();
+        services.AddScoped<IIntegrationEventHandler<TransactionCompletedEvent>, TransactionCompletedHandler>();
 
         services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddScoped<IWalletOperationService, WalletOperationService>();
@@ -422,7 +422,7 @@ public static class BuilderExtensions
 
         services.AddScoped<IWalletNotificationService, WalletNotificationService>();
         services.AddSingleton<INotificationDispatcher, NotificationDispatcher>();
-        services.AddSingleton<IExchangeNotificationChannel, SignalRNotificationChannel>();
+        services.AddSingleton<ITransactionNotificationChannel, SignalRNotificationChannel>();
 
         services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
         services.AddSingleton<IJwtTokenValidator, JwtTokenValidator>();

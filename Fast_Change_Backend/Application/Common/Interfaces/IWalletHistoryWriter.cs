@@ -3,17 +3,17 @@
 namespace Application.Common.Interfaces;
 
 /// <summary>
-/// Wallet history writer interface for adding exchange events to the wallet history.
+/// Wallet history writer interface for adding transaction events to the wallet history.
 /// </summary>
 public interface IWalletHistoryWriter
 {
     /// <summary>
-    /// Adds an exchange event to the wallet history asynchronously.
+    /// Adds a transaction event to the wallet history asynchronously.
     /// </summary>
     /// <param name="event"></param>
     /// <param name="ct"></param>
     /// <returns></returns>
-    Task AddExchangeAsync(
-        ExchangeCompletedEvent @event,
+    Task AddTransactionAsync(
+        TransactionCompletedEvent @event,
         CancellationToken ct);
 }

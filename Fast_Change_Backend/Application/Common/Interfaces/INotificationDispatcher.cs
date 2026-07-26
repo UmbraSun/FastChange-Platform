@@ -13,7 +13,7 @@ public interface INotificationDispatcher
     /// <param name="event"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task DispatchExchangeCompletedAsync(
-        ExchangeCompletedEvent @event,
+    Task DispatchTransactionCompletedAsync(
+        TransactionCompletedEvent @event,
         CancellationToken cancellationToken);
 }

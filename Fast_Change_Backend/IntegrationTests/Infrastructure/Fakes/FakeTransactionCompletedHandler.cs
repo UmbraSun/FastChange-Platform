@@ -3,11 +3,11 @@ using Contracts.Events;
 
 namespace IntegrationTests.Infrastructure.Fakes;
 
-public sealed class FakeExchangeCompletedHandler
-    : IIntegrationEventHandler<ExchangeCompletedEvent>
+public sealed class FakeTransactionCompletedHandler
+    : IIntegrationEventHandler<TransactionCompletedEvent>
 {
     public Task HandleAsync(
-        ExchangeCompletedEvent @event,
+        TransactionCompletedEvent @event,
         CancellationToken cancellationToken)
     {
         return Task.CompletedTask;

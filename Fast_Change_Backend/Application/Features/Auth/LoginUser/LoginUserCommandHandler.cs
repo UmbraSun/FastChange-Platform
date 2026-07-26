@@ -7,7 +7,8 @@ namespace Application.Features.Auth.LoginUser;
 /// <summary>
 /// Validates user credentials and issues JWT access and refresh tokens on successful login.
 /// </summary>
-public sealed class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, LoginUserResponse>
+public sealed class LoginUserCommandHandler 
+    : IRequestHandler<LoginUserCommand, LoginUserResponse>
 {
     private readonly ILoginUserRepository _loginUserRepository;
     private readonly IJwtTokenGenerator _jwtTokenGenerator;

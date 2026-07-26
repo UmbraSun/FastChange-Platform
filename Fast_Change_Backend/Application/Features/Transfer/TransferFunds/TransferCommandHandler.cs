@@ -2,93 +2,92 @@
 using Application.Common.Interfaces;
 using Contracts.Enums;
 using Contracts.Events;
+using Domain.Entities;
 using MediatR;
 using Resources;
 
-namespace Application.Features.Exchange.ExchangeCurrency;
+namespace Application.Features.Transfer.TransferFunds;
 
-public sealed class ExchangeCommandHandler
-    : IRequestHandler<ExchangeCommand, ExchangeResponse>
+public sealed class TransferCommandHandler
+    : IRequestHandler<TransferCommand, TransferResponse>
 {
     private readonly IWalletRepository _walletRepository;
     private readonly IWalletAccessService _walletAccessService;
-    private readonly IExchangeRateProvider _exchangeRateProvider;
     private readonly ITransactionRepository _transactionRepository;
     private readonly IOutboxWriter _outboxWriter;
-    private readonly IExchangeService _exchangeService;
     private readonly IUnitOfWork _unitOfWork;
 
-    public ExchangeCommandHandler(
+
+    public TransferCommandHandler(
         IWalletRepository walletRepository,
         IWalletAccessService walletAccessService,
-        IExchangeRateProvider exchangeRateProvider,
         ITransactionRepository transactionRepository,
         IOutboxWriter outboxWriter,
-        IExchangeService exchangeService,
         IUnitOfWork unitOfWork)
     {
         _walletRepository = walletRepository;
         _walletAccessService = walletAccessService;
-        _exchangeRateProvider = exchangeRateProvider;
         _transactionRepository = transactionRepository;
         _outboxWriter = outboxWriter;
-        _exchangeService = exchangeService;
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<ExchangeResponse> Handle(
-        ExchangeCommand request,
+
+    public async Task<TransferResponse> Handle(
+        TransferCommand request,
         CancellationToken cancellationToken)
     {
-        var fromWallet = await _walletRepository.GetByIdAsync(request.FromWalletId, cancellationToken)
+        var fromWallet = await _walletRepository.GetByIdAsync(
+            request.FromWalletId,
+            cancellationToken)
             ?? throw new BusinessException(Localization.WalletNotFound);
-
-        var toWallet = await _walletRepository.GetByIdAsync(request.ToWalletId, cancellationToken)
+        var toWallet = await _walletRepository.GetByIdAsync(
+            request.ToWalletId,
+            cancellationToken)
             ?? throw new BusinessException(Localization.WalletNotFound);
 
         if (fromWallet.Id == toWallet.Id)
             throw new BusinessException(Localization.SourceAndDestinationWalletsMustBeDifferent);
 
-        await _walletAccessService.EnsureAccessAsync(fromWallet, cancellationToken);
-        await _walletAccessService.EnsureAccessAsync(toWallet, cancellationToken);
+        await _walletAccessService.EnsureAccessAsync(fromWallet,cancellationToken);
+        
+        var operationId = Guid.NewGuid();
+        fromWallet.Withdraw(request.Amount);
+        toWallet.Deposit(request.Amount);
 
-        var rate = await _exchangeRateProvider.GetRateAsync(
-            fromWallet.Currency,
-            toWallet.Currency,
-            cancellationToken)
-            ?? throw new BusinessException(Localization.ExchangeRateNotFound);
-
-        var result = _exchangeService.Exchange(
+        var withdrawTransaction = Transaction.Create(
             fromWallet,
+            request.Amount,
+            -request.Amount,
+            fromWallet.Balance,
+            TransactionType.Transfer,
+            operationId);
+
+        var depositTransaction = Transaction.Create(
             toWallet,
             request.Amount,
-            rate.Rate);
+            request.Amount,
+            toWallet.Balance,
+            TransactionType.Transfer,
+            operationId);
 
-        await _transactionRepository.AddAsync(
-            result.WithdrawTransaction,
-            cancellationToken);
-
-        await _transactionRepository.AddAsync(
-            result.DepositTransaction,
-            cancellationToken);
-
+        await _transactionRepository.AddAsync(withdrawTransaction, cancellationToken);
+        await _transactionRepository.AddAsync(depositTransaction, cancellationToken);
+        
         var integrationEvent = new TransactionCompletedEvent(
-            result.WithdrawTransaction.OperationId.Value,
+            operationId,
             fromWallet.Id,
             toWallet.Id,
             request.Amount,
             fromWallet.Currency,
-            TransactionType.Exchange,
-            rate.Rate);
+            TransactionType.Transfer);
 
         await _outboxWriter.AddAsync(integrationEvent, cancellationToken);
-
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-        return new ExchangeResponse(
-            rate.Rate,
+        
+        return new TransferResponse(
+            operationId,
             request.Amount,
-            result.ReceivedAmount,
             fromWallet.Balance,
             toWallet.Balance);
     }
