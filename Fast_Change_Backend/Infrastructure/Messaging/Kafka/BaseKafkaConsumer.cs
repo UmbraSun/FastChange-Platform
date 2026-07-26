@@ -40,10 +40,8 @@ public abstract class BaseKafkaConsumer<TEvent>
             try
             {
                 var result = _consumer.Consume(stoppingToken);
-
                 var parent = result.Message.Headers
                     .FirstOrDefault(h => h.Key == "traceparent");
-
                 var parentContext = parent != null
                     ? ActivityContext.Parse(
                         Encoding.UTF8.GetString(parent.GetValueBytes()),
@@ -55,33 +53,18 @@ public abstract class BaseKafkaConsumer<TEvent>
                     ActivityKind.Consumer,
                     parentContext);
 
-                activity?.SetTag(
-                    "messaging.system",
-                    "kafka");
-
-                activity?.SetTag(
-                    "messaging.destination.name",
-                    Topic);
-
-                activity?.SetTag(
-                    "messaging.kafka.partition",
-                    result.Partition.Value);
-
-                activity?.SetTag(
-                    "messaging.kafka.offset",
-                    result.Offset.Value);
-
+                activity?.SetTag("messaging.system", "kafka");
+                activity?.SetTag("messaging.destination.name", Topic);
+                activity?.SetTag("messaging.kafka.partition", result.Partition.Value);
+                activity?.SetTag("messaging.kafka.offset", result.Offset.Value);
+                
                 var @event = Deserialize(result.Message.Value);
-
                 using var scope = _scopeFactory.CreateScope();
-
                 var handlers =scope.ServiceProvider
                     .GetServices<IIntegrationEventHandler<TEvent>>();
 
                 foreach (var handler in handlers)
-                    await handler.HandleAsync(
-                        @event,
-                        stoppingToken);
+                    await handler.HandleAsync(@event, stoppingToken);
 
                 _consumer.Commit(result);
             }
@@ -102,8 +85,7 @@ public abstract class BaseKafkaConsumer<TEvent>
         _consumer.Close();
     }
 
-    private static TEvent Deserialize(
-        string value)
+    private static TEvent Deserialize(string value)
     {
         return JsonSerializer.Deserialize<TEvent>(value)
             ?? throw new InvalidOperationException(Localization.UnableToDeserializeKafkaEvent);

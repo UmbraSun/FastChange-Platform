@@ -18,7 +18,7 @@ public sealed class ExchangeCompletedConsumerTests
     }
 
     [Fact]
-    public async Task ExchangeCompletedConsumer_Should_Write_Wallet_History()
+    public async Task TransactionCompletedConsumer_Should_Write_Wallet_History()
     {
         // Arrange
         var operationId = Guid.NewGuid();

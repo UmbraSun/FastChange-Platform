@@ -23,7 +23,7 @@ builder.Services.AddSingleton<TelegramNotificationService>();
 builder.Services.AddScoped<IIntegrationEventHandler<ExchangeCompletedEvent>, ExchangeCompletedTelegramHandler>();
 builder.Services.AddKafka(builder.Configuration);
 
-builder.Services.AddHostedService<ExchangeCompletedConsumer>();
+builder.Services.AddHostedService<TransactionCompletedConsumer>();
 
 var app = builder.Build();
 await app.RunAsync();

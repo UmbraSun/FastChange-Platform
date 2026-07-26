@@ -47,8 +47,8 @@ public class IntegrationTestFactory
             ConfigureHostedServices(services);
 
             services.RemoveAll<IIntegrationEventHandler<ExchangeCompletedEvent>>();
-            services.AddScoped<IIntegrationEventHandler<ExchangeCompletedEvent>, ExchangeCompletedHandler>();
-            services.AddScoped<IIntegrationEventHandler<ExchangeCompletedEvent>, FakeExchangeCompletedHandler>();
+            services.AddScoped<IIntegrationEventHandler<ExchangeCompletedEvent>, TransactionCompletedHandler>();
+            services.AddScoped<IIntegrationEventHandler<ExchangeCompletedEvent>, FakeTransactionCompletedHandler>();
             
             services.RemoveAll<IKafkaProducer>();
             services.AddSingleton<IKafkaProducer, FailingKafkaProducer>();
