@@ -1,4 +1,5 @@
-﻿using Domain.Common;
+﻿using Contracts.Exceptions;
+using Domain.Common;
 using Resources;
 
 namespace Domain.Entities;
@@ -23,9 +24,7 @@ public class Wallet : IHasDomainEvents
     public void Deposit(decimal amount)
     {
         if (amount <= 0)
-            throw new ArgumentOutOfRangeException(
-                nameof(amount),
-                Localization.AmountGreaterThanZero);
+            throw new ArgumentOutOfRangeException(nameof(amount), Localization.AmountGreaterThanZero);
 
         Balance += amount;
     }
@@ -33,13 +32,10 @@ public class Wallet : IHasDomainEvents
     public void Withdraw(decimal amount)
     {
         if (amount <= 0)
-            throw new ArgumentOutOfRangeException(
-                nameof(amount),
-                Localization.AmountGreaterThanZero);
+            throw new ArgumentOutOfRangeException(nameof(amount),Localization.AmountGreaterThanZero);
 
         if (Balance < amount)
-            throw new InvalidOperationException(
-                Localization.InsufficientFunds);
+            throw new BusinessException(Localization.InsufficientFunds);
 
         Balance -= amount;
     }

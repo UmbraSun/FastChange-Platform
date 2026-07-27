@@ -73,11 +73,13 @@ public sealed class ExchangeCommandHandler
             cancellationToken);
 
         var integrationEvent = new TransactionCompletedEvent(
-            result.WithdrawTransaction.OperationId.Value,
+            result.WithdrawTransaction.OperationId!.Value,
             fromWallet.Id,
             toWallet.Id,
             request.Amount,
+            result.ReceivedAmount,
             fromWallet.Currency,
+            toWallet.Currency,
             TransactionType.Exchange,
             rate.Rate);
 

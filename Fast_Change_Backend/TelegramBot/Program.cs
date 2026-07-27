@@ -20,7 +20,7 @@ builder.Services.AddSingleton(sp =>
 });
 
 builder.Services.AddSingleton<TelegramNotificationService>();
-builder.Services.AddScoped<IIntegrationEventHandler<ExchangeCompletedEvent>, ExchangeCompletedTelegramHandler>();
+builder.Services.AddScoped<IIntegrationEventHandler<TransactionCompletedEvent>, TransactionCompletedTelegramHandler>();
 builder.Services.AddKafka(builder.Configuration);
 
 builder.Services.AddHostedService<TransactionCompletedConsumer>();

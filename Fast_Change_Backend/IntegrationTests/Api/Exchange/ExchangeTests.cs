@@ -99,7 +99,7 @@ public sealed class ExchangeTests : IntegrationTestBase
             outboxMessages.Should().ContainSingle();
             
             var outbox = outboxMessages[0];
-            outbox.Type.Should().Contain(nameof(ExchangeCompletedEvent));
+            outbox.Type.Should().Contain(nameof(TransactionCompletedEvent));
             outbox.ProcessedOnUtc.Should().BeNull();
         });
     }

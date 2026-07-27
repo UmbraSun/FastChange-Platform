@@ -7,6 +7,8 @@ public sealed record TransactionCompletedEvent(
     Guid FromWalletId,
     Guid ToWalletId,
     decimal Amount,
-    string Currency,
+    decimal? ReceivedAmount,
+    string FromCurrency,
+    string ToCurrency,
     TransactionType Type,
     decimal? ExchangeRate = null);

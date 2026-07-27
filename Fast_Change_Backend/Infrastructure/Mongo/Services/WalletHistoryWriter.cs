@@ -32,17 +32,17 @@ public sealed class WalletHistoryWriter : IWalletHistoryWriter
                 SignedAmount = -@event.Amount,
                 OperationType = @event.Type.ToString(),
                 ExchangeRate = @event.ExchangeRate,
+                ReceivedAmount = @event.ReceivedAmount,
                 CreatedAtUtc = DateTime.UtcNow
             },
             new WalletHistoryDocument
             {
                 OperationId = @event.OperationId,
                 WalletId = @event.ToWalletId,
-                SignedAmount = @event.Type == TransactionType.Exchange
-                    ? @event.Amount * @event.ExchangeRate!.Value
-                    : @event.Amount,
+                SignedAmount = @event.ReceivedAmount ?? @event.Amount,
                 OperationType = @event.Type.ToString(),
                 ExchangeRate = @event.ExchangeRate,
+                ReceivedAmount = @event.ReceivedAmount,
                 CreatedAtUtc = DateTime.UtcNow
             }
         ],

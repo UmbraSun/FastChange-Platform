@@ -32,8 +32,8 @@ public sealed class OutboxWriter
 
     private static string ResolveTopic<TEvent>()
     {
-        if (typeof(TEvent) == typeof(ExchangeCompletedEvent))
-            return "exchange-events";
+        if (typeof(TEvent) == typeof(TransactionCompletedEvent))
+            return "transaction-events";
 
         throw new InvalidOperationException($"Kafka topic is not configured for {typeof(TEvent).Name}");
     }

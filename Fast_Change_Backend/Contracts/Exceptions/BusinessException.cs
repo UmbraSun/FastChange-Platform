@@ -1,4 +1,4 @@
-﻿namespace Application.Common.Exceptions;
+﻿namespace Contracts.Exceptions;
 
 public class BusinessException : Exception
 {

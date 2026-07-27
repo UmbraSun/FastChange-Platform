@@ -1,4 +1,4 @@
-﻿using Application.Common.Exceptions;
+﻿using Contracts.Exceptions;
 using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;

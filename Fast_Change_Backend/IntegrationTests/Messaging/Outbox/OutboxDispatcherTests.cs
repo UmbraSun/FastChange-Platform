@@ -1,4 +1,5 @@
 ﻿using Application.Common.Models;
+using Contracts.Enums;
 using Contracts.Events;
 using FluentAssertions;
 using Infrastructure.BackgroundServices.Outbox;
@@ -6,7 +7,6 @@ using IntegrationTests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Persistence;
 using System.Text.Json;
 
 namespace IntegrationTests.Messaging.Outbox;
@@ -30,16 +30,18 @@ public sealed class OutboxDispatcherTests
             db.OutboxMessages.Add(new OutboxMessage
             {
                 Id = eventId,
-                Type = nameof(ExchangeCompletedEvent),
+                Type = nameof(TransactionCompletedEvent),
                 Payload = JsonSerializer.Serialize(
-                    new ExchangeCompletedEvent(
+                    new TransactionCompletedEvent(
                         Guid.NewGuid(),
                         Guid.NewGuid(),
                         Guid.NewGuid(),
                         100m,
                         10m,
+                        "USD",
+                        TransactionType.Exchange,
                         1000m)),
-                Topic = "exchange-events",
+                Topic = "transaction-events",
                 Key = eventId.ToString(),
                 OccurredOnUtc = DateTime.UtcNow
             });
@@ -48,12 +50,12 @@ public sealed class OutboxDispatcherTests
         });
 
         using var consumer = new KafkaTestConsumer(Fixture.Kafka.BootstrapServers);
-        consumer.Subscribe("exchange-events");
+        consumer.Subscribe("transaction-events");
 
         var message = consumer.Consume(TimeSpan.FromSeconds(10));
         message.Should().NotBeNull();
         message!.Message.Key.Should().Be(eventId.ToString());
-        message.Message.Value.Should().Contain(nameof(ExchangeCompletedEvent));
+        message.Message.Value.Should().Contain(nameof(TransactionCompletedEvent));
 
         await ExecuteScopeAsync(async db =>
         {

@@ -1,5 +1,5 @@
-﻿using Application.Common.Exceptions;
-using Application.Common.Interfaces;
+﻿using Application.Common.Interfaces;
+using Contracts.Exceptions;
 using Domain.Entities;
 using Resources;
 
@@ -30,8 +30,7 @@ public sealed class WalletAccessService : IWalletAccessService
             throw new BusinessException(Localization.WalletNotFound);
 
         if (wallet.UserId != _currentUserService.UserId)
-            throw new BusinessException(
-                Localization.WalletIsNotAssociatedWithThisUser);
+            throw new BusinessException(Localization.WalletIsNotAssociatedWithThisUser);
 
         return wallet;
     }
@@ -49,8 +48,7 @@ public sealed class WalletAccessService : IWalletAccessService
         CancellationToken cancellationToken = default)
     {
         if (wallet.UserId != _currentUserService.UserId)
-            throw new BusinessException(
-                Localization.WalletIsNotAssociatedWithThisUser);
+            throw new BusinessException(Localization.WalletIsNotAssociatedWithThisUser);
 
         return Task.CompletedTask;
     }
