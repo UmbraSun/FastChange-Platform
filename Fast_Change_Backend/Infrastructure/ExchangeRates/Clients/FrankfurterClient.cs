@@ -1,4 +1,4 @@
-﻿using Application.Common.Exceptions;
+﻿using Contracts.Exceptions;
 using Infrastructure.ExchangeRates.Contracts;
 using Microsoft.Extensions.Logging;
 using Resources;

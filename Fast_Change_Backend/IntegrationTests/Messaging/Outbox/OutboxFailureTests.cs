@@ -1,4 +1,5 @@
 ﻿using Application.Common.Models;
+using Contracts.Enums;
 using Contracts.Events;
 using FluentAssertions;
 using IntegrationTests.Infrastructure;
@@ -27,16 +28,18 @@ public sealed class OutboxFailureTests
             db.OutboxMessages.Add(new OutboxMessage
             {
                 Id = eventId,
-                Type = nameof(ExchangeCompletedEvent),
+                Type = nameof(TransactionCompletedEvent),
                 Payload = JsonSerializer.Serialize(
-                    new ExchangeCompletedEvent(
+                    new TransactionCompletedEvent(
                         Guid.NewGuid(),
                         Guid.NewGuid(),
                         Guid.NewGuid(),
                         100m,
                         10m,
+                        "USD",
+                        TransactionType.Exchange,
                         1000m)),
-                Topic = "exchange-events",
+                Topic = "transaction-events",
                 Key = eventId.ToString(),
                 OccurredOnUtc = DateTime.UtcNow
             });

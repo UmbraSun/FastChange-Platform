@@ -1,7 +1,7 @@
-﻿using Application.Common.Exceptions;
-using Application.Common.Interfaces;
+﻿using Application.Common.Interfaces;
 using Contracts.Enums;
 using Contracts.Events;
+using Contracts.Exceptions;
 using Domain.Entities;
 using MediatR;
 using Resources;
@@ -79,7 +79,9 @@ public sealed class TransferCommandHandler
             fromWallet.Id,
             toWallet.Id,
             request.Amount,
+            null,
             fromWallet.Currency,
+            toWallet.Currency,
             TransactionType.Transfer);
 
         await _outboxWriter.AddAsync(integrationEvent, cancellationToken);

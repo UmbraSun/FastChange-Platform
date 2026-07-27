@@ -26,9 +26,9 @@ public sealed class OutboxTests
             var message = new OutboxMessage
             {
                 Id = messageId,
-                Type = nameof(ExchangeCompletedEvent),
+                Type = nameof(TransactionCompletedEvent),
                 Payload = "{\"operationId\":\"test\"}",
-                Topic = "exchange-events",
+                Topic = "transaction-events",
                 Key = messageId.ToString(),
                 OccurredOnUtc = DateTime.UtcNow
             };
@@ -46,8 +46,8 @@ public sealed class OutboxTests
 
         var outbox = messages.Single();
         outbox.Id.Should().Be(messageId);
-        outbox.Type.Should().Be(nameof(ExchangeCompletedEvent));
-        outbox.Topic.Should().Be("exchange-events");
+        outbox.Type.Should().Be(nameof(TransactionCompletedEvent));
+        outbox.Topic.Should().Be("transaction-events");
         outbox.Payload.Should().NotBeNullOrWhiteSpace();
         outbox.ProcessedOnUtc.Should().BeNull();
     }
@@ -64,9 +64,9 @@ public sealed class OutboxTests
                 new OutboxMessage
                 {
                     Id = messageId,
-                    Type = nameof(ExchangeCompletedEvent),
+                    Type = nameof(TransactionCompletedEvent),
                     Payload = "{}",
-                    Topic = "exchange-events",
+                    Topic = "transaction-events",
                     Key = messageId.ToString(),
                     OccurredOnUtc = DateTime.UtcNow
                 });

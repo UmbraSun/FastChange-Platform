@@ -1,4 +1,5 @@
 ﻿using Application.Common.Interfaces;
+using Contracts.Enums;
 using Contracts.Events;
 using FluentAssertions;
 using Infrastructure.Mongo.Documents;
@@ -25,7 +26,16 @@ public sealed class ExchangeCompletedConsumerTests
         var fromWalletId = Guid.NewGuid();
         var toWalletId = Guid.NewGuid();
 
-        var @event = new ExchangeCompletedEvent(operationId, fromWalletId, toWalletId, 100m, 10m, 1000m);
+        var @event = new TransactionCompletedEvent(
+            operationId, 
+            fromWalletId, 
+            toWalletId, 
+            100m, 
+            10m, 
+            "USD", 
+            "EUR",
+            TransactionType.Exchange, 
+            1000m);
         var producer = Factory.Services.GetRequiredService<IKafkaProducer>();
 
         // Act

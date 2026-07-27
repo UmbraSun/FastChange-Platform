@@ -1,5 +1,5 @@
-﻿using Application.Common.Exceptions;
-using Application.Common.Interfaces;
+﻿using Application.Common.Interfaces;
+using Contracts.Exceptions;
 using MediatR;
 using Resources;
 
@@ -23,30 +23,17 @@ public sealed class PreviewExchangeQueryHandler
         PreviewExchangeQuery request,
         CancellationToken cancellationToken)
     {
-        var fromWallet = await _walletRepository.GetByIdAsync(
-            request.FromWalletId,
-            cancellationToken)
+        var fromWallet = await _walletRepository.GetByIdAsync(request.FromWalletId, cancellationToken)
             ?? throw new BusinessException(Localization.WalletNotFound);
 
-        var toWallet = await _walletRepository.GetByIdAsync(
-            request.ToWalletId,
-            cancellationToken)
+        var toWallet = await _walletRepository.GetByIdAsync(request.ToWalletId, cancellationToken)
             ?? throw new BusinessException(Localization.WalletNotFound);
 
-        var rate = await _exchangeRateProvider.GetRateAsync(
-            fromWallet.Currency,
-            toWallet.Currency,
-            cancellationToken)
+        var rate = await _exchangeRateProvider.GetRateAsync(fromWallet.Currency, toWallet.Currency, cancellationToken)
             ?? throw new BusinessException(Localization.ExchangeRateNotFound);
 
-        var receivedAmount = decimal.Round(
-            request.Amount * rate.Rate,
-            8,
-            MidpointRounding.ToEven);
-
-        return new PreviewExchangeResponse(
-            rate.Rate,
-            request.Amount,
-            receivedAmount);
+        var receivedAmount = decimal.Round(request.Amount * rate.Rate, 8, MidpointRounding.ToEven);
+        
+        return new PreviewExchangeResponse(rate.Rate, request.Amount, receivedAmount);
     }
 }
