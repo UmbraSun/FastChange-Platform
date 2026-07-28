@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using Infrastructure.Mongo.Documents;
+using MongoDB.Driver;
 using Testcontainers.MongoDb;
 
 namespace IntegrationTests.Infrastructure;
@@ -20,8 +21,16 @@ public sealed class MongoFixture : IAsyncLifetime
     public async Task InitializeAsync()
     {
         await Container.StartAsync();
-        
+
         _client = new MongoClient(Container.GetConnectionString());
+        var collection = Database.GetCollection<WalletHistoryDocument>("wallet-history");
+        var index = new CreateIndexModel<WalletHistoryDocument>(
+            Builders<WalletHistoryDocument>.IndexKeys
+                .Ascending(x => x.OperationId)
+                .Ascending(x => x.WalletId),
+            new CreateIndexOptions { Unique = true });
+
+        await collection.Indexes.CreateOneAsync(index);
     }
 
     public async Task DisposeAsync()
