@@ -15,8 +15,7 @@ public sealed class WalletHistoryRepository
         IMongoDatabase database,
         IOptions<MongoSettings> settings)
     {
-        _collection = database.GetCollection<WalletHistoryDocument>(
-            settings.Value.WalletHistoryCollection);
+        _collection = database.GetCollection<WalletHistoryDocument>(settings.Value.WalletHistoryCollection);
     }
 
     public async Task<IReadOnlyList<WalletHistoryItem>> GetByWalletAsync(
@@ -30,15 +29,14 @@ public sealed class WalletHistoryRepository
             .Limit(take)
             .ToListAsync(cancellationToken);
 
-        return data
-            .Select(x => new WalletHistoryItem(
-                x.OperationId,
-                x.SignedAmount,
-                x.BalanceAfter,
-                x.OperationType,
-                x.ExchangeRate,
-                x.ReceivedAmount,
-                x.CreatedAtUtc))
+        return data.Select(x => new WalletHistoryItem(
+            x.OperationId,
+            x.SignedAmount,
+            x.BalanceAfter,
+            x.OperationType,
+            x.ExchangeRate,
+            x.ReceivedAmount,
+            x.CreatedAtUtc))
             .ToList();
     }
 }

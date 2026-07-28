@@ -15,8 +15,7 @@ public sealed class WalletHistoryWriter : IWalletHistoryWriter
         IMongoDatabase db,
         IOptions<MongoSettings> options)
     {
-        _collection = db.GetCollection<WalletHistoryDocument>(
-            options.Value.WalletHistoryCollection);
+        _collection = db.GetCollection<WalletHistoryDocument>(options.Value.WalletHistoryCollection);
     }
 
     public async Task AddTransactionAsync(
