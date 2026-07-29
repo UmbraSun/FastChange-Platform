@@ -11,4 +11,9 @@ public abstract class OutboxFailureTestBase
         : base(fixture, new OutboxFailureFactory(fixture))
     {
     }
+
+    protected IntegrationTestFactory CreateFactory(IntegrationFixture fixture)
+    {
+        return new OutboxFailureTestFactory(fixture);
+    }
 }
