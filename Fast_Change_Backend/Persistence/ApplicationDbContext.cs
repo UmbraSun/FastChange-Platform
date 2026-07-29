@@ -53,8 +53,12 @@ public class ApplicationDbContext : DbContext
             entity.Entity.ClearDomainEvents();
 
         foreach (var entry in ChangeTracker.Entries<Wallet>())
-            if (entry.State == EntityState.Modified)
-                entry.Entity.Version++;
+        {
+            if (entry.State != EntityState.Modified)
+                continue;
+
+            entry.Entity.Version++;
+        }
 
         return await base.SaveChangesAsync(cancellationToken);
     }

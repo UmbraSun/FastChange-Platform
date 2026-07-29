@@ -21,6 +21,8 @@ public class IntegrationTestFactory
 {
     protected readonly IntegrationFixture _fixture;
 
+    protected virtual bool DisableHostedServices => true;
+
     public IntegrationTestFactory(IntegrationFixture fixture)
     {
         _fixture = fixture;
@@ -44,7 +46,8 @@ public class IntegrationTestFactory
 
         builder.ConfigureServices(services =>
         {
-            ConfigureHostedServices(services);
+            if (DisableHostedServices)
+                ConfigureHostedServices(services);
 
             services.RemoveAll<IIntegrationEventHandler<TransactionCompletedEvent>>();
             services.AddScoped<IIntegrationEventHandler<TransactionCompletedEvent>, TransactionCompletedHandler>();

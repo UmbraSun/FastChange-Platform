@@ -23,11 +23,12 @@ The goal is to demonstrate real-world system design, not just isolated features.
 
 The system is built using Clean Architecture principles:
 
-- Domain Layer — business logic and entities
-- Application Layer — use cases (CQRS)
-- Persistence Layer — database access (EF Core)
-- Infrastructure Layer — external systems (Kafka, RabbitMQ, Redis)
-- API Layer — HTTP interface
+- Domain Layer — business rules and entities
+- Application Layer — CQRS use cases, commands, queries and abstractions
+- Infrastructure Layer — external integrations, messaging, background services
+- Persistence Layer — PostgreSQL and MongoDB implementations
+- Contracts Layer — integration events and shared contracts
+- API Layer — HTTP endpoints
 
 The system follows:
 
@@ -50,17 +51,13 @@ The system follows:
 - Mapster
 
 ### Messaging
-- RabbitMQ (queue-based messaging)
-- Apache Kafka (event streaming)
+- Apache Kafka
+- Event-driven communication
+- Outbox Pattern
+- Background consumers
 
 ### Caching
 - Redis
-
-### Planned
-- MongoDB (read models / audit logs)
-- SignalR (real-time updates)
-- Telegram Bot integration
-- AI / RAG integration
 
 ### Frontend
 - React
@@ -77,12 +74,17 @@ The system follows:
 
 ## Key Features
 
-- Wallet system (deposit / withdraw)
-- Currency exchange with rate provider
-- Transaction tracking
-- Event publishing via Outbox Pattern
-- Kafka / RabbitMQ integration
-- Idempotent consumers
+- JWT authentication with refresh tokens
+- Multi-currency wallet system
+- Currency exchange operations
+- User-to-user transfers
+- Transaction history with pagination
+- Optimistic concurrency control
+- Kafka event publishing
+- Outbox Pattern
+- MongoDB read model
+- Telegram notifications
+- Integration testing with Testcontainers
 
 ---
 
@@ -112,15 +114,8 @@ Detailed documentation is available in the `/docs` folder:
 
 ## Getting Started
 
-> (to be completed with Docker Compose setup)
-
-Planned setup includes:
-
-- PostgreSQL
-- Kafka
-- RabbitMQ
-- Redis
-- API service
+Docker Compose configuration is planned.
+Currently infrastructure dependencies can be started using Testcontainers for integration testing.
 
 ---
 
