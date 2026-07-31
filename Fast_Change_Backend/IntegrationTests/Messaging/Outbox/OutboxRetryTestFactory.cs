@@ -1,5 +1,6 @@
 ﻿using Application.Common.Interfaces;
 using IntegrationTests.Infrastructure;
+using IntegrationTests.Infrastructure.Fakes;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;

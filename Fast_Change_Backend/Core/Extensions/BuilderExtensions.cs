@@ -22,6 +22,7 @@ using Infrastructure.Messaging.RabbitMq.Connection;
 using Infrastructure.Messaging.RabbitMq.Publishers;
 using Infrastructure.Mongo;
 using Infrastructure.Mongo.Repositories;
+using Infrastructure.Mongo.Services;
 using Infrastructure.Notifications;
 using Infrastructure.Observability;
 using Infrastructure.Redis;
@@ -410,6 +411,7 @@ public static class BuilderExtensions
         services.AddScoped<IOutboxRepository, OutboxRepository>();
         services.AddScoped<IOutboxWriter, OutboxWriter>();
         services.AddScoped<IOutboxStore, OutboxStore>();
+        services.AddScoped<IWalletHistoryWriter, WalletHistoryWriter>();
 
         services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
 
@@ -421,8 +423,8 @@ public static class BuilderExtensions
         services.AddScoped<IExchangeService, ExchangeService>();
 
         services.AddScoped<IWalletNotificationService, WalletNotificationService>();
-        services.AddSingleton<INotificationDispatcher, NotificationDispatcher>();
-        services.AddSingleton<ITransactionNotificationChannel, SignalRNotificationChannel>();
+        services.AddScoped<INotificationDispatcher, NotificationDispatcher>();
+        services.AddScoped<ITransactionNotificationChannel, SignalRNotificationChannel>();
 
         services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
         services.AddSingleton<IJwtTokenValidator, JwtTokenValidator>();

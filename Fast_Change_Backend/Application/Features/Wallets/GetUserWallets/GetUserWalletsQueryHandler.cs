@@ -1,5 +1,5 @@
-﻿using Application.Common.Exceptions;
-using Application.Common.Interfaces;
+﻿using Application.Common.Interfaces;
+using Contracts.Exceptions;
 using MediatR;
 using Resources;
 

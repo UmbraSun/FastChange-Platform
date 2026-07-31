@@ -34,7 +34,7 @@ public sealed class ExchangeConcurrencyTests
                 IsVerified = true
             };
 
-            var source = new Wallet
+            var source = new Domain.Entities.Wallet
             {
                 Id = sourceWalletId,
                 UserId = userId,
@@ -42,7 +42,7 @@ public sealed class ExchangeConcurrencyTests
             };
             source.Deposit(100);
 
-            var destination = new Wallet
+            var destination = new Domain.Entities.Wallet
             {
                 Id = destinationWalletId,
                 UserId = userId,

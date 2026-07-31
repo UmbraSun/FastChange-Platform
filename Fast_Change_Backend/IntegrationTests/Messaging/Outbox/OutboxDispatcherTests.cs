@@ -39,6 +39,7 @@ public sealed class OutboxDispatcherTests
                         100m,
                         10m,
                         "USD",
+                        "EUR",
                         TransactionType.Exchange,
                         1000m)),
                 Topic = "transaction-events",

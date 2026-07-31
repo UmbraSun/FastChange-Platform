@@ -1,4 +1,5 @@
-﻿using Confluent.Kafka;
+﻿using Application.Common.Interfaces;
+using Confluent.Kafka;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -18,23 +19,30 @@ public static class KafkaServiceCollectionExtensions
             .GetSection(KafkaSettings.SectionName)
             .Get<KafkaSettings>()!;
 
+        services.AddSingleton<KafkaProducerFactory>();
+
+        services.AddSingleton<IKafkaProducer>(sp =>
+        {
+            var factory = sp.GetRequiredService<KafkaProducerFactory>();
+            return new KafkaProducer(factory);
+        });
+
         services.AddSingleton<IProducer<string, string>>(sp =>
         {
-            var config = new ProducerConfig
-            {
-                BootstrapServers = settings.BootstrapServers,
-                ClientId = settings.ClientId,
-                Acks = settings.Acks,
-                EnableIdempotence = settings.EnableIdempotence,
-                CompressionType = settings.CompressionType,
-                MessageTimeoutMs = settings.MessageTimeoutMs
-            };
+            var factory = sp.GetRequiredService<KafkaProducerFactory>();
+            return factory.Producer;
+        });
 
-            return new ProducerBuilder<string, string>(config).Build();
+        services.AddSingleton<IAdminClient>(sp =>
+        {
+            var factory = sp.GetRequiredService<KafkaProducerFactory>();
+            return factory.AdminClient;
         });
 
         services.AddSingleton<IConsumer<string, string>>(sp =>
         {
+            var settings = sp.GetRequiredService<IOptions<KafkaSettings>>().Value;
+
             var config = new ConsumerConfig
             {
                 BootstrapServers = settings.BootstrapServers,
@@ -44,18 +52,6 @@ public static class KafkaServiceCollectionExtensions
             };
 
             return new ConsumerBuilder<string, string>(config).Build();
-        });
-
-        services.AddSingleton<IAdminClient>(sp =>
-        {
-            var settings = sp.GetRequiredService<IOptions<KafkaSettings>>().Value;
-
-            var config = new AdminClientConfig
-            {
-                BootstrapServers = settings.BootstrapServers
-            };
-
-            return new AdminClientBuilder(config).Build();
         });
 
         return services;

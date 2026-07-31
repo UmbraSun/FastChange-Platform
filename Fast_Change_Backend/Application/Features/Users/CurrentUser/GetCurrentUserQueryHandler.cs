@@ -1,5 +1,5 @@
-﻿using Application.Common.Exceptions;
-using Application.Common.Interfaces;
+﻿using Application.Common.Interfaces;
+using Contracts.Exceptions;
 using MediatR;
 using Resources;
 
@@ -8,7 +8,7 @@ namespace Application.Features.Users.CurrentUser;
 /// <summary>
 /// Handler for retrieving the currently authenticated user's information.
 /// </summary>
-public sealed class GetCurrentUserQueryHandler 
+public sealed class GetCurrentUserQueryHandler
     : IRequestHandler<GetCurrentUserQuery, GetCurrentUserResponse>
 {
     private readonly IUserRepository _userRepository;

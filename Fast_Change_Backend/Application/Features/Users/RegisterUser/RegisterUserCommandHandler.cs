@@ -1,5 +1,5 @@
-﻿using Application.Common.Exceptions;
-using Application.Common.Interfaces;
+﻿using Application.Common.Interfaces;
+using Contracts.Exceptions;
 using Domain.Entities;
 using FastChange.Application.Features.Users.RegisterUser;
 using MediatR;
@@ -10,7 +10,7 @@ namespace Application.Features.Users.RegisterUser;
 /// <summary>
 /// Command handler for registering a new user. It checks for email uniqueness, hashes the password, creates default wallets, and persists the user and wallets to the database.
 /// </summary>
-public sealed class RegisterUserCommandHandler 
+public sealed class RegisterUserCommandHandler
     : IRequestHandler<RegisterUserCommand, Guid>
 {
     private readonly IUserRepository _userRepository;
