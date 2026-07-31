@@ -34,7 +34,7 @@ public sealed class ExchangeValidationTests
                 IsVerified = true
             };
 
-            var fromWallet = new Wallet
+            var fromWallet = new Domain.Entities.Wallet
             {
                 Id = fromWalletId,
                 UserId = userId,
@@ -42,7 +42,7 @@ public sealed class ExchangeValidationTests
             };
             fromWallet.Deposit(50);
 
-            var toWallet = new Wallet
+            var toWallet = new Domain.Entities.Wallet
             {
                 Id = toWalletId,
                 UserId = userId,
@@ -91,7 +91,7 @@ public sealed class ExchangeValidationTests
                 IsVerified = true
             };
 
-            var wallet = new Wallet
+            var wallet = new Domain.Entities.Wallet
             {
                 Id = walletId,
                 UserId = user.Id,

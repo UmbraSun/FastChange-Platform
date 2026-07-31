@@ -37,7 +37,7 @@ public sealed class TransferTests : IntegrationTestBase
                 IsVerified = true
             };
             
-            var fromWallet = new Wallet
+            var fromWallet = new Domain.Entities.Wallet
             {
                 Id = fromWalletId,
                 UserId = userId,
@@ -45,7 +45,7 @@ public sealed class TransferTests : IntegrationTestBase
             };
             fromWallet.Deposit(1000);
 
-            var toWallet = new Wallet
+            var toWallet = new Domain.Entities.Wallet
             {
                 Id = toWalletId,
                 UserId = Guid.NewGuid(),
@@ -121,7 +121,7 @@ public sealed class TransferTests : IntegrationTestBase
                 IsVerified = true
             };
 
-            var fromWallet = new Wallet
+            var fromWallet = new Domain.Entities.Wallet
             {
                 Id = fromWalletId,
                 UserId = userId,
@@ -130,7 +130,7 @@ public sealed class TransferTests : IntegrationTestBase
 
             fromWallet.Deposit(50);
 
-            var toWallet = new Wallet
+            var toWallet = new Domain.Entities.Wallet
             {
                 Id = toWalletId,
                 UserId = receiverId,
@@ -204,7 +204,7 @@ public sealed class TransferTests : IntegrationTestBase
                 IsVerified = true
             };
 
-            var fromWallet = new Wallet
+            var fromWallet = new Domain.Entities.Wallet
             {
                 Id = fromWalletId,
                 UserId = ownerId,
@@ -213,7 +213,7 @@ public sealed class TransferTests : IntegrationTestBase
 
             fromWallet.Deposit(1000);
 
-            var toWallet = new Wallet
+            var toWallet = new Domain.Entities.Wallet
             {
                 Id = toWalletId,
                 UserId = receiverId,
@@ -280,7 +280,7 @@ public sealed class TransferTests : IntegrationTestBase
                 IsVerified = true
             };
 
-            var wallet = new Wallet
+            var wallet = new Domain.Entities.Wallet
             {
                 Id = walletId,
                 UserId = userId,
