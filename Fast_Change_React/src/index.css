@@ -1,13 +1,41 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-/* Global body override to guarantee corporate dark canvas behavior */
-html, body, #root {
+@theme {
+  --color-exchange-bg: #0B0E11;
+  --color-exchange-card: #151A21;
+  --color-exchange-border: #2B3139;
+
+  --color-exchange-text: #FFFFFF;
+  --color-exchange-muted: #848E9C;
+
+  --color-exchange-gold: #F0B90B;
+  --color-exchange-gold-hover: #F8D12F;
+
+  --color-exchange-success: #0ECB81;
+  --color-exchange-danger: #F6465D;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
   margin: 0;
-  padding: 0;
-  background-color: #0B0E11; /* ExchangeBg style */
-  color: #EAECEF;            /* ExchangeText style */
-  min-height: 100vh;
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+body {
+  background-color: #0B0E11;
+  color: #FFFFFF;
+
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
 }
