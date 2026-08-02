@@ -1,23 +1,8 @@
-import React, { useState } from 'react';
-import { RegisterForm } from './features/auth/components/RegisterForm';
-import DashboardScreen from './features/dashboard/components/DashboardScreen';
+import { AppRouter } from './app/router';
 
-export const App: React.FC = () => {
-  // Simple view switcher to orchestrate between Auth and Dashboard phases without routing overhead yet
-  const [currentView, setCurrentView] = useState<'register' | 'dashboard'>('register');
-
-  const handleRegistrationSuccess = () => {
-    setCurrentView('dashboard');
-  };
-
+export const App = () => {
   return (
-    <div className="bg-exchangeBg min-h-screen selection:bg-exchangeGreen/30">
-      {currentView === 'register' ? (
-        <RegisterForm onSuccess={handleRegistrationSuccess} />
-      ) : (
-        <DashboardScreen />
-      )}
-    </div>
+    <AppRouter />
   );
 };
 
