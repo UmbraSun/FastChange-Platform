@@ -1,25 +1,31 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
+import {
+  createBrowserRouter,
+} from "react-router-dom";
 
-import { RegisterPage } from '@/pages/auth/RegisterPage';
-import { DashboardPage } from '@/pages/dashboard/DashboardPage';
+import RegisterPage from "@/pages/auth/RegisterPage";
+import DashboardPage from "@/pages/dashboard/DashboardPage";
+import {
+  ProtectedRoute,
+} from "./ProtectedRoute";
+import {
+  PublicRoute,
+} from "./PublicRoute";
 
-export const AppRouter = () => {
-  return (
-    <Routes>
-      <Route
-        path="/register"
-        element={<RegisterPage />}
-      />
-
-      <Route
-        path="/dashboard"
-        element={<DashboardPage />}
-      />
-
-      <Route
-        path="*"
-        element={<Navigate to="/register" replace />}
-      />
-    </Routes>
-  );
-};
+export const router = createBrowserRouter([
+  {
+    path: "/",
+    element: (
+      <PublicRoute>
+        <RegisterPage />
+      </PublicRoute>
+    ),
+  },
+  {
+    path: "/dashboard",
+    element: (
+      <ProtectedRoute>
+        <DashboardPage />
+      </ProtectedRoute>
+    ),
+  },
+]);

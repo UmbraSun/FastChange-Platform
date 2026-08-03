@@ -1,4 +1,5 @@
 import axios, { type AxiosError, type AxiosResponse } from 'axios';
+import { setupAuthInterceptor } from "./interceptors/authInterceptor";
 
 export const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'https://localhost:7001/api/v1',
@@ -6,6 +7,8 @@ export const apiClient = axios.create({
     'Content-Type': 'application/json',
   },
 });
+
+setupAuthInterceptor(apiClient);
 
 apiClient.interceptors.response.use(
   (response: AxiosResponse) => response,

@@ -1,7 +1,7 @@
-export const DashboardPage = () => {
+import DashboardScreen from "@/features/dashboard/components/DashboardScreen";
+
+export default function DashboardPage() {
   return (
-    <div>
-      Dashboard Page
-    </div>
+    <DashboardScreen />
   );
-};
+}
