@@ -1,14 +1,11 @@
-import type { ReactNode } from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import {
+  RouterProvider as ReactRouterProvider,
+} from "react-router-dom";
 
-interface RouterProviderProps {
-  children: ReactNode;
-}
+import { router } from "@/app/router";
 
-export const RouterProvider = ({ children }: RouterProviderProps) => {
+export function RouterProvider() {
   return (
-    <BrowserRouter>
-      {children}
-    </BrowserRouter>
+    <ReactRouterProvider router={router} />
   );
-};
+}

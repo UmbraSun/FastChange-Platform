@@ -1,26 +1,19 @@
-import type { ReactNode } from 'react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { RouterProvider } from './RouterProvider';
+import type { ReactNode } from "react";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "@/shared/api/queryClient";
+import { RouterProvider } from "./RouterProvider";
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: 1,
-      refetchOnWindowFocus: false,
-    },
-  },
-});
-
-interface AppProvidersProps {
-  children: ReactNode;
+interface Props {
+  children?: ReactNode;
 }
 
-export const AppProviders = ({ children }: AppProvidersProps) => {
+export function AppProviders({
+  children,
+}: Props) {
   return (
     <QueryClientProvider client={queryClient}>
-      <RouterProvider>
-        {children}
-      </RouterProvider>
+      <RouterProvider />
+      {children}
     </QueryClientProvider>
   );
-};
+}
