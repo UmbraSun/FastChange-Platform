@@ -1,5 +1,6 @@
 ﻿import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useLogin } from "../model/useLogin";
 import { Input } from "@/shared/ui/input";
 import { Button } from "@/shared/ui/button";
 import {
@@ -13,6 +14,7 @@ import { useRegister } from "../model/useRegister";
 
 
 export function RegisterForm() {
+  const loginMutation = useLogin();
   const navigate = useNavigate();
   const registerMutation = useRegister();
   const {
@@ -25,13 +27,40 @@ export function RegisterForm() {
     resolver: zodResolver(registerSchema),
   });
   const onSubmit = (
-    values: RegisterFormValues
+  values: RegisterFormValues
   ) => {
-    registerMutation.mutate(values, {
+
+  registerMutation.mutate(
+    values,
+    {
       onSuccess: () => {
-        navigate("/dashboard");
+
+        loginMutation.mutate(
+          values,
+          {
+            onSuccess: () => {
+              navigate("/dashboard");
+            },
+
+            onError: (error) => {
+              console.error(
+                "Login failed",
+                error
+              );
+            },
+          }
+        );
+
       },
-    });
+
+      onError: (error) => {
+        console.error(
+          "Registration failed",
+          error
+        );
+      },
+    }
+    );
   };
 
   return (
@@ -77,10 +106,14 @@ export function RegisterForm() {
 
         <Button
           className="w-full"
-          disabled={registerMutation.isPending}>
+          disabled={
+            registerMutation.isPending ||
+            loginMutation.isPending
+          }>
           {
             registerMutation.isPending
-              ? "Creating..."
+            || loginMutation.isPending
+              ? "Please wait..."
               : "Create account"
           }
         </Button>

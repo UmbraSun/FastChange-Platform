@@ -21,6 +21,8 @@ public static class ApplicationExtensions
         app.UseHealthChecks();
         app.ApplyDatabaseMigrations();
 
+        app.MapControllers();
+
         return app;
     }
 
@@ -49,7 +51,6 @@ public static class ApplicationExtensions
     private static void ApiConfigs(this WebApplication app)
     {
         app.UseRouting();
-        app.MapControllers();
         app.UseCors();
     }
 
