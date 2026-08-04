@@ -130,7 +130,16 @@ public static class BuilderExtensions
     // CORS configuration
     private static void Cors(this IServiceCollection services)
     {
-        services.AddCors();
+        services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(policy =>
+            {
+                policy.WithOrigins("http://localhost:5173")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials();
+            });
+        });
     }
 
     // Rate Limiter configuration

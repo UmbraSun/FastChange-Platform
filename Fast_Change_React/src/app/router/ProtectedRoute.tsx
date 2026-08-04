@@ -15,7 +15,7 @@ export function ProtectedRoute({
   if (!isAuthenticated) {
     return (
       <Navigate
-        to="/register"
+        to="/"
         replace
       />
     );
