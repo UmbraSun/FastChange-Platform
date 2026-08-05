@@ -1,21 +1,16 @@
-import type { AxiosInstance } from "axios";
-import { useAuthStore } from "@/entities/auth/model/authStore";
+import type { InternalAxiosRequestConfig, } from "axios";
+import { useAuthStore, } from "@/entities/auth/model/authStore";
 
-export function setupAuthInterceptor(
-  client: AxiosInstance
+export function authInterceptor(
+  config: InternalAxiosRequestConfig
 ) {
-  client.interceptors.request.use(
-    (config) => {
-      const token =
-        useAuthStore.getState()
-          .accessToken;
+  const token =
+    useAuthStore.getState().accessToken;
 
-      if (token) {
-        config.headers.Authorization =
-          `Bearer ${token}`;
-      }
+  if (token) {
+    config.headers.Authorization =
+      `Bearer ${token}`;
+  }
 
-      return config;
-    }
-  );
+  return config;
 }

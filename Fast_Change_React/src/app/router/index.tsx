@@ -1,7 +1,6 @@
 import {
   createBrowserRouter,
 } from "react-router-dom";
-
 import RegisterPage from "@/pages/auth/RegisterPage";
 import DashboardPage from "@/pages/dashboard/DashboardPage";
 import {
@@ -10,6 +9,9 @@ import {
 import {
   PublicRoute,
 } from "./PublicRoute";
+import {
+  AppShell,
+} from "@/widgets/app-shell";
 
 export const router = createBrowserRouter([
   {
@@ -21,11 +23,16 @@ export const router = createBrowserRouter([
     ),
   },
   {
-    path: "/dashboard",
     element: (
       <ProtectedRoute>
-        <DashboardPage />
+        <AppShell />
       </ProtectedRoute>
     ),
+    children: [
+      {
+        path: "/dashboard",
+        element: <DashboardPage />,
+      },
+    ],
   },
 ]);
