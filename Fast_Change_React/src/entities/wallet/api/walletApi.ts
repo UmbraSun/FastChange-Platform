@@ -5,5 +5,6 @@ export async function getUserWallets(): Promise<WalletDto[]> {
   const response = await apiClient.get<WalletDto[]>(
     "/User/wallets"
   );
+
   return response.data;
 }

@@ -49,8 +49,7 @@ public sealed class ExchangeController : ControllerBase
         ExchangeCommand command,
         CancellationToken cancellationToken)
     {
-        var result =
-            await _sender.Send(
+        var result = await _sender.Send(
                 command,
                 cancellationToken);
 
