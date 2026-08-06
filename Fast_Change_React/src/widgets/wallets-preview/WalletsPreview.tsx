@@ -29,22 +29,13 @@ export function WalletsPreview() {
       >
         Your wallets
       </h2>
-      <div
-        className="
-          grid
-          gap-4
-        "
-      >
-        {
-          data?.map(
-            wallet => (
-              <WalletCard
-                key={wallet.walletId}
-                wallet={wallet}
-              />
-            )
-          )
-        }
+      <div className="space-y-3">
+        {data?.map((wallet) => (
+          <WalletCard
+            key={wallet.walletId}
+            wallet={wallet}
+          />
+        ))}
       </div>
     </section>
   );
