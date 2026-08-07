@@ -267,7 +267,7 @@ public static class BuilderExtensions
         services.Configure<ExchangeRateSettings>(
             configuration.GetSection(ExchangeRateSettings.SectionName));
 
-        services.AddHttpClient<FrankfurterClient>(client =>
+        services.AddHttpClient<CryptoRateClient>(client =>
         {
             var exchangeSettings = configuration.GetSection(ExchangeRateSettings.SectionName).Get<ExchangeRateSettings>()
                 ?? throw new InvalidOperationException("ExchangeRateSettings configuration section is missing.");
@@ -293,14 +293,22 @@ public static class BuilderExtensions
             });
         });
 
-        services.AddSingleton<IConnectionMultiplexer>(_ =>
-            ConnectionMultiplexer.Connect(configuration.GetConnectionString("Redis")!));
+        services.AddSingleton<IConnectionMultiplexer>(provider =>
+        {
+            var config = provider.GetRequiredService<IConfiguration>();
+            var connectionString = config.GetConnectionString("Redis");
+
+            if (string.IsNullOrEmpty(connectionString))
+                throw new InvalidOperationException("Строка подключения 'Redis' не найдена в конфигурации.");
+
+            return ConnectionMultiplexer.Connect(connectionString);
+        });
         services.AddScoped<IExchangeRateCache, ExchangeRateRedisCache>();
 
-        services.AddScoped<FrankfurterExchangeRateProvider>();
+        services.AddScoped<CryptoRateProvider>();
         services.AddScoped<IExchangeRateProvider>(sp =>
         {
-            var inner = sp.GetRequiredService<FrankfurterExchangeRateProvider>();
+            var inner = sp.GetRequiredService<CryptoRateProvider>();
             var cache = sp.GetRequiredService<IExchangeRateCache>();
 
             return new CachedExchangeRateProvider(inner, cache);

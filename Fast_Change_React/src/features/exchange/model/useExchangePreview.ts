@@ -1,19 +1,35 @@
-import { useQuery, } from "@tanstack/react-query";
-import { getExchangePreview, } from "../api/exchangeApi";
-import type { ExchangeRequest, } from "./dto";
+import { useQuery } from "@tanstack/react-query";
+import { previewExchange } from "../api/preview";
 
-export function useExchangePreview(
-  data: ExchangeRequest
-) {
+interface Props {
+  fromWalletId: string;
+  toWalletId: string;
+  amount: number;
+}
+
+export function useExchangePreview({
+  fromWalletId,
+  toWalletId,
+  amount,
+}: Props) {
   return useQuery({
     queryKey: [
       "exchange-preview",
-      data,
+      fromWalletId,
+      toWalletId,
+      amount,
     ],
-    queryFn: () => getExchangePreview(data),
+
+    queryFn: () =>
+      previewExchange({
+        fromWalletId,
+        toWalletId,
+        amount,
+      }),
+
     enabled:
-      Boolean(data.fromWalletId) &&
-      Boolean(data.toWalletId) &&
-      data.amount > 0,
+      Boolean(fromWalletId) &&
+      Boolean(toWalletId) &&
+      amount > 0,
   });
 }
