@@ -1,4 +1,45 @@
+import { useWallets } from "@/features/wallet/model/useWallets";
+import { useMemo, useState } from "react";
+import { useExchangePreview } from "../model/useExchangePreview";
+
 export function ExchangeCard() {
+  const {
+    data: wallets,
+    isLoading,
+  } = useWallets();
+
+  const [fromWalletId, setFromWalletId] = useState("");
+  const [toWalletId, setToWalletId] = useState("");
+  const [amount, setAmount] = useState("");
+
+  const sortedWallets = useMemo(() => {
+    return [...(wallets ?? [])].sort(
+      (a, b) => a.currency.localeCompare(b.currency)
+    );
+  }, [wallets]);
+
+  const fromWallet = sortedWallets.find(
+    x => x.walletId === fromWalletId
+  );
+
+  const toWallet = sortedWallets.find(
+    x => x.walletId === toWalletId
+  );
+
+  const preview = useExchangePreview({
+    fromWalletId,
+    toWalletId,
+    amount: Number(amount),
+  });
+
+  if (isLoading) {
+    return (
+      <div className="text-center py-10">
+        Loading wallets...
+      </div>
+    );
+  }
+
   return (
     <section
       className="
@@ -30,14 +71,58 @@ export function ExchangeCard() {
             p-4
           "
         >
-          <span>
-            BTC
-          </span>
-          <span className="text-xl font-semibold">
-            0
-          </span>
+          <select
+            value={fromWalletId}
+            onChange={(e) => setFromWalletId(e.target.value)}
+            className="
+            bg-transparent
+            text-lg
+            font-semibold
+          outline-none
+          "
+          >
+            <option value="">
+              Select wallet
+            </option>
+
+            {sortedWallets.map(wallet => (
+              <option
+                key={wallet.walletId}
+                value={wallet.walletId}
+              >
+                {wallet.currency}
+              </option>
+            ))}
+          </select>
+          <input
+            type="number"
+            min="0"
+            placeholder="0"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            className="
+              w-32
+              bg-transparent
+              text-right
+              text-xl
+              font-semibold
+              outline-none
+            "
+          />
         </div>
       </div>
+
+      <p className="
+        mt-2
+        text-xs
+        text-exchange-muted
+      ">
+        Balance:
+        {" "}
+        {fromWallet?.balance ?? 0}
+        {" "}
+        {fromWallet?.currency}
+      </p>
 
       <div className="
         text-center
@@ -66,11 +151,36 @@ export function ExchangeCard() {
             p-4
           "
         >
-          <span>
-            USD
-          </span>
+          <select
+            value={toWalletId}
+            onChange={(e) => setToWalletId(e.target.value)}
+            className="
+            bg-transparent
+            text-lg
+            font-semibold
+            outline-none
+          "
+          >
+            <option value="">
+              Select wallet
+            </option>
+
+            {sortedWallets.map(wallet => (
+              <option
+                key={wallet.walletId}
+                value={wallet.walletId}
+              >
+                {wallet.currency}
+              </option>
+            ))}
+          </select>
+
           <span className="text-xl font-semibold">
-            0
+            {
+              preview.isFetching
+                ? "..."
+                : preview.data?.receivedAmount ?? 0
+            }
           </span>
         </div>
       </div>
@@ -88,7 +198,11 @@ export function ExchangeCard() {
           </span>
 
           <span>
-            1 BTC ≈ 118432 USD
+            1 {fromWallet?.currency}
+            {" ≈ "}
+            {preview.data?.exchangeRate ?? 0}
+            {" "}
+            {toWallet?.currency}
           </span>
         </div>
       </div>

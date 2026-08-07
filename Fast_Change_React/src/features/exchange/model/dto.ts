@@ -12,6 +12,12 @@ export interface ExchangeResponse {
   destinationBalance: number;
 }
 
+export interface ExchangePreviewRequest {
+  fromWalletId: string;
+  toWalletId: string;
+  amount: number;
+}
+
 export interface ExchangePreviewResponse {
   exchangeRate: number;
   sentAmount: number;

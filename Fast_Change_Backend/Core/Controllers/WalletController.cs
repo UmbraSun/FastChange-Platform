@@ -70,7 +70,7 @@ public class WalletController : ControllerBase
     }
 
     /// <summary>
-    /// 
+    /// Gets the transaction history for a specific wallet by its ID
     /// </summary>
     /// <param name="walletId"></param>
     /// <param name="take"></param>

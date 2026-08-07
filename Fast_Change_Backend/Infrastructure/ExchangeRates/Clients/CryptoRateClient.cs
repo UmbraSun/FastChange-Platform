@@ -6,20 +6,20 @@ using System.Net.Http.Json;
 
 namespace Infrastructure.ExchangeRates.Clients;
 
-public sealed class FrankfurterClient
+public sealed class CryptoRateClient
 {
     private readonly HttpClient _httpClient;
-    private readonly ILogger<FrankfurterClient> _logger;
+    private readonly ILogger<CryptoRateClient> _logger;
 
-    public FrankfurterClient(
+    public CryptoRateClient(
         HttpClient httpClient,
-        ILogger<FrankfurterClient> logger)
+        ILogger<CryptoRateClient> logger)
     {
         _httpClient = httpClient;
         _logger = logger;
     }
 
-    public async Task<FrankfurterResponse> GetLatestRateAsync(
+    public async Task<CryptoRateResponse> GetLatestRateAsync(
         string from,
         string to,
         CancellationToken cancellationToken)
@@ -28,10 +28,10 @@ public sealed class FrankfurterClient
         {
             _logger.LogInformation(
                 "Exchange rate request: {From} -> {To}",
-                from, to);
+                from, to);  
 
             var response = await _httpClient.GetAsync(
-                $"v2/rate/{from}/{to}",
+                $"simple/price?ids={from}&vs_currencies={to}",
                 cancellationToken);
 
             if (!response.IsSuccessStatusCode)
@@ -44,7 +44,7 @@ public sealed class FrankfurterClient
                     Localization.ExchangeRateProviderUnavailable);
             }
 
-            var result = await response.Content.ReadFromJsonAsync<FrankfurterResponse>(
+            var result = await response.Content.ReadFromJsonAsync<CryptoRateResponse>(
                 cancellationToken: cancellationToken);
 
             if (result is null)
