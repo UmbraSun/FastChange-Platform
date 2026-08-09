@@ -1,22 +1,15 @@
 ﻿import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useLogin } from "../model/useLogin";
+import { useNavigate } from "react-router-dom";
 import { Input } from "@/shared/ui/input";
 import { Button } from "@/shared/ui/button";
-import {
-  registerSchema,
-  type RegisterFormValues,
-} from "../model/schema";
-import {
-  useNavigate,
-} from "react-router-dom";
+import { registerSchema, type RegisterFormValues, } from "../model/schema";
 import { useRegister } from "../model/useRegister";
 
-
 export function RegisterForm() {
-  const loginMutation = useLogin();
   const navigate = useNavigate();
   const registerMutation = useRegister();
+
   const {
     register,
     handleSubmit,
@@ -26,40 +19,24 @@ export function RegisterForm() {
   } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
   });
+
   const onSubmit = (
-  values: RegisterFormValues
+    values: RegisterFormValues
   ) => {
+    registerMutation.mutate(
+      values,
+      {
+        onSuccess: () => {
+          navigate("/login");
+        },
 
-  registerMutation.mutate(
-    values,
-    {
-      onSuccess: () => {
-
-        loginMutation.mutate(
-          values,
-          {
-            onSuccess: () => {
-              navigate("/dashboard");
-            },
-
-            onError: (error) => {
-              console.error(
-                "Login failed",
-                error
-              );
-            },
-          }
-        );
-
-      },
-
-      onError: (error) => {
-        console.error(
-          "Registration failed",
-          error
-        );
-      },
-    }
+        onError: (error) => {
+          console.error(
+            "Registration failed",
+            error
+          );
+        },
+      }
     );
   };
 
@@ -69,7 +46,6 @@ export function RegisterForm() {
         <h1 className="text-3xl font-bold">
           Create account
         </h1>
-
         <p className="mt-2 text-exchange-muted">
           Join FastChange exchange
         </p>
@@ -77,46 +53,50 @@ export function RegisterForm() {
 
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="space-y-4">
-
+        className="space-y-4"
+      >
         <Input
           placeholder="Email"
           type="email"
-          {...register("email")}/>
-
-        {
-          errors.email && (
-            <p className="text-sm text-exchange-danger">
-              {errors.email.message}
-            </p>
-          )
-        }
+          {...register("email")}
+        />
+        {errors.email && (
+          <p className="text-sm text-exchange-danger">
+            {errors.email.message}
+          </p>
+        )}
 
         <Input
           placeholder="Password"
           type="password"
-          {...register("password")}/>
-        {
-          errors.password && (
-            <p className="text-sm text-exchange-danger">
-              {errors.password.message}
-            </p>
-          )
-        }
+          {...register("password")}
+        />
+        {errors.password && (
+          <p className="text-sm text-exchange-danger">
+            {errors.password.message}
+          </p>
+        )}
 
         <Button
+          type="submit"
           className="w-full"
-          disabled={
-            registerMutation.isPending ||
-            loginMutation.isPending
-          }>
-          {
-            registerMutation.isPending
-            || loginMutation.isPending
-              ? "Please wait..."
-              : "Create account"
-          }
+          disabled={registerMutation.isPending}
+        >
+          {registerMutation.isPending
+            ? "Creating..."
+            : "Create account"}
         </Button>
+
+        <div className="text-center text-sm text-exchange-muted">
+          Already have an account?{" "}
+          <button
+            type="button"
+            onClick={() => navigate("/login")}
+            className="font-medium text-exchange-gold hover:underline"
+          >
+            Sign in
+          </button>
+        </div>
       </form>
     </div>
   );

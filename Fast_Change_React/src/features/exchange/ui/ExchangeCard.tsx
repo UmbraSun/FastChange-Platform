@@ -1,6 +1,7 @@
 import { useWallets } from "@/features/wallet/model/useWallets";
 import { useMemo, useState } from "react";
 import { useExchangePreview } from "../model/useExchangePreview";
+import { useExchange } from "../model/useExchange";
 
 export function ExchangeCard() {
   const {
@@ -31,6 +32,23 @@ export function ExchangeCard() {
     toWalletId,
     amount: Number(amount),
   });
+
+  const exchangeMutation = useExchange();
+
+  const handleExchange = () => {
+    exchangeMutation.mutate(
+      {
+        fromWalletId,
+        toWalletId,
+        amount: Number(amount),
+      },
+      {
+        onSuccess: () => {
+          setAmount("");
+        },
+      }
+    );
+  };
 
   if (isLoading) {
     return (
@@ -207,6 +225,8 @@ export function ExchangeCard() {
         </div>
       </div>
       <button
+        disabled={exchangeMutation.isPending}
+        onClick={handleExchange}
         className="
           w-full
           rounded-2xl
@@ -216,9 +236,15 @@ export function ExchangeCard() {
           text-black
           transition
           hover:opacity-90
+          disabled:cursor-not-allowed
+          disabled:opacity-50
         "
       >
-        Confirm Exchange
+        {
+          exchangeMutation.isPending
+            ? "Processing..."
+            : "Confirm Exchange"
+        }
       </button>
     </section>
   );

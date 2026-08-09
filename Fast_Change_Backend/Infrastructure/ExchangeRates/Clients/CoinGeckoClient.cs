@@ -1,58 +1,81 @@
 ﻿using Contracts.Exceptions;
-using Infrastructure.ExchangeRates.Contracts;
 using Microsoft.Extensions.Logging;
 using Resources;
 using System.Net.Http.Json;
 
 namespace Infrastructure.ExchangeRates.Clients;
 
-public sealed class CryptoRateClient
+public sealed class CoinGeckoClient
 {
     private readonly HttpClient _httpClient;
-    private readonly ILogger<CryptoRateClient> _logger;
+    private readonly ILogger<CoinGeckoClient> _logger;
 
-    public CryptoRateClient(
+    public CoinGeckoClient(
         HttpClient httpClient,
-        ILogger<CryptoRateClient> logger)
+        ILogger<CoinGeckoClient> logger)
     {
         _httpClient = httpClient;
         _logger = logger;
     }
 
-    public async Task<CryptoRateResponse> GetLatestRateAsync(
+    public async Task<decimal> GetLatestRateAsync(
         string from,
         string to,
         CancellationToken cancellationToken)
     {
         try
         {
+            var fromId = CurrencyHelper.GetCoinGeckoId(from);
+            var toId = CurrencyHelper.GetCoinGeckoId(to);
+
             _logger.LogInformation(
                 "Exchange rate request: {From} -> {To}",
-                from, to);  
+                from, to);
 
             var response = await _httpClient.GetAsync(
-                $"simple/price?ids={from}&vs_currencies={to}",
+                $"api/v3/simple/price?ids={fromId}&vs_currencies={toId}",
                 cancellationToken);
 
             if (!response.IsSuccessStatusCode)
             {
                 _logger.LogError(
-                    "Frankfurter API error: {StatusCode}",
+                    "CoinGecko API error: {StatusCode}",
                     response.StatusCode);
 
                 throw new ExternalServiceException(
                     Localization.ExchangeRateProviderUnavailable);
             }
 
-            var result = await response.Content.ReadFromJsonAsync<CryptoRateResponse>(
+            var rawData = await response.Content.ReadFromJsonAsync<Dictionary<string, Dictionary<string, decimal>>>(
                 cancellationToken: cancellationToken);
 
-            if (result is null)
+            if (rawData is null)
             {
-                _logger.LogError("Frankfurter returned empty response");
+                _logger.LogError("CoinGecko returned empty response");
+                throw new ExternalServiceException(Localization.EmptyResponseFromExchangeProvider);
+            }
+
+            rawData.TryGetValue(fromId, out var rate);
+
+            if (rate is null)
+            {
+                _logger.LogError("CoinGecko returned empty response");
 
                 throw new ExternalServiceException(
                     Localization.EmptyResponseFromExchangeProvider);
+            }
+
+            if (!rate.TryGetValue(
+                toId,
+                out var result))
+            {
+                _logger.LogError(
+                    "CoinGecko rate not found: {From} -> {To}",
+                    from,
+                    to);
+
+                throw new ExternalServiceException(
+                    Localization.ExchangeRateNotFound);
             }
 
             _logger.LogInformation(
@@ -63,14 +86,14 @@ public sealed class CryptoRateClient
         }
         catch (TaskCanceledException)
         {
-            _logger.LogError("Frankfurter request timeout");
+            _logger.LogError("CoinGecko request timeout");
 
             throw new ExternalServiceException(
                 Localization.ExchangeRateProviderTimeout);
         }
         catch (Exception ex) when (ex is not ExternalServiceException)
         {
-            _logger.LogError(ex, "Unexpected Frankfurter error");
+            _logger.LogError(ex, "Unexpected CoinGecko error");
 
             throw new ExternalServiceException(
                 Localization.UnexpectedExchangeRateProviderError);

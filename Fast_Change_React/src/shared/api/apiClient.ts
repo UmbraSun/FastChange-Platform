@@ -1,5 +1,7 @@
 import axios, { type AxiosError, type AxiosResponse, } from "axios";
-import { authInterceptor, } from "./interceptors/authInterceptor";
+
+import { authInterceptor } from "./interceptors/authInterceptor";
+import { useAuthStore } from "@/entities/auth/model/authStore";
 
 export const apiClient = axios.create({
   baseURL:
@@ -11,11 +13,20 @@ export const apiClient = axios.create({
   },
 });
 
-apiClient.interceptors.request.use(authInterceptor);
+apiClient.interceptors.request.use(
+  authInterceptor
+);
 
 apiClient.interceptors.response.use(
   (response: AxiosResponse) => response,
+
   (error: AxiosError) => {
+    if (error.response?.status === 401) {
+      useAuthStore
+        .getState()
+        .clearTokens();
+    }
+
     if (error.response?.data) {
       const problem =
         error.response.data as {
