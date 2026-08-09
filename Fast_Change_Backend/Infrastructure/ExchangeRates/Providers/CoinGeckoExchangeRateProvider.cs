@@ -4,12 +4,12 @@ using Infrastructure.ExchangeRates.Clients;
 
 namespace Infrastructure.ExchangeRates.Providers;
 
-public class CryptoRateProvider
+public class CoinGeckoExchangeRateProvider
     : IExchangeRateProvider
 {
-    private readonly CryptoRateClient _client;
+    private readonly CoinGeckoClient _client;
 
-    public CryptoRateProvider(CryptoRateClient client)
+    public CoinGeckoExchangeRateProvider(CoinGeckoClient client)
     {
         _client = client;
     }
@@ -19,12 +19,10 @@ public class CryptoRateProvider
         string to,
         CancellationToken cancellationToken)
     {
-        var response = await _client.GetLatestRateAsync(
+        var rate = await _client.GetLatestRateAsync(
             from,
             to,
             cancellationToken);
-
-        var rate = response.Rates[to];
 
         return new ExchangeRate(
             from,

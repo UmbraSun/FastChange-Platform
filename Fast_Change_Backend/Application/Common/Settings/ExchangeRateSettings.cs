@@ -4,7 +4,9 @@ public sealed class ExchangeRateSettings
 {
     public const string SectionName = "ExchangeRate";
 
-    public string BaseUrl { get; init; } = string.Empty;
+    public string CoinGeckoUrl { get; set; } = string.Empty;
 
-    public int TimeoutSeconds { get; init; } = 10;
+    public string FrankfurterUrl { get; set; } = string.Empty;
+
+    public int TimeoutSeconds { get; set; } = 10;
 }

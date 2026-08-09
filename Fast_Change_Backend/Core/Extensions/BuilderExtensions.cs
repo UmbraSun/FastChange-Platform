@@ -267,13 +267,16 @@ public static class BuilderExtensions
         services.Configure<ExchangeRateSettings>(
             configuration.GetSection(ExchangeRateSettings.SectionName));
 
-        services.AddHttpClient<CryptoRateClient>(client =>
+        services.AddHttpClient<CoinGeckoClient>((sp, client) =>
         {
-            var exchangeSettings = configuration.GetSection(ExchangeRateSettings.SectionName).Get<ExchangeRateSettings>()
-                ?? throw new InvalidOperationException("ExchangeRateSettings configuration section is missing.");
+            var settings = sp.GetRequiredService<IOptions<ExchangeRateSettings>>().Value;
 
-            client.BaseAddress = new Uri(exchangeSettings.BaseUrl);
-        }).AddResilienceHandler("Frankfurter", pipeline =>
+            client.BaseAddress = new Uri(settings.CoinGeckoUrl);
+            client.DefaultRequestHeaders.Add(
+                "User-Agent",
+                "FastChangePlatform/1.0");
+        })
+        .AddResilienceHandler("CoinGecko", pipeline =>
         {
             pipeline.AddRetry(new HttpRetryStrategyOptions
             {
@@ -281,12 +284,42 @@ public static class BuilderExtensions
                 Delay = TimeSpan.FromSeconds(2),
                 BackoffType = DelayBackoffType.Exponential
             });
-
+        
             pipeline.AddTimeout(TimeSpan.FromSeconds(15));
-
+            
             pipeline.AddCircuitBreaker(new HttpCircuitBreakerStrategyOptions
             {
-                FailureRatio = 0.5, 
+                FailureRatio = 0.5,
+                MinimumThroughput = 10,
+                SamplingDuration = TimeSpan.FromSeconds(30),
+                BreakDuration = TimeSpan.FromSeconds(20)
+            });
+        });
+
+        services.AddHttpClient<FrankfurterClient>((sp, client) =>
+        {
+            var settings = sp.GetRequiredService<IOptions<ExchangeRateSettings>>()
+                .Value;
+
+            client.BaseAddress = new Uri(settings.FrankfurterUrl);
+            client.DefaultRequestHeaders.Add(
+                "User-Agent",
+                "FastChangePlatform/1.0");
+        })
+        .AddResilienceHandler("Frankfurter", pipeline =>
+        {
+            pipeline.AddRetry(new HttpRetryStrategyOptions
+            {
+                MaxRetryAttempts = 3,
+                Delay = TimeSpan.FromSeconds(2),
+                BackoffType = DelayBackoffType.Exponential
+            });
+        
+            pipeline.AddTimeout(TimeSpan.FromSeconds(15));
+        
+            pipeline.AddCircuitBreaker(new HttpCircuitBreakerStrategyOptions
+            {
+                FailureRatio = 0.5,
                 MinimumThroughput = 10,
                 SamplingDuration = TimeSpan.FromSeconds(30),
                 BreakDuration = TimeSpan.FromSeconds(20)
@@ -305,10 +338,14 @@ public static class BuilderExtensions
         });
         services.AddScoped<IExchangeRateCache, ExchangeRateRedisCache>();
 
-        services.AddScoped<CryptoRateProvider>();
+        services.AddScoped<FrankfurterExchangeRateProvider>();
+        services.AddScoped<CoinGeckoExchangeRateProvider>();
+
+        services.AddScoped<ExchangeRateProvider>();
+
         services.AddScoped<IExchangeRateProvider>(sp =>
         {
-            var inner = sp.GetRequiredService<CryptoRateProvider>();
+            var inner = sp.GetRequiredService<ExchangeRateProvider>();
             var cache = sp.GetRequiredService<IExchangeRateCache>();
 
             return new CachedExchangeRateProvider(inner, cache);

@@ -1,9 +1,16 @@
-import { useMutation, } from "@tanstack/react-query";
-import { exchangeCurrency, } from "../api/exchangeApi";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { exchange } from "../api/exchange";
 
 export function useExchange() {
+  const queryClient = useQueryClient();
+
   return useMutation({
-    mutationFn:
-      exchangeCurrency,
+    mutationFn: exchange,
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["wallets"],
+      });
+    },
   });
 }

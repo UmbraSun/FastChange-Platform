@@ -7,11 +7,10 @@ import type {
 export async function loginUser(
   data: LoginRequest
 ): Promise<LoginResponse> {
-  const response =
-    await apiClient.post<LoginResponse>(
-      "/Auth/login",
-      data
-    );
+  const response = await apiClient.post<LoginResponse>(
+    "/Auth/login",
+    data
+  );
 
   return response.data;
 }
