@@ -1,49 +1,68 @@
-import {
-  ArrowDownToLine,
-  ArrowLeftRight,
-  ArrowUpFromLine,
-} from "lucide-react";
-import { useNavigate, } from "react-router-dom";
+import { ArrowDownToLine, ArrowLeftRight, ArrowUpFromLine, } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { DepositModal } from "@/features/wallet/ui/DepositModal";
+import { WithdrawModal } from "@/features/wallet/ui/WithdrawModal";
 
 const actions = [
   {
     title: "Deposit",
     icon: ArrowDownToLine,
-    path: "/deposit",
+    action: "deposit",
   },
   {
     title: "Exchange",
     icon: ArrowLeftRight,
-    path: "/exchange",
+    action: "exchange",
   },
   {
     title: "Withdraw",
     icon: ArrowUpFromLine,
-    path: "/withdraw",
+    action: "withdraw",
   },
 ];
 
 export function QuickActions() {
   const navigate = useNavigate();
+  const [isDepositOpen, setIsDepositOpen] = useState(false);
+  const [isWithdrawOpen, setIsWithdrawOpen] = useState(false);
+  const handleAction = (action: string) => {
+    switch (action) {
+      case "deposit":
+        setIsDepositOpen(true);
+        break;
+
+      case "exchange":
+        navigate("/exchange");
+        break;
+
+      case "withdraw":
+        setIsWithdrawOpen(true);
+        break;
+    }
+  };
 
   return (
-    <section
-      className="
-        grid
-        grid-cols-3
-        gap-3
-      "
-    >
-      {
-        actions.map(
+    <>
+      <section
+        className="
+          grid
+          grid-cols-3
+          gap-3
+        "
+      >
+        {actions.map(
           ({
             title,
             icon: Icon,
-            path,
+            action,
           }) => (
             <button
               key={title}
-              onClick={() => navigate(path)}
+              type="button"
+              onClick={() =>
+                handleAction(action)
+              }
               className="
                 flex
                 flex-col
@@ -65,13 +84,28 @@ export function QuickActions() {
                   text-exchange-gold
                 "
               />
+
               <span className="text-sm">
                 {title}
               </span>
             </button>
           )
-        )
-      }
-    </section>
+        )}
+      </section>
+
+      <DepositModal
+        open={isDepositOpen}
+        onClose={() =>
+          setIsDepositOpen(false)
+        }
+      />
+
+      <WithdrawModal
+        open={isWithdrawOpen}
+        onClose={() =>
+          setIsWithdrawOpen(false)
+        }
+      />
+    </>
   );
 }
