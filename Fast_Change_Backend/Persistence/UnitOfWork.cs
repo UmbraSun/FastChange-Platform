@@ -13,28 +13,6 @@ public sealed class UnitOfWork : IUnitOfWork
         _dbContext = dbContext;
     }
 
-    public async Task ExecuteAsync(
-       Func<CancellationToken, Task> action,
-       CancellationToken cancellationToken)
-    {
-        await using var transaction =
-            await _dbContext.Database.BeginTransactionAsync(cancellationToken);
-
-        try
-        {
-            await action(cancellationToken);
-
-            await _dbContext.SaveChangesAsync(cancellationToken);
-
-            await transaction.CommitAsync(cancellationToken);
-        }
-        catch
-        {
-            await transaction.RollbackAsync(cancellationToken);
-            throw;
-        }
-    }
-
     public async Task BeginTransactionAsync(CancellationToken cancellationToken)
     {
         _transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);

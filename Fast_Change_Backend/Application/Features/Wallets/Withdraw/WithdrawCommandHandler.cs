@@ -36,11 +36,9 @@ public sealed class WithdrawCommandHandler
 
         var result = _walletOperationService.Withdraw(wallet, request.Amount);
 
-        await _unitOfWork.ExecuteAsync(async ct =>
-        {
-            await _walletRepository.UpdateAsync(wallet, ct);
-            await _transactionRepository.AddAsync(result.transaction, ct);
-        }, cancellationToken);
+        await _walletRepository.UpdateAsync(wallet, cancellationToken);
+        await _transactionRepository.AddAsync(result.transaction, cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return new WithdrawResponse(
             wallet.Id,
