@@ -62,7 +62,7 @@ public class WalletController : ControllerBase
     /// <returns></returns>
     [HttpGet("{walletId:guid}/transactions")]
     public async Task<IActionResult> GetTransactions(
-        GetTransactionHistoryQuery query,
+        [FromQuery] GetTransactionHistoryQuery query,
         CancellationToken cancellationToken)
     {
         var result = await _sender.Send(query, cancellationToken);
