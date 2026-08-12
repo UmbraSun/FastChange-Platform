@@ -38,8 +38,7 @@ public sealed class KnowledgeIndexer
 
         try
         {
-            await IndexInternalAsync(
-                cancellationToken);
+            await IndexInternalAsync(cancellationToken);
         }
         finally
         {
@@ -50,8 +49,7 @@ public sealed class KnowledgeIndexer
     private async Task IndexInternalAsync(
         CancellationToken cancellationToken)
     {
-        var documents =
-            await _loader.LoadAsync(cancellationToken);
+        var documents = await _loader.LoadAsync(cancellationToken);
 
         _logger.LogInformation(
             "Loaded {Count} documents",
@@ -64,36 +62,33 @@ public sealed class KnowledgeIndexer
             _logger.LogInformation(
                 "Indexed document {Document}",
                 document.Name);
-            
+
             if (await _vectorStore.ExistsAsync(
                     document.Name,
                     document.Hash,
                     cancellationToken))
                 continue;
 
-            var chunks =
-                _chunkingService.Chunk(document);
+            var chunks = _chunkingService.Chunk(document);
 
             foreach (var chunk in chunks)
             {
-                var embedding =
-                    await _embeddingProvider.CreateEmbeddingAsync(
-                        chunk.Content,
-                        cancellationToken);
+                var embedding = await _embeddingProvider.CreateEmbeddingAsync(
+                    chunk.Content,
+                    cancellationToken);
 
-                vectors.Add(
-                    new KnowledgeVector(
-                        chunk.Id,
-                        chunk.DocumentName,
-                        document.Hash,
-                        chunk.Heading,
-                        chunk.Content,
-                        embedding));
+                vectors.Add(new KnowledgeVector(
+                    chunk.Id,
+                    chunk.DocumentName,
+                    document.Hash,
+                    chunk.Heading,
+                    chunk.ChunkIndex,
+                    chunk.Content,
+                    DateTime.UtcNow,
+                    embedding));
             }
         }
 
-        await _vectorStore.UpsertAsync(
-            vectors,
-            cancellationToken);
+        await _vectorStore.UpsertAsync(vectors, cancellationToken);
     }
 }

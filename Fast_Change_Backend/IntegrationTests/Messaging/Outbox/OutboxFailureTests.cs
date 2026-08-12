@@ -39,6 +39,7 @@ public sealed class OutboxFailureTests
                         "USD",
                         "EUR",
                         TransactionType.Exchange,
+                        500m,
                         1000m)),
                 Topic = "transaction-events",
                 Key = eventId.ToString(),

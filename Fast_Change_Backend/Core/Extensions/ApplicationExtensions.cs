@@ -1,4 +1,5 @@
 ﻿using HealthChecks.UI.Client;
+using Infrastructure.Mongo;
 using Infrastructure.SignalR.Hubs;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +10,7 @@ namespace Core.Extensions;
 
 public static class ApplicationExtensions
 {
-    public static WebApplication UseInfrastructurePipeline(this WebApplication app)
+    public static async Task<WebApplication> UseInfrastructurePipeline(this WebApplication app)
     {
         app.OpenApi();
         app.HttpConfigs();
@@ -20,6 +21,7 @@ public static class ApplicationExtensions
         app.AddHubs();
         app.UseHealthChecks();
         app.ApplyDatabaseMigrations();
+        await app.ApplyMongoDb();
 
         app.MapControllers();
 
@@ -117,5 +119,14 @@ public static class ApplicationExtensions
         }
 
         context.Database.Migrate();
+    }
+
+    // Applies MongoDB indexes on application startup
+    private static async Task ApplyMongoDb(this WebApplication app)
+    {
+        using var scope = app.Services.CreateScope();
+        var initializer = scope.ServiceProvider.GetRequiredService<MongoIndexesInitializer>();
+
+        await initializer.InitializeAsync();
     }
 }
