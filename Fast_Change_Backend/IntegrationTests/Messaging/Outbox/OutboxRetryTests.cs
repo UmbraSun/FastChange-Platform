@@ -41,7 +41,10 @@ public sealed class OutboxRetryTests : OutboxTestBase
                         null,
                         "USD",
                         "EUR",
-                        TransactionType.Transfer)),
+                        TransactionType.Transfer,
+                        500m,
+                        1500m,
+                        null)),
                 Topic = "transaction-events",
                 Key = eventId.ToString(),
                 OccurredOnUtc = DateTime.UtcNow

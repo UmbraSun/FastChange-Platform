@@ -11,4 +11,6 @@ public sealed record TransactionCompletedEvent(
     string FromCurrency,
     string ToCurrency,
     TransactionType Type,
+    decimal FromBalanceAfter,
+    decimal ToBalanceAfter,
     decimal? ExchangeRate = null);

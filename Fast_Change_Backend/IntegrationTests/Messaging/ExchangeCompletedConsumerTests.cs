@@ -34,7 +34,8 @@ public sealed class ExchangeCompletedConsumerTests
             10m, 
             "USD", 
             "EUR",
-            TransactionType.Exchange, 
+            TransactionType.Exchange,
+            500m,
             1000m);
         var producer = Factory.Services.GetRequiredService<IKafkaProducer>();
 

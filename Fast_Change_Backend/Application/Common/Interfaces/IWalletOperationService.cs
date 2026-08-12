@@ -12,20 +12,24 @@ public interface IWalletOperationService
     /// </summary>
     /// <param name="wallet"></param>
     /// <param name="amount"></param>
+    /// <param name="operationId"></param>
     /// <returns></returns>
     (Transaction transaction, decimal newBalance) Deposit(
         Wallet wallet,
-        decimal amount);
+        decimal amount,
+        Guid operationId);
 
     /// <summary>
     /// Withdraws a specified amount from the given wallet and returns the transaction details along with the new balance.
     /// </summary>
     /// <param name="wallet"></param>
     /// <param name="amount"></param>
+    /// <param name="operationId"></param>
     /// <returns></returns>
     (Transaction transaction, decimal newBalance) Withdraw(
         Wallet wallet,
-        decimal amount);
+        decimal amount,
+        Guid operationId);
 
     /// <summary>
     /// Exchanges a specified amount from one wallet to another, applying the given exchange rate, and returns the transaction details for both wallets.

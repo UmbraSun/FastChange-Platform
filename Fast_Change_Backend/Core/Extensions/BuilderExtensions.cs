@@ -37,6 +37,9 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -372,23 +375,23 @@ public static class BuilderExtensions
     // MongoDB configuration
     private static void AddMongoDb(this IServiceCollection services, ConfigurationManager configuration)
     {
-        services.Configure<MongoSettings>(
-            configuration.GetSection(MongoSettings.SectionName));
-
+        BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
+        
+        services.Configure<MongoSettings>(configuration.GetSection(MongoSettings.SectionName));
         services.AddSingleton<IMongoClient>(sp =>
         {
             var settings = sp.GetRequiredService<IOptions<MongoSettings>>().Value;
             return new MongoClient(settings.ConnectionString);
         });
-
         services.AddSingleton(sp =>
         {
-            var settings =
-                sp.GetRequiredService<IOptions<MongoSettings>>().Value;
+            var settings = sp.GetRequiredService<IOptions<MongoSettings>>().Value;
 
             return sp.GetRequiredService<IMongoClient>()
                 .GetDatabase(settings.DatabaseName);
         });
+
+        services.AddSingleton<MongoIndexesInitializer>();
 
         services.AddScoped<IWalletHistoryReader, WalletHistoryRepository>();
         services.AddScoped<GetWalletHistoryHandler>();

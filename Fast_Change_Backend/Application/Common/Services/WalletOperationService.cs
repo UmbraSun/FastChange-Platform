@@ -8,23 +8,21 @@ public sealed class WalletOperationService : IWalletOperationService
 {
     public (Transaction transaction, decimal newBalance) Deposit(
         Wallet wallet,
-        decimal amount)
+        decimal amount,
+        Guid operationId)
     {
         wallet.Deposit(amount);
-
-        var tx = TransactionFactory.CreateDeposit(wallet, amount);
-
+        var tx = TransactionFactory.CreateDeposit(wallet, amount, operationId);
         return (tx, wallet.Balance);
     }
 
     public (Transaction transaction, decimal newBalance) Withdraw(
         Wallet wallet,
-        decimal amount)
+        decimal amount,
+        Guid operationId)
     {
         wallet.Withdraw(amount);
-
-        var tx = TransactionFactory.CreateWithdraw(wallet, amount);
-
+        var tx = TransactionFactory.CreateWithdraw(wallet, amount, operationId);
         return (tx, wallet.Balance);
     }
 
