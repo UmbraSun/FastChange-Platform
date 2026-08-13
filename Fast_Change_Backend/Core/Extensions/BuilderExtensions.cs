@@ -163,7 +163,7 @@ public static class BuilderExtensions
             options.AddPolicy("ExchangePolicy",
                 httpContext =>
                 {
-                    var userId = httpContext.User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value 
+                    var userId = httpContext.User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value
                         ?? httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
                     if (string.IsNullOrWhiteSpace(userId))
@@ -185,8 +185,7 @@ public static class BuilderExtensions
                         });
                 });
 
-            options.RejectionStatusCode =
-                StatusCodes.Status429TooManyRequests;
+            options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
         });
     }
 
@@ -249,7 +248,21 @@ public static class BuilderExtensions
                 ValidateIssuerSigningKey = true,
                 ValidIssuer = jwtSettings!.Issuer,
                 ValidAudience = jwtSettings.Audience,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret))
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret)),
+                NameClaimType = JwtRegisteredClaimNames.Sub
+            };
+            options.Events = new JwtBearerEvents
+            {
+                OnMessageReceived = context =>
+                {
+                    var accessToken = context.Request.Query["access_token"];
+                    var path = context.HttpContext.Request.Path;
+
+                    if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs/wallet"))
+                        context.Token = accessToken;
+
+                    return Task.CompletedTask;
+                }
             };
         });
     }
@@ -287,9 +300,9 @@ public static class BuilderExtensions
                 Delay = TimeSpan.FromSeconds(2),
                 BackoffType = DelayBackoffType.Exponential
             });
-        
+
             pipeline.AddTimeout(TimeSpan.FromSeconds(15));
-            
+
             pipeline.AddCircuitBreaker(new HttpCircuitBreakerStrategyOptions
             {
                 FailureRatio = 0.5,
@@ -317,9 +330,9 @@ public static class BuilderExtensions
                 Delay = TimeSpan.FromSeconds(2),
                 BackoffType = DelayBackoffType.Exponential
             });
-        
+
             pipeline.AddTimeout(TimeSpan.FromSeconds(15));
-        
+
             pipeline.AddCircuitBreaker(new HttpCircuitBreakerStrategyOptions
             {
                 FailureRatio = 0.5,
@@ -370,13 +383,14 @@ public static class BuilderExtensions
     {
         services.AddSignalR();
         services.AddSingleton<IWalletNotificationService, WalletNotificationService>();
+        services.AddScoped<ITransactionNotificationChannel, SignalRNotificationChannel>();
     }
 
     // MongoDB configuration
     private static void AddMongoDb(this IServiceCollection services, ConfigurationManager configuration)
     {
         BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
-        
+
         services.Configure<MongoSettings>(configuration.GetSection(MongoSettings.SectionName));
         services.AddSingleton<IMongoClient>(sp =>
         {
@@ -410,9 +424,7 @@ public static class BuilderExtensions
     // Observability configuration
     private static void AddObservability(this IServiceCollection services, IConfiguration configuration)
     {
-        services.Configure<TelemetryOptions>(
-            configuration.GetSection(
-                TelemetryOptions.SectionName));
+        services.Configure<TelemetryOptions>(configuration.GetSection(TelemetryOptions.SectionName));
 
         var settings = configuration
             .GetSection(TelemetryOptions.SectionName)
@@ -479,9 +491,7 @@ public static class BuilderExtensions
         services.AddScoped<IWalletAccessService, WalletAccessService>();
         services.AddScoped<IExchangeService, ExchangeService>();
 
-        services.AddScoped<IWalletNotificationService, WalletNotificationService>();
         services.AddScoped<INotificationDispatcher, NotificationDispatcher>();
-        services.AddScoped<ITransactionNotificationChannel, SignalRNotificationChannel>();
 
         services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
         services.AddSingleton<IJwtTokenValidator, JwtTokenValidator>();

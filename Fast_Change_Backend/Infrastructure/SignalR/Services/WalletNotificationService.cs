@@ -16,17 +16,15 @@ public sealed class WalletNotificationService
     }
 
     public async Task WalletUpdatedAsync(
+        Guid userId,
         Guid walletId,
         CancellationToken cancellationToken)
     {
         await _hub.Clients
-            .User(walletId.ToString())
+            .User(userId.ToString())
             .SendAsync(
                 "WalletUpdated",
-                new
-                {
-                    WalletId = walletId
-                },
+                new { WalletId = walletId },
                 cancellationToken);
     }
 }

@@ -1,19 +1,19 @@
-﻿using Domain.Entities;
-
-namespace Application.Common.Interfaces;
+﻿namespace Application.Common.Interfaces;
 
 /// <summary>
-/// Wallet notification service interface for sending notifications related to wallet updates.
+/// Provides real-time notifications about wallet updates.
 /// </summary>
 public interface IWalletNotificationService
 {
     /// <summary>
-    /// Updates the wallet and sends a notification to the user about the wallet update.
+    /// Notifies a user that one of their wallets has been updated.
     /// </summary>
-    /// <param name="walletId"></param>
+    /// <param name="userId">The owner of the updated wallet.</param>
+    /// <param name="walletId">The updated wallet.</param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task WalletUpdatedAsync(
+        Guid userId,
         Guid walletId,
         CancellationToken cancellationToken);
 }

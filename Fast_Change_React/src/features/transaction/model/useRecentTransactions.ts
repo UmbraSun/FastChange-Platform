@@ -1,8 +1,7 @@
 import { useQueries } from "@tanstack/react-query";
-import { useMemo } from "react";
 import { useWallets } from "@/entities/wallet/model/useWallets";
 import { getWalletHistory } from "@/entities/wallet/api/historyApi";
-import type { WalletHistoryItem, } from "@/entities/wallet/model/historyDto";
+import type { WalletHistoryItem } from "@/entities/wallet/model/historyDto";
 
 const RECENT_TRANSACTIONS_COUNT = 5;
 const HISTORY_TAKE = 50;
@@ -19,19 +18,19 @@ export function useRecentTransactions() {
         "wallet-history",
         wallet.walletId,
       ],
+
       queryFn: () =>
         getWalletHistory(
           wallet.walletId,
           HISTORY_TAKE,
         ),
+
       enabled: Boolean(wallet.walletId),
     })),
   });
 
-  const transactions = useMemo<
-    WalletHistoryItem[]
-  >(() => {
-    return historyQueries
+  const transactions: WalletHistoryItem[] =
+    historyQueries
       .flatMap(
         (query) => query.data ?? [],
       )
@@ -44,13 +43,16 @@ export function useRecentTransactions() {
         0,
         RECENT_TRANSACTIONS_COUNT,
       );
-  }, [historyQueries]);
 
-  const isLoading =
-    isWalletsLoading ||
+  const isLoading = isWalletsLoading ||
     historyQueries.some(
       (query) => query.isLoading,
     );
+
+  console.log(
+    "RECENT TRANSACTIONS",
+    historyQueries.map(query => query.data),
+  );
 
   return {
     data: transactions,
