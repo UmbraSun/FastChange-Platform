@@ -7,10 +7,26 @@ export function useExchange() {
   return useMutation({
     mutationFn: exchange,
 
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["wallets"],
-      });
+    onSuccess: async (_, variables) => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ["user-wallets"],
+        }),
+
+        queryClient.invalidateQueries({
+          queryKey: [
+            "wallet-history",
+            variables.fromWalletId,
+          ],
+        }),
+
+        queryClient.invalidateQueries({
+          queryKey: [
+            "wallet-history",
+            variables.toWalletId,
+          ],
+        }),
+      ]);
     },
   });
 }

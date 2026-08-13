@@ -20,5 +20,4 @@ public sealed class NotificationDispatcher : INotificationDispatcher
         foreach (var channel in _channels)
             await channel.NotifyAsync(@event, cancellationToken);
     }
-
 }
