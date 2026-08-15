@@ -26,7 +26,7 @@ using Infrastructure.Mongo.Services;
 using Infrastructure.Notifications;
 using Infrastructure.Observability;
 using Infrastructure.Redis;
-using Infrastructure.SignalR;
+using Infrastructure.SignalR.Providers;
 using Infrastructure.SignalR.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
@@ -238,7 +238,8 @@ public static class BuilderExtensions
         })
         .AddJwtBearer(options =>
         {
-            var jwtSettings = configuration.GetSection(JwtSettings.SectionName).Get<JwtSettings>();
+            var jwtSettings = configuration.GetSection(JwtSettings.SectionName).Get<JwtSettings>()
+                ?? throw new InvalidOperationException("JWT configuration is missing.");
 
             options.TokenValidationParameters = new TokenValidationParameters
             {
@@ -382,6 +383,7 @@ public static class BuilderExtensions
     private static void AddSignalRConf(this IServiceCollection services)
     {
         services.AddSignalR();
+        services.AddSingleton<IUserIdProvider, WalletUserIdProvider>();
         services.AddSingleton<IWalletNotificationService, WalletNotificationService>();
         services.AddScoped<ITransactionNotificationChannel, SignalRNotificationChannel>();
     }
@@ -481,8 +483,6 @@ public static class BuilderExtensions
         services.AddScoped<IOutboxWriter, OutboxWriter>();
         services.AddScoped<IOutboxStore, OutboxStore>();
         services.AddScoped<IWalletHistoryWriter, WalletHistoryWriter>();
-
-        services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
 
         services.AddScoped<IIntegrationEventHandler<TransactionCompletedEvent>, TransactionCompletedHandler>();
 
