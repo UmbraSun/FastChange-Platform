@@ -1,9 +1,11 @@
 ﻿using Application.Common.Interfaces;
 using Application.Common.Models;
+using Contracts.Exceptions;
+using Resources;
 
 namespace Infrastructure.ExchangeRates.Providers;
 
-public sealed class ExchangeRateProvider
+public sealed class ExchangeRateProvider 
     : IExchangeRateProvider
 {
     private readonly FrankfurterExchangeRateProvider _fiatProvider;
@@ -17,21 +19,23 @@ public sealed class ExchangeRateProvider
         _cryptoProvider = cryptoProvider;
     }
 
-
-    public Task<ExchangeRate> GetRateAsync(
+    public async Task<ExchangeRate> GetRateAsync(
         string from,
         string to,
         CancellationToken cancellationToken)
     {
         if (CurrencyHelper.IsCrypto(from))
-            return _cryptoProvider.GetRateAsync(
-                from,
-                to,
-                cancellationToken);
+            return await _cryptoProvider.GetRateAsync(from, to, cancellationToken);
 
-        return _fiatProvider.GetRateAsync(
-            from,
-            to,
-            cancellationToken);
+        if (CurrencyHelper.IsCrypto(to))
+        {
+            var reverseRate = await _cryptoProvider.GetRateAsync(to, from, cancellationToken);
+            if (reverseRate.Rate <= 0)
+                throw new ExternalServiceException(Localization.ExchangeRateNotFound);
+            
+            return new ExchangeRate(from, to, 1m / reverseRate.Rate, reverseRate.RetrievedAtUtc);
+        }
+
+        return await _fiatProvider.GetRateAsync(from, to, cancellationToken);
     }
 }

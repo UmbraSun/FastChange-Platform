@@ -2,14 +2,12 @@ import { useWallets } from "@/entities/wallet/model/useWallets";
 import { useMemo, useState } from "react";
 import { useExchangePreview } from "../model/useExchangePreview";
 import { useExchange } from "../model/useExchange";
-import { useQueryClient } from "@tanstack/react-query";
 
 export function ExchangeCard() {
   const {
     data: wallets,
     isLoading,
   } = useWallets();
-  const queryClient = useQueryClient();
 
   const [fromWalletId, setFromWalletId] = useState("");
   const [toWalletId, setToWalletId] = useState("");
@@ -44,15 +42,6 @@ export function ExchangeCard() {
         toWalletId,
         amount: Number(amount),
       },
-      {
-        onSuccess: async () => {
-          setAmount("");
-
-          await queryClient.invalidateQueries({
-            queryKey: ["user-wallets"],
-          });
-        },
-      }
     );
   };
 

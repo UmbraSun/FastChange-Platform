@@ -26,54 +26,37 @@ public sealed class FrankfurterClient
     {
         try
         {
-            _logger.LogInformation(
-                "Exchange rate request: {From} -> {To}",
-                from, to);
+            _logger.LogInformation("Exchange rate request: {From} -> {To}", from, to);
 
-            var response = await _httpClient.GetAsync(
-                $"v2/rate/{from}/{to}",
-                cancellationToken);
+            var response = await _httpClient.GetAsync($"v2/rate/{from}/{to}", cancellationToken);
 
             if (!response.IsSuccessStatusCode)
             {
-                _logger.LogError(
-                    "Frankfurter API error: {StatusCode}",
-                    response.StatusCode);
-
-                throw new ExternalServiceException(
-                    Localization.ExchangeRateProviderUnavailable);
+                _logger.LogError("Frankfurter API error: {StatusCode}", response.StatusCode);
+                throw new ExternalServiceException(Localization.ExchangeRateProviderUnavailable);
             }
 
-            var result = await response.Content.ReadFromJsonAsync<FrankfurterResponse>(
-                cancellationToken: cancellationToken);
+            var result = await response.Content.ReadFromJsonAsync<FrankfurterResponse>(cancellationToken: cancellationToken);
 
             if (result is null)
             {
                 _logger.LogError("Frankfurter returned empty response");
-
-                throw new ExternalServiceException(
-                    Localization.EmptyResponseFromExchangeProvider);
+                throw new ExternalServiceException(Localization.EmptyResponseFromExchangeProvider);
             }
 
-            _logger.LogInformation(
-                "Exchange rate received successfully: {From} -> {To}",
-                from, to);
+            _logger.LogInformation("Exchange rate received successfully: {From} -> {To}", from, to);
 
             return result;
         }
         catch (TaskCanceledException)
         {
             _logger.LogError("Frankfurter request timeout");
-
-            throw new ExternalServiceException(
-                Localization.ExchangeRateProviderTimeout);
+            throw new ExternalServiceException(Localization.ExchangeRateProviderTimeout);
         }
         catch (Exception ex) when (ex is not ExternalServiceException)
         {
             _logger.LogError(ex, "Unexpected Frankfurter error");
-
-            throw new ExternalServiceException(
-                Localization.UnexpectedExchangeRateProviderError);
+            throw new ExternalServiceException(Localization.UnexpectedExchangeRateProviderError);
         }
     }
 }

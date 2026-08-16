@@ -1,8 +1,5 @@
 import { apiClient } from "@/shared/api/apiClient";
-import type {
-  ExchangePreviewRequest,
-  ExchangePreviewResponse,
-} from "../model/dto";
+import type { ExchangePreviewRequest, ExchangePreviewResponse, } from "../model/dto";
 
 export async function previewExchange(
   request: ExchangePreviewRequest,

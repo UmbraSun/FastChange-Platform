@@ -20,17 +20,7 @@ public class FrankfurterExchangeRateProvider
         string toCurrency,
         CancellationToken cancellationToken)
     {
-        var response = await _client.GetLatestRateAsync(
-            fromCurrency,
-            toCurrency,
-            cancellationToken);
-
-        var rate = response.Rates[toCurrency];
-
-        return new ExchangeRate(
-            fromCurrency,
-            toCurrency,
-            rate,
-            DateTime.UtcNow);
+        var response = await _client.GetLatestRateAsync(fromCurrency, toCurrency, cancellationToken);
+        return new ExchangeRate(fromCurrency, toCurrency, response.Rate, DateTime.UtcNow);
     }
 }
