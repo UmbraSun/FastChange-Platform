@@ -38,6 +38,7 @@ public sealed class RegisterUserCommandHandler
         var defaultWallets = new List<Wallet>
         {
             new() { Id = Guid.NewGuid(), UserId = user.Id, Currency = "USD" },
+            new() { Id = Guid.NewGuid(), UserId = user.Id, Currency = "EUR" },
             new() { Id = Guid.NewGuid(), UserId = user.Id, Currency = "BTC" }
         };
 

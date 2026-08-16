@@ -25,78 +25,84 @@ public sealed class CoinGeckoClient
     {
         try
         {
-            var fromId = CurrencyHelper.GetCoinGeckoId(from);
-            var toId = CurrencyHelper.GetCoinGeckoId(to);
+            _logger.LogInformation("Exchange rate request: {From} -> {To}", from, to);
 
-            _logger.LogInformation(
-                "Exchange rate request: {From} -> {To}",
-                from, to);
+            var fromIsCrypto = CurrencyHelper.IsCrypto(from);
+            var toIsCrypto = CurrencyHelper.IsCrypto(to);
 
-            var response = await _httpClient.GetAsync(
-                $"api/v3/simple/price?ids={fromId}&vs_currencies={toId}",
-                cancellationToken);
+            if (!fromIsCrypto && !toIsCrypto)
+                throw new ExternalServiceException(Localization.ExchangeRateNotFound);
 
-            if (!response.IsSuccessStatusCode)
+            if (!fromIsCrypto && toIsCrypto)
             {
-                _logger.LogError(
-                    "CoinGecko API error: {StatusCode}",
-                    response.StatusCode);
+                var directRate = await GetRateAsync(to, from, cancellationToken);
 
-                throw new ExternalServiceException(
-                    Localization.ExchangeRateProviderUnavailable);
-            }
+                if (directRate == 0)
+                {
+                    _logger.LogError("CoinGecko returned zero rate: {From} -> {To}", to, from);
+                    throw new ExternalServiceException(Localization.ExchangeRateNotFound);
+                }
 
-            var rawData = await response.Content.ReadFromJsonAsync<Dictionary<string, Dictionary<string, decimal>>>(
-                cancellationToken: cancellationToken);
+                var inverseRate = 1m / directRate;
 
-            if (rawData is null)
-            {
-                _logger.LogError("CoinGecko returned empty response");
-                throw new ExternalServiceException(Localization.EmptyResponseFromExchangeProvider);
-            }
-
-            rawData.TryGetValue(fromId, out var rate);
-
-            if (rate is null)
-            {
-                _logger.LogError("CoinGecko returned empty response");
-
-                throw new ExternalServiceException(
-                    Localization.EmptyResponseFromExchangeProvider);
-            }
-
-            if (!rate.TryGetValue(
-                toId,
-                out var result))
-            {
-                _logger.LogError(
-                    "CoinGecko rate not found: {From} -> {To}",
+                _logger.LogInformation("Inverse CoinGecko rate received: {From} -> {To}, Rate: {Rate}",
                     from,
-                    to);
+                    to,
+                    inverseRate);
 
-                throw new ExternalServiceException(
-                    Localization.ExchangeRateNotFound);
+                return inverseRate;
             }
 
-            _logger.LogInformation(
-                "Exchange rate received successfully: {From} -> {To}",
-                from, to);
-
-            return result;
+            return await GetRateAsync(from, to, cancellationToken);
         }
         catch (TaskCanceledException)
         {
             _logger.LogError("CoinGecko request timeout");
-
-            throw new ExternalServiceException(
-                Localization.ExchangeRateProviderTimeout);
+            throw new ExternalServiceException(Localization.ExchangeRateProviderTimeout);
         }
         catch (Exception ex) when (ex is not ExternalServiceException)
         {
             _logger.LogError(ex, "Unexpected CoinGecko error");
-
-            throw new ExternalServiceException(
-                Localization.UnexpectedExchangeRateProviderError);
+            throw new ExternalServiceException(Localization.UnexpectedExchangeRateProviderError);
         }
+    }
+
+    private async Task<decimal> GetRateAsync(
+        string from,
+        string to,
+        CancellationToken cancellationToken)
+    {
+        var fromId = CurrencyHelper.GetCoinGeckoId(from);
+        var toCurrency = to.ToLowerInvariant();
+        var response = await _httpClient.GetAsync($"api/v3/simple/price?ids={fromId}&vs_currencies={toCurrency}", cancellationToken);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            _logger.LogError("CoinGecko API error: {StatusCode}",response.StatusCode);
+            throw new ExternalServiceException(Localization.ExchangeRateProviderUnavailable);
+        }
+
+        var rawData = await response.Content
+            .ReadFromJsonAsync<Dictionary<string, Dictionary<string, decimal>>>(cancellationToken: cancellationToken);
+
+        if (rawData is null)
+        {
+            _logger.LogError("CoinGecko returned empty response");
+            throw new ExternalServiceException(Localization.EmptyResponseFromExchangeProvider);
+        }
+
+        if (!rawData.TryGetValue(fromId, out var rate))
+        {
+            _logger.LogError("CoinGecko currency not found: {Currency}", from);
+            throw new ExternalServiceException(Localization.ExchangeRateNotFound);
+        }
+
+        if (!rate.TryGetValue(toCurrency, out var result))
+        {
+            _logger.LogError("CoinGecko rate not found: {From} -> {To}", from, to);
+            throw new ExternalServiceException(Localization.ExchangeRateNotFound);
+        }
+
+        return result;
     }
 }

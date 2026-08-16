@@ -19,15 +19,7 @@ public class CoinGeckoExchangeRateProvider
         string to,
         CancellationToken cancellationToken)
     {
-        var rate = await _client.GetLatestRateAsync(
-            from,
-            to,
-            cancellationToken);
-
-        return new ExchangeRate(
-            from,
-            to,
-            rate,
-            DateTime.UtcNow);
+        var rate = await _client.GetLatestRateAsync(from, to, cancellationToken);
+        return new ExchangeRate(from, to, rate, DateTime.UtcNow);
     }
 }
