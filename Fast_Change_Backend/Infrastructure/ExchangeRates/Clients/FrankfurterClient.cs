@@ -59,4 +59,84 @@ public sealed class FrankfurterClient
             throw new ExternalServiceException(Localization.UnexpectedExchangeRateProviderError);
         }
     }
+
+    public async Task<decimal> GetRateAsync(
+        string fromCurrency,
+        string toCurrency,
+        DateOnly date,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            _logger.LogInformation("Historical exchange rate request: {From} -> {To}, Date: {Date}", fromCurrency, toCurrency, date);
+
+            var response = await _httpClient.GetAsync($"v2/rate/{fromCurrency}/{toCurrency}?date={date:yyyy-MM-dd}", cancellationToken);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError("Frankfurter API error: {StatusCode}", response.StatusCode);
+                throw new ExternalServiceException(Localization.ExchangeRateProviderUnavailable);
+            }
+
+            var result = await response.Content.ReadFromJsonAsync<FrankfurterResponse>(cancellationToken: cancellationToken);
+
+            if (result is null)
+            {
+                _logger.LogError("Frankfurter returned empty response");
+                throw new ExternalServiceException(Localization.EmptyResponseFromExchangeProvider);
+            }
+
+            return result.Rate;
+        }
+        catch (TaskCanceledException)
+        {
+            _logger.LogError("Frankfurter request timeout");
+            throw new ExternalServiceException(Localization.ExchangeRateProviderTimeout);
+        }
+        catch (Exception ex) when (ex is not ExternalServiceException)
+        {
+            _logger.LogError(ex, "Unexpected Frankfurter error");
+            throw new ExternalServiceException(Localization.UnexpectedExchangeRateProviderError);
+        }
+    }
+
+    public async Task<decimal> GetHistoricalRateAsync(
+        string from,
+        string to,
+        DateOnly date,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            _logger.LogInformation("Historical exchange rate request: {From} -> {To}, Date: {Date}", from, to, date);
+
+            var response = await _httpClient.GetAsync($"v2/rate/{from}/{to}?date={date:yyyy-MM-dd}", cancellationToken);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError("Frankfurter historical API error: {StatusCode}", response.StatusCode);
+                throw new ExternalServiceException(Localization.ExchangeRateProviderUnavailable);
+            }
+
+            var result = await response.Content.ReadFromJsonAsync<FrankfurterResponse>(cancellationToken: cancellationToken);
+            if (result is null)
+                throw new ExternalServiceException(Localization.EmptyResponseFromExchangeProvider);
+            if (result.Rate <= 0)
+            {
+                _logger.LogError("Frankfurter returned invalid historical rate: {From} -> {To}, Rate: {Rate}", from, to, result.Rate);
+                throw new ExternalServiceException(Localization.ExchangeRateNotFound);
+            }
+
+            return result.Rate;
+        }
+        catch (TaskCanceledException)
+        {
+            throw new ExternalServiceException(Localization.ExchangeRateProviderTimeout);
+        }
+        catch (Exception ex) when (ex is not ExternalServiceException)
+        {
+            _logger.LogError(ex, "Unexpected Frankfurter historical rate error");
+            throw new ExternalServiceException(Localization.UnexpectedExchangeRateProviderError);
+        }
+    }
 }

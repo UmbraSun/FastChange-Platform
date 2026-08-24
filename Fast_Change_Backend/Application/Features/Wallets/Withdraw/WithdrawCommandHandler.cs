@@ -54,6 +54,7 @@ public sealed class WithdrawCommandHandler
             TransactionType.Withdraw,
             result.newBalance,
             0m,
+            result.transaction.CreatedAtUtc,
             null);
 
         await _outboxWriter.AddAsync(integrationEvent, cancellationToken);

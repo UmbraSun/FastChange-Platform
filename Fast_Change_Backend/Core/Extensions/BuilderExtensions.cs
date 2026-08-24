@@ -354,7 +354,7 @@ public static class BuilderExtensions
             return ConnectionMultiplexer.Connect(connectionString);
         });
         services.AddScoped<IExchangeRateCache, ExchangeRateRedisCache>();
-
+        services.AddScoped<IMarketDataProvider, FrankfurterMarketDataProvider>();
         services.AddScoped<FrankfurterExchangeRateProvider>();
         services.AddScoped<CoinGeckoExchangeRateProvider>();
 

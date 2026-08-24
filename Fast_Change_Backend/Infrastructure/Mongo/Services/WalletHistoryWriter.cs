@@ -101,7 +101,7 @@ public sealed class WalletHistoryWriter : IWalletHistoryWriter
             OperationType = @event.Type.ToString(),
             ExchangeRate = @event.ExchangeRate,
             ReceivedAmount = @event.ReceivedAmount,
-            CreatedAtUtc = DateTime.UtcNow
+            CreatedAtUtc = @event.CreatedAtUtc
         };
     }
 }
