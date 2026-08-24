@@ -83,6 +83,7 @@ public sealed class ExchangeCommandHandler
             TransactionType.Exchange,
             fromWallet.Balance,
             toWallet.Balance,
+            result.DepositTransaction.CreatedAtUtc,
             rate.Rate);
 
         await _outboxWriter.AddAsync(integrationEvent, cancellationToken);

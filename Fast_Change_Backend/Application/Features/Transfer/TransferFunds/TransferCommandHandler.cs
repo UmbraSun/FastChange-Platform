@@ -84,7 +84,8 @@ public sealed class TransferCommandHandler
             toWallet.Currency,
             TransactionType.Transfer,
             fromWallet.Balance,
-            toWallet.Balance);
+            toWallet.Balance,
+            depositTransaction.CreatedAtUtc);
 
         await _outboxWriter.AddAsync(integrationEvent, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);

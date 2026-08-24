@@ -55,7 +55,8 @@ public sealed class DepositCommandHandler
             wallet.Currency,
             TransactionType.Deposit,
             0m,
-            result.newBalance);
+            result.newBalance,
+            result.transaction.CreatedAtUtc);
 
         await _outboxWriter.AddAsync(integrationEvent, cancellationToken);
         

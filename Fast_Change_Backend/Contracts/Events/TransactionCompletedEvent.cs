@@ -13,4 +13,5 @@ public sealed record TransactionCompletedEvent(
     TransactionType Type,
     decimal FromBalanceAfter,
     decimal ToBalanceAfter,
+    DateTime CreatedAtUtc,
     decimal? ExchangeRate = null);

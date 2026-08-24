@@ -1,7 +1,9 @@
-﻿using Contracts.Exceptions;
+﻿using Application.Common.Models;
+using Contracts.Exceptions;
 using Microsoft.Extensions.Logging;
 using Resources;
 using System.Net.Http.Json;
+using System.Text.Json;
 
 namespace Infrastructure.ExchangeRates.Clients;
 
@@ -104,5 +106,71 @@ public sealed class CoinGeckoClient
         }
 
         return result;
+    }
+
+    public async Task<MarketData> GetMarketDataAsync(
+        string currency,
+        string targetCurrency,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var currencyId = CurrencyHelper.GetCoinGeckoId(currency);
+            var target = targetCurrency.ToLowerInvariant();
+
+            _logger.LogInformation("Market data request: {Currency} -> {TargetCurrency}", currency, targetCurrency);
+
+            var response = await _httpClient.GetAsync(
+                $"api/v3/simple/price" +
+                $"?ids={currencyId}" +
+                $"&vs_currencies={target}" +
+                "&include_24hr_change=true",
+                cancellationToken);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError("CoinGecko API error: {StatusCode}", response.StatusCode);
+                throw new ExternalServiceException(Localization.ExchangeRateProviderUnavailable);
+            }
+
+            var rawData = await response.Content.ReadFromJsonAsync<
+                Dictionary<string, Dictionary<string, JsonElement>>>(cancellationToken: cancellationToken);
+
+            if (rawData is null)
+            {
+                _logger.LogError("CoinGecko returned empty response");
+                throw new ExternalServiceException(Localization.EmptyResponseFromExchangeProvider);
+            }
+
+            if (!rawData.TryGetValue(currencyId, out var data))
+            {
+                _logger.LogError("CoinGecko currency not found: {Currency}", currency);
+                throw new ExternalServiceException(Localization.ExchangeRateNotFound);
+            }
+
+            if (!data.TryGetValue(target, out var priceElement))
+                throw new ExternalServiceException(Localization.ExchangeRateNotFound);
+
+            if (!data.TryGetValue($"{target}_24h_change", out var changeElement))
+            {
+                _logger.LogError("CoinGecko 24h change not found: {Currency} -> {TargetCurrency}", currency, targetCurrency);
+                throw new ExternalServiceException(Localization.ExchangeRateNotFound);
+            }
+
+            var price = priceElement.GetDecimal();
+            var change24h = changeElement.GetDecimal();
+
+            return new MarketData(currency, targetCurrency, price, change24h, DateTime.UtcNow);
+        }
+        catch (TaskCanceledException)
+        {
+            _logger.LogError("CoinGecko market data request timeout");
+            throw new ExternalServiceException(Localization.ExchangeRateProviderTimeout);
+        }
+        catch (Exception ex) when (ex is not ExternalServiceException)
+        {
+            _logger.LogError(ex, "Unexpected CoinGecko market data error");
+            throw new ExternalServiceException(Localization.UnexpectedExchangeRateProviderError);
+        }
     }
 }
