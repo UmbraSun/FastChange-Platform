@@ -80,10 +80,7 @@ public sealed class WalletHistoryWriter : IWalletHistoryWriter
                 throw new InvalidOperationException($"Unsupported transaction type: {@event.Type}");
         }
 
-        await _collection.InsertManyAsync(
-            documents,
-            new InsertManyOptions { IsOrdered = false },
-            ct);
+        await _collection.InsertManyAsync(documents, new InsertManyOptions { IsOrdered = false }, ct);
     }
 
     private static WalletHistoryDocument CreateDocument(

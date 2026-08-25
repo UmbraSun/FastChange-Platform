@@ -281,8 +281,7 @@ public static class BuilderExtensions
     // Cache provider configuration
     private static void AddCacheProvider(this IServiceCollection services, ConfigurationManager configuration)
     {
-        services.Configure<ExchangeRateSettings>(
-            configuration.GetSection(ExchangeRateSettings.SectionName));
+        services.Configure<ExchangeRateSettings>(configuration.GetSection(ExchangeRateSettings.SectionName));
 
         services.AddHttpClient<CoinGeckoClient>((sp, client) =>
         {
@@ -354,7 +353,6 @@ public static class BuilderExtensions
             return ConnectionMultiplexer.Connect(connectionString);
         });
         services.AddScoped<IExchangeRateCache, ExchangeRateRedisCache>();
-        services.AddScoped<IMarketDataProvider, FrankfurterMarketDataProvider>();
         services.AddScoped<FrankfurterExchangeRateProvider>();
         services.AddScoped<CoinGeckoExchangeRateProvider>();
 
@@ -367,6 +365,13 @@ public static class BuilderExtensions
 
             return new CachedExchangeRateProvider(inner, cache);
         });
+
+        services.AddScoped<IMarketDataProvider, CoinGeckoMarketDataProvider>();
+        
+        services.AddScoped<FrankfurterHistoricalExchangeRateProvider>();
+        services.AddScoped<CoinGeckoHistoricalExchangeRateProvider>();
+        
+        services.AddScoped<IHistoricalExchangeRateProvider, HistoricalExchangeRateProvider>();
     }
 
     // RabbitMQ configuration

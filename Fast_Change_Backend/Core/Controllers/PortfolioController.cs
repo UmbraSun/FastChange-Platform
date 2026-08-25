@@ -1,4 +1,5 @@
 ﻿using Application.Features.Portfolio.GetPortfolio;
+using Application.Features.Portfolio.GetPortfolioPerformance;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -34,6 +35,22 @@ public sealed class PortfolioController : ControllerBase
         CancellationToken cancellationToken = default)
     {
         var result = await _sender.Send(new GetPortfolioQuery(currency), cancellationToken);
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Gets the performance of the portfolio, including the current value, previous value, change amount, and change percentage, converted to the specified currency.
+    /// </summary>
+    /// <param name="currency"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    [HttpGet("performance")]
+    public async Task<IActionResult> GetPerformance(
+        [FromQuery] string currency = "USD",
+        CancellationToken cancellationToken = default)
+    {
+        var result = await _sender.Send(new GetPortfolioPerformanceQuery(currency), cancellationToken);
+
         return Ok(result);
     }
 }

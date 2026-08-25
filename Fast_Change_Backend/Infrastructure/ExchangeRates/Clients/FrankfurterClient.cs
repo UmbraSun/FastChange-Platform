@@ -1,7 +1,9 @@
 ﻿using Contracts.Exceptions;
 using Infrastructure.ExchangeRates.Contracts;
+using Infrastructure.ExchangeRates.Exceptions;
 using Microsoft.Extensions.Logging;
 using Resources;
+using System.Net;
 using System.Net.Http.Json;
 
 namespace Infrastructure.ExchangeRates.Clients;
@@ -112,6 +114,12 @@ public sealed class FrankfurterClient
 
             var response = await _httpClient.GetAsync($"v2/rate/{from}/{to}?date={date:yyyy-MM-dd}", cancellationToken);
 
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                _logger.LogInformation("Frankfurter has no rate for {From} -> {To} on {Date}", from, to, date);
+                throw new HistoricalRateNotAvailableException(from, to, date);
+            }
+
             if (!response.IsSuccessStatusCode)
             {
                 _logger.LogError("Frankfurter historical API error: {StatusCode}", response.StatusCode);
@@ -132,6 +140,10 @@ public sealed class FrankfurterClient
         catch (TaskCanceledException)
         {
             throw new ExternalServiceException(Localization.ExchangeRateProviderTimeout);
+        }
+        catch (HistoricalRateNotAvailableException)
+        {
+            throw;
         }
         catch (Exception ex) when (ex is not ExternalServiceException)
         {

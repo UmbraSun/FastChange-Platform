@@ -31,6 +31,32 @@ public sealed class WalletHistoryRepository
 
         return data.Select(x => new WalletHistoryItem(
             x.OperationId,
+            x.WalletId,
+            x.SignedAmount,
+            x.BalanceAfter,
+            x.OperationType,
+            x.ExchangeRate,
+            x.ReceivedAmount,
+            x.CreatedAtUtc))
+            .ToList();
+    }
+
+    public async Task<IReadOnlyList<WalletHistoryItem>> GetByWalletsAsync(
+        IReadOnlyCollection<Guid> walletIds,
+        DateTime fromUtc,
+        CancellationToken cancellationToken)
+    {
+        if (walletIds.Count == 0)
+            return [];
+
+        var data = await _collection
+            .Find(x => walletIds.Contains(x.WalletId) && x.CreatedAtUtc >= fromUtc)
+            .SortBy(x => x.CreatedAtUtc)
+            .ToListAsync(cancellationToken);
+
+        return data.Select(x => new WalletHistoryItem(
+            x.OperationId,
+            x.WalletId,
             x.SignedAmount,
             x.BalanceAfter,
             x.OperationType,
