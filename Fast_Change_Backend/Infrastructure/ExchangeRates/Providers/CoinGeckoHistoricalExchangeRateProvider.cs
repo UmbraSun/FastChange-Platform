@@ -9,8 +9,7 @@ public sealed class CoinGeckoHistoricalExchangeRateProvider
 {
     private readonly CoinGeckoClient _client;
 
-    public CoinGeckoHistoricalExchangeRateProvider(
-        CoinGeckoClient client)
+    public CoinGeckoHistoricalExchangeRateProvider(CoinGeckoClient client)
     {
         _client = client;
     }
@@ -22,7 +21,7 @@ public sealed class CoinGeckoHistoricalExchangeRateProvider
         CancellationToken cancellationToken)
     {
         var rate = await _client.GetHistoricalRateAsync(fromCurrency, toCurrency, date, cancellationToken);
-
+        
         return new ExchangeRate(fromCurrency, toCurrency, rate, date.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc));
     }
 }

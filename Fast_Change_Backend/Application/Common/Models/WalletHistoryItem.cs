@@ -12,6 +12,7 @@
 /// <param name="CreatedAtUtc"></param>
 public sealed record WalletHistoryItem(
     Guid OperationId,
+    Guid WalletId,
     decimal SignedAmount,
     decimal BalanceAfter,
     string OperationType,

@@ -18,4 +18,16 @@ public interface IWalletHistoryReader
         Guid walletId,
         int take,
         CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Gets the wallet history items for multiple wallets starting from a specific date.
+    /// </summary>
+    /// <param name="walletIds"></param>
+    /// <param name="fromUtc"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<IReadOnlyList<WalletHistoryItem>> GetByWalletsAsync(
+        IReadOnlyCollection<Guid> walletIds,
+        DateTime fromUtc,
+        CancellationToken cancellationToken);
 }

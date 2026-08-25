@@ -1,7 +1,10 @@
 ﻿using Application.Common.Models;
 using Contracts.Exceptions;
+using Infrastructure.ExchangeRates.Contracts;
+using Infrastructure.ExchangeRates.Exceptions;
 using Microsoft.Extensions.Logging;
 using Resources;
+using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 
@@ -80,7 +83,7 @@ public sealed class CoinGeckoClient
 
         if (!response.IsSuccessStatusCode)
         {
-            _logger.LogError("CoinGecko API error: {StatusCode}",response.StatusCode);
+            _logger.LogError("CoinGecko API error: {StatusCode}", response.StatusCode);
             throw new ExternalServiceException(Localization.ExchangeRateProviderUnavailable);
         }
 
@@ -170,6 +173,72 @@ public sealed class CoinGeckoClient
         catch (Exception ex) when (ex is not ExternalServiceException)
         {
             _logger.LogError(ex, "Unexpected CoinGecko market data error");
+            throw new ExternalServiceException(Localization.UnexpectedExchangeRateProviderError);
+        }
+    }
+
+    public async Task<decimal> GetHistoricalRateAsync(
+        string from,
+        string to,
+        DateOnly date,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            _logger.LogInformation("Historical CoinGecko rate request: {From} -> {To}, Date: {Date}", from, to, date);
+
+            var fromIsCrypto = CurrencyHelper.IsCrypto(from);
+            var toIsCrypto = CurrencyHelper.IsCrypto(to);
+
+            if (!fromIsCrypto)
+                throw new ExternalServiceException(Localization.ExchangeRateNotFound);
+
+            var coinId = CurrencyHelper.GetCoinGeckoId(from);
+            var response = await _httpClient.GetAsync($"api/v3/coins/{coinId}/history?date={date:dd-MM-yyyy}&localization=false", cancellationToken);
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                _logger.LogInformation("CoinGecko historical rate not found: {From} -> {To}, Date: {Date}", from, to, date);
+                throw new HistoricalRateNotAvailableException(from, to, date);
+            }
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError("CoinGecko historical API error: {StatusCode}", response.StatusCode);
+                throw new ExternalServiceException(Localization.ExchangeRateProviderUnavailable);
+            }
+
+            var result = await response.Content.ReadFromJsonAsync<CoinGeckoHistoryResponse>(cancellationToken: cancellationToken);
+            if (result?.MarketData?.CurrentPrice is null)
+                throw new ExternalServiceException(Localization.EmptyResponseFromExchangeProvider);
+
+            var targetCurrency = to.ToLowerInvariant();
+
+            if (!result.MarketData.CurrentPrice.TryGetValue(
+                    targetCurrency,
+                    out var rate))
+            {
+                _logger.LogError("CoinGecko historical rate not found: {From} -> {To}, Date: {Date}", from, to, date);
+                throw new ExternalServiceException(Localization.ExchangeRateNotFound);
+            }
+
+            if (rate <= 0)
+                throw new ExternalServiceException(Localization.ExchangeRateNotFound);
+
+            return rate;
+        }
+        catch (TaskCanceledException)
+        {
+            _logger.LogError("CoinGecko historical request timeout");
+            throw new ExternalServiceException(Localization.ExchangeRateProviderTimeout);
+        }
+        catch (HistoricalRateNotAvailableException)
+        {
+            throw;
+        }
+        catch (Exception ex) when (ex is not ExternalServiceException)
+        {
+            _logger.LogError(ex, "Unexpected CoinGecko historical error");
             throw new ExternalServiceException(Localization.UnexpectedExchangeRateProviderError);
         }
     }

@@ -1,11 +1,12 @@
-﻿using Application.Common.Interfaces;
-using Application.Common.Models;
+﻿using Application.Common.Models;
+using Contracts.Exceptions;
 using Infrastructure.ExchangeRates.Clients;
+using Infrastructure.ExchangeRates.Exceptions;
+using Resources;
 
 namespace Infrastructure.ExchangeRates.Providers;
 
 public sealed class FrankfurterHistoricalExchangeRateProvider
-    : IHistoricalExchangeRateProvider
 {
     private readonly FrankfurterClient _client;
 
@@ -20,8 +21,27 @@ public sealed class FrankfurterHistoricalExchangeRateProvider
         DateOnly date,
         CancellationToken cancellationToken)
     {
-        var rate = await _client.GetHistoricalRateAsync(fromCurrency, toCurrency, date, cancellationToken);
+        const int maxLookbackDays = 7;
 
-        return new ExchangeRate(fromCurrency, toCurrency, rate, date.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc));
+        for (var daysBack = 0; daysBack <= maxLookbackDays; daysBack++)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var requestedDate = date.AddDays(-daysBack);
+
+            try
+            {
+                var rate = await _client.GetHistoricalRateAsync(fromCurrency, toCurrency, requestedDate, cancellationToken);
+
+                return new ExchangeRate(fromCurrency, toCurrency, rate, requestedDate.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc));
+            }
+            catch (HistoricalRateNotAvailableException)
+            {
+                // Weekend / holiday.
+                // Try the previous calendar day.
+            }
+        }
+
+        throw new ExternalServiceException(Localization.ExchangeRateNotFound);
     }
 }
