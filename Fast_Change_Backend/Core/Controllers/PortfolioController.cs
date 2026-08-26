@@ -1,4 +1,5 @@
-﻿using Application.Features.Portfolio.GetPortfolio;
+﻿using Application.Features.Portfolio.GetMarketOverview;
+using Application.Features.Portfolio.GetPortfolio;
 using Application.Features.Portfolio.GetPortfolioPerformance;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -50,7 +51,23 @@ public sealed class PortfolioController : ControllerBase
         CancellationToken cancellationToken = default)
     {
         var result = await _sender.Send(new GetPortfolioPerformanceQuery(currency), cancellationToken);
+        return Ok(result);
+    }
 
+    /// <summary>
+    /// Gets current market prices and 24-hour price changes for the requested cryptocurrencies.
+    /// </summary>
+    /// <param name="currencies"></param>
+    /// <param name="currency"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    [HttpGet("market")]
+    public async Task<IActionResult> GetMarketOverview(
+        [FromQuery] IReadOnlyCollection<string> currencies,
+        [FromQuery] string currency = "USD",
+        CancellationToken cancellationToken = default)
+    {
+        var result = await _sender.Send(new GetMarketOverviewQuery(currencies, currency), cancellationToken);
         return Ok(result);
     }
 }
