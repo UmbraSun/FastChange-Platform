@@ -242,4 +242,53 @@ public sealed class CoinGeckoClient
             throw new ExternalServiceException(Localization.UnexpectedExchangeRateProviderError);
         }
     }
+
+    public async Task<IReadOnlyDictionary<string, CoinGeckoSimplePriceResponse>> GetMarketDataAsync(
+        IReadOnlyCollection<string> currencies,
+        string quoteCurrency,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            if (currencies.Count == 0)
+                return new Dictionary<string, CoinGeckoSimplePriceResponse>();
+
+            var ids = currencies.Select(CurrencyHelper.GetCoinGeckoId)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+
+            var query = string.Join(",", ids);
+            var quote = quoteCurrency.ToLowerInvariant();
+
+            _logger.LogInformation("CoinGecko market data request: {Currencies} -> {QuoteCurrency}", string.Join(",", currencies), quoteCurrency);
+            
+            var response = await _httpClient.GetAsync($"api/v3/simple/price?ids={query}&vs_currencies={quote}&include_24hr_change=true", cancellationToken);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError("CoinGecko market data API error: {StatusCode}", response.StatusCode);
+                throw new ExternalServiceException(Localization.ExchangeRateProviderUnavailable);
+            }
+
+            var rawData = await response.Content.ReadFromJsonAsync<Dictionary<string, CoinGeckoSimplePriceResponse>>(cancellationToken: cancellationToken);
+
+            if (rawData is null)
+            {
+                _logger.LogError("CoinGecko returned empty market data response");
+                throw new ExternalServiceException(Localization.EmptyResponseFromExchangeProvider);
+            }
+
+            return rawData;
+        }
+        catch (TaskCanceledException)
+        {
+            _logger.LogError("CoinGecko market data request timeout");
+            throw new ExternalServiceException(Localization.ExchangeRateProviderTimeout);
+        }
+        catch (Exception ex) when (ex is not ExternalServiceException)
+        {
+            _logger.LogError(ex, "Unexpected CoinGecko market data error");
+            throw new ExternalServiceException(Localization.UnexpectedExchangeRateProviderError);
+        }
+    }
 }
