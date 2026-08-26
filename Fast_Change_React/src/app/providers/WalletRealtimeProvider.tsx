@@ -7,7 +7,6 @@ export function WalletRealtimeProvider() {
 
   const handleWalletUpdated = useCallback(
     (walletId: string) => {
-
       void queryClient.invalidateQueries({
         queryKey: [
           "wallet-history",
@@ -17,6 +16,10 @@ export function WalletRealtimeProvider() {
 
       void queryClient.invalidateQueries({
         queryKey: ["user-wallets"],
+      });
+
+      void queryClient.invalidateQueries({
+        queryKey: ["portfolio-performance"],
       });
     },
     [queryClient],
