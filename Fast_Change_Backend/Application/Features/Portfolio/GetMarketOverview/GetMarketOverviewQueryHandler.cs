@@ -7,10 +7,10 @@ namespace Application.Features.Portfolio.GetMarketOverview;
 public sealed class GetMarketOverviewQueryHandler
     : IRequestHandler<GetMarketOverviewQuery, IReadOnlyList<MarketDataItem>>
 {
-    private readonly IMarketDataProvider _marketDataProvider;
+    private readonly IBatchMarketDataProvider _marketDataProvider;
 
     public GetMarketOverviewQueryHandler(
-        IMarketDataProvider marketDataProvider)
+        IBatchMarketDataProvider marketDataProvider)
     {
         _marketDataProvider = marketDataProvider;
     }

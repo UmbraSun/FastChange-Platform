@@ -7,7 +7,7 @@ using Resources;
 namespace Infrastructure.ExchangeRates.Providers;
 
 public sealed class CoinGeckoMarketDataProvider
-    : IMarketDataProvider
+    : IMarketDataProvider, IBatchMarketDataProvider
 {
     private static readonly TimeSpan CacheDuration = TimeSpan.FromSeconds(30);
 
