@@ -18,16 +18,4 @@ public interface IMarketDataProvider
         string currency,
         string targetCurrency,
         CancellationToken cancellationToken);
-
-    /// <summary>
-    /// Get market data for multiple currencies
-    /// </summary>
-    /// <param name="currencies"></param>
-    /// <param name="quoteCurrency"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    Task<IReadOnlyList<MarketDataItem>> GetMarketDataAsync(
-        IReadOnlyCollection<string> currencies,
-        string quoteCurrency,
-        CancellationToken cancellationToken);
 }

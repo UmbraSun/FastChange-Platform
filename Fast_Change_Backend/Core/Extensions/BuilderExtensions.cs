@@ -9,6 +9,7 @@ using Contracts.Notifications;
 using Core.Infrastructure;
 using FluentValidation;
 using Infrastructure.BackgroundServices.Outbox;
+using Infrastructure.ExchangeRates.Cache;
 using Infrastructure.ExchangeRates.Caching;
 using Infrastructure.ExchangeRates.Clients;
 using Infrastructure.ExchangeRates.Providers;
@@ -353,6 +354,7 @@ public static class BuilderExtensions
             return ConnectionMultiplexer.Connect(connectionString);
         });
         services.AddScoped<IExchangeRateCache, ExchangeRateRedisCache>();
+        services.AddScoped<IMarketDataCache, MarketDataRedisCache>();
         services.AddScoped<FrankfurterExchangeRateProvider>();
         services.AddScoped<CoinGeckoExchangeRateProvider>();
 
@@ -366,8 +368,10 @@ public static class BuilderExtensions
             return new CachedExchangeRateProvider(inner, cache);
         });
 
-        services.AddScoped<IMarketDataProvider, CoinGeckoMarketDataProvider>();
-        
+        services.AddScoped<CoinGeckoMarketDataProvider>();
+        services.AddScoped<IMarketDataProvider>(sp => sp.GetRequiredService<CoinGeckoMarketDataProvider>());
+        services.AddScoped<IBatchMarketDataProvider>(sp => sp.GetRequiredService<CoinGeckoMarketDataProvider>());
+
         services.AddScoped<FrankfurterHistoricalExchangeRateProvider>();
         services.AddScoped<CoinGeckoHistoricalExchangeRateProvider>();
         
