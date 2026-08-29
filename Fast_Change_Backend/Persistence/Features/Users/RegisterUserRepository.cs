@@ -1,4 +1,5 @@
 ﻿using Application.Common.Interfaces;
+using Application.Common.Models;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,5 +26,28 @@ public sealed class RegisterUserRepository : IUserRepository
         _context.Wallets.AddRange(wallets);
 
         await _context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task<IReadOnlyList<TransferRecipient>> SearchTransferRecipientsAsync(
+        string query,
+        string currency,
+        CancellationToken cancellationToken)
+    {
+        query = query.Trim();
+        currency = currency.ToUpperInvariant();
+
+        if (string.IsNullOrWhiteSpace(query))
+            return [];
+
+        return await _context.Users
+            .AsNoTracking()
+            .Where(user =>
+                user.Email.Contains(query) &&
+                user.Wallets.Any(wallet => wallet.Currency == currency))
+            .SelectMany(user => user.Wallets
+                .Where(wallet => wallet.Currency == currency)
+                .Select(wallet => new TransferRecipient(user.Id, user.Email, wallet.Id, wallet.Currency)))
+            .Take(10)
+            .ToListAsync(cancellationToken);
     }
 }
