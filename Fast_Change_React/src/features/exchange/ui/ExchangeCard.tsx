@@ -2,6 +2,7 @@ import { useWallets } from "@/entities/wallet/model/useWallets";
 import { useMemo, useState } from "react";
 import { useExchangePreview } from "../model/useExchangePreview";
 import { useExchange } from "../model/useExchange";
+import { Select } from "@/shared/ui/select/Select";
 
 export function ExchangeCard() {
   const {
@@ -84,29 +85,16 @@ export function ExchangeCard() {
             p-4
           "
         >
-          <select
+          <Select
             value={fromWalletId}
-            onChange={(e) => setFromWalletId(e.target.value)}
-            className="
-            bg-transparent
-            text-lg
-            font-semibold
-          outline-none
-          "
-          >
-            <option value="">
-              Select wallet
-            </option>
+            onChange={setFromWalletId}
+            placeholder="Select wallet"
+            options={sortedWallets.map((wallet) => ({
+              value: wallet.walletId,
+              label: wallet.currency,
+            }))}
+          />
 
-            {sortedWallets.map(wallet => (
-              <option
-                key={wallet.walletId}
-                value={wallet.walletId}
-              >
-                {wallet.currency}
-              </option>
-            ))}
-          </select>
           <input
             type="number"
             min="0"
@@ -164,29 +152,15 @@ export function ExchangeCard() {
             p-4
           "
         >
-          <select
+          <Select
             value={toWalletId}
-            onChange={(e) => setToWalletId(e.target.value)}
-            className="
-            bg-transparent
-            text-lg
-            font-semibold
-            outline-none
-          "
-          >
-            <option value="">
-              Select wallet
-            </option>
-
-            {sortedWallets.map(wallet => (
-              <option
-                key={wallet.walletId}
-                value={wallet.walletId}
-              >
-                {wallet.currency}
-              </option>
-            ))}
-          </select>
+            onChange={setToWalletId}
+            placeholder="Select wallet"
+            options={sortedWallets.map((wallet) => ({
+              value: wallet.walletId,
+              label: wallet.currency,
+            }))}
+          />
 
           <span className="text-xl font-semibold">
             {

@@ -3,6 +3,7 @@ import { X } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useWallets } from "@/entities/wallet/model/useWallets";
 import { useDeposit } from "../model/useDeposit";
+import { Select } from "@/shared/ui/select/Select";
 
 interface DepositModalProps {
   open: boolean;
@@ -123,38 +124,16 @@ export function DepositModal({
               Asset
             </label>
 
-            <select
+            <Select
               value={walletId}
-              onChange={(event) =>
-                setWalletId(event.target.value)
-              }
+              onChange={setWalletId}
               disabled={isLoading}
-              className="
-                mt-2
-                w-full
-                rounded-2xl
-                border
-                border-exchange-border
-                bg-black/20
-                p-4
-                outline-none
-                transition
-                focus:border-exchange-gold
-              "
-            >
-              <option value="">
-                Select wallet
-              </option>
-
-              {wallets?.map((wallet) => (
-                <option
-                  key={wallet.walletId}
-                  value={wallet.walletId}
-                >
-                  {wallet.currency}
-                </option>
-              ))}
-            </select>
+              placeholder="Select wallet"
+              options={(wallets ?? []).map((wallet) => ({
+                value: wallet.walletId,
+                label: wallet.currency,
+              }))}
+            />
           </div>
 
           <div>
