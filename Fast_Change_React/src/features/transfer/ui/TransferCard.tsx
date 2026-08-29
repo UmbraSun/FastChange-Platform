@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { useWallets } from "@/entities/wallet/model/useWallets";
 import { useTransfer } from "@/entities/transfer/model/useTransfer";
 import { useTransferRecipients } from "@/entities/transfer/model/useTransferRecipients";
+import { Select } from "@/shared/ui/select/Select";
 
 export function TransferCard() {
   const {
@@ -105,34 +106,19 @@ export function TransferCard() {
             p-4
           "
         >
-          <select
+          <Select
             value={fromWalletId}
-            onChange={(event) => {
-              setFromWalletId(event.target.value);
+            onChange={(value) => {
+              setFromWalletId(value);
               setRecipientQuery("");
               setSelectedRecipientWalletId("");
             }}
-            className="
-              w-full
-              bg-transparent
-              text-lg
-              font-semibold
-              outline-none
-            "
-          >
-            <option value="">
-              Select wallet
-            </option>
-
-            {sortedWallets.map((wallet) => (
-              <option
-                key={wallet.walletId}
-                value={wallet.walletId}
-              >
-                {wallet.currency}
-              </option>
-            ))}
-          </select>
+            placeholder="Select wallet"
+            options={sortedWallets.map((wallet) => ({
+              value: wallet.walletId,
+              label: wallet.currency,
+            }))}
+          />
         </div>
 
         <p className="mt-2 text-xs text-exchange-muted">
