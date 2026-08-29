@@ -7,6 +7,7 @@ import LoginPage from "@/pages/auth/LoginPage";
 import RegisterPage from "@/pages/auth/RegisterPage";
 import DashboardPage from "@/pages/dashboard/DashboardPage";
 import ExchangePage from "@/pages/exchange/ExchangePage";
+import TransferPage from "@/pages/transfer/TransferPage";
 
 export const router = createBrowserRouter([
   {
@@ -45,14 +46,14 @@ export const router = createBrowserRouter([
         path: "dashboard",
         element: <DashboardPage />,
       },
+      {
+        path: "exchange",
+        element: <ExchangePage />,
+      },
+      {
+        path: "transfer",
+        element: <TransferPage />,
+      },
     ],
-  },
-  {
-    path: "/exchange",
-    element: (
-      <ProtectedRoute>
-        <ExchangePage />
-      </ProtectedRoute>
-    ),
   },
 ]);

@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Application.Common.Models;
+using Domain.Entities;
 
 namespace Application.Common.Interfaces;
 
@@ -31,4 +32,16 @@ public interface IUserRepository
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task SaveUserWithWalletsAsync(User user, List<Wallet> wallets, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Searches for transfer recipients based on a query and currency in PostgreSQL
+    /// </summary>
+    /// <param name="query"></param>
+    /// <param name="currency"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<IReadOnlyList<TransferRecipient>> SearchTransferRecipientsAsync(
+        string query,
+        string currency,
+        CancellationToken cancellationToken);
 }

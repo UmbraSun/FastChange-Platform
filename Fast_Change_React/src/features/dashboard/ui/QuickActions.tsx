@@ -1,4 +1,4 @@
-import { ArrowDownToLine, ArrowLeftRight, ArrowUpFromLine, } from "lucide-react";
+import { ArrowDownToLine, ArrowLeftRight, ArrowUpFromLine, Send, } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { DepositModal } from "@/features/wallet/ui/DepositModal";
@@ -20,6 +20,11 @@ const actions = [
     icon: ArrowUpFromLine,
     action: "withdraw",
   },
+  {
+    title: "Transfer",
+    icon: Send,
+    action: "transfer",
+  },
 ];
 
 export function QuickActions() {
@@ -39,6 +44,10 @@ export function QuickActions() {
       case "withdraw":
         setIsWithdrawOpen(true);
         break;
+
+      case "transfer":
+        navigate("/transfer");
+        break;
     }
   };
 
@@ -47,8 +56,9 @@ export function QuickActions() {
       <section
         className="
           grid
-          grid-cols-3
+          grid-cols-2
           gap-3
+          sm:grid-cols-4
         "
       >
         {actions.map(
