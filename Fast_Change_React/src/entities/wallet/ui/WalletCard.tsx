@@ -25,6 +25,12 @@ const currencyInfo: Record<
     icon: "$",
     decimals: 2,
   },
+  EUR: {
+    name: "Euro",
+    color: "bg-blue-500",
+    icon: "€",
+    decimals: 2,
+  },
 };
 
 export function WalletCard({ wallet }: Props) {
@@ -50,20 +56,25 @@ export function WalletCard({ wallet }: Props) {
       "
     >
       <div className="flex items-center justify-between">
-
         <div className="flex items-center gap-3">
-
           <div
             className={`
               ${info.color}
-              flex h-12 w-12 items-center justify-center rounded-full text-lg font-bold text-black
+              flex
+              h-12
+              w-12
+              items-center
+              justify-center
+              rounded-full
+              text-lg
+              font-bold
+              text-black
             `}
           >
             {info.icon}
           </div>
 
           <div>
-
             <h3 className="font-semibold text-exchange-text">
               {wallet.currency}
             </h3>
@@ -71,13 +82,10 @@ export function WalletCard({ wallet }: Props) {
             <p className="text-sm text-exchange-muted">
               {info.name}
             </p>
-
           </div>
-
         </div>
 
         <div className="text-right">
-
           <p className="font-semibold text-exchange-text">
             {wallet.balance.toFixed(info.decimals)}
           </p>
@@ -85,9 +93,7 @@ export function WalletCard({ wallet }: Props) {
           <p className="text-sm text-exchange-muted">
             {wallet.currency}
           </p>
-
         </div>
-
       </div>
     </div>
   );

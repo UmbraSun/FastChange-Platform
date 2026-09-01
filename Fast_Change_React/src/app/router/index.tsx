@@ -8,6 +8,7 @@ import RegisterPage from "@/pages/auth/RegisterPage";
 import DashboardPage from "@/pages/dashboard/DashboardPage";
 import ExchangePage from "@/pages/exchange/ExchangePage";
 import TransferPage from "@/pages/transfer/TransferPage";
+import WalletsPage from "@/pages/wallets/WalletsPage";
 
 export const router = createBrowserRouter([
   {
@@ -45,6 +46,10 @@ export const router = createBrowserRouter([
       {
         path: "dashboard",
         element: <DashboardPage />,
+      },
+      {
+        path: "wallets",
+        element: <WalletsPage />,
       },
       {
         path: "exchange",
