@@ -1,7 +1,7 @@
-import { createBrowserRouter, } from "react-router-dom";
-import { ProtectedRoute, } from "./ProtectedRoute";
-import { PublicRoute, } from "./PublicRoute";
-import { AppShell, } from "@/widgets/app-shell";
+import { createBrowserRouter } from "react-router-dom";
+import { ProtectedRoute } from "./ProtectedRoute";
+import { PublicRoute } from "./PublicRoute";
+import { AppShell } from "@/widgets/app-shell";
 
 import LoginPage from "@/pages/auth/LoginPage";
 import RegisterPage from "@/pages/auth/RegisterPage";
@@ -9,6 +9,7 @@ import DashboardPage from "@/pages/dashboard/DashboardPage";
 import ExchangePage from "@/pages/exchange/ExchangePage";
 import TransferPage from "@/pages/transfer/TransferPage";
 import WalletsPage from "@/pages/wallets/WalletsPage";
+import HistoryPage from "@/pages/history/HistoryPage";
 
 export const router = createBrowserRouter([
   {
@@ -58,6 +59,10 @@ export const router = createBrowserRouter([
       {
         path: "transfer",
         element: <TransferPage />,
+      },
+      {
+        path: "history",
+        element: <HistoryPage />,
       },
     ],
   },
