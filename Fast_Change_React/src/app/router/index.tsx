@@ -10,6 +10,7 @@ import ExchangePage from "@/pages/exchange/ExchangePage";
 import TransferPage from "@/pages/transfer/TransferPage";
 import WalletsPage from "@/pages/wallets/WalletsPage";
 import HistoryPage from "@/pages/history/HistoryPage";
+import ProfilePage from "@/pages/profile/ProfilePage";
 
 export const router = createBrowserRouter([
   {
@@ -63,6 +64,10 @@ export const router = createBrowserRouter([
       {
         path: "history",
         element: <HistoryPage />,
+      },
+      {
+        path: "profile",
+        element: <ProfilePage />,
       },
     ],
   },
