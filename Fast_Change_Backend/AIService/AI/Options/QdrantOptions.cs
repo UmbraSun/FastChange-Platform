@@ -8,8 +8,7 @@ public sealed class QdrantOptions
 
     public int Port { get; init; } = 6334;
 
-    public string CollectionName { get; init; }
-        = "knowledge";
+    public string CollectionName { get; init; } = "knowledge";
 
     public int VectorSize { get; init; } = 1536;
 }

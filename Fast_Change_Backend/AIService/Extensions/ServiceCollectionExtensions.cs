@@ -6,6 +6,7 @@ using AIService.Providers.OpenAI;
 using AIService.Services.Knowledge;
 using AIService.Services.Prompt;
 using AIService.Services.Retrieval;
+using AIService.Services.VectorStore;
 using Microsoft.Extensions.Options;
 using OpenAI;
 using Qdrant.Client;
@@ -60,6 +61,7 @@ public static class ServiceCollectionExtensions
         });
 
         services.AddSingleton<QdrantInitializer>();
+        services.AddScoped<IVectorStore, QdrantVectorStore>();
         services.AddScoped<IChatProvider, OpenAiChatProvider>();
         services.AddScoped<IEmbeddingProvider, OpenAiEmbeddingProvider>();
         services.AddScoped<IKnowledgeLoader, FileKnowledgeLoader>();

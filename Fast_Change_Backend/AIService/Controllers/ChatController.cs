@@ -14,9 +14,7 @@ public sealed class ChatController
 {
     private readonly IChatService _chatService;
 
-
-    public ChatController(
-        IChatService chatService)
+    public ChatController(IChatService chatService)
     {
         _chatService = chatService;
     }
@@ -32,13 +30,7 @@ public sealed class ChatController
         ChatRequest request,
         CancellationToken cancellationToken)
     {
-        var answer =
-            await _chatService.AskAsync(
-                request.Question,
-                cancellationToken);
-
-
-        return Ok(
-            new ChatResponse(answer));
+        var answer = await _chatService.AskAsync(request.Question, cancellationToken);
+        return Ok(new ChatResponse(answer));
     }
 }

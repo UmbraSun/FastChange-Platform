@@ -22,13 +22,9 @@ public sealed class QdrantInitializer
     public async Task InitializeAsync(
         CancellationToken cancellationToken)
     {
-        var exists =
-            await _client.CollectionExistsAsync(
-                _options.CollectionName);
+        var exists = await _client.CollectionExistsAsync(_options.CollectionName);
 
-        if (exists)
-            return;
-
+        if (exists) return;
 
         await _client.CreateCollectionAsync(
             _options.CollectionName,

@@ -11,6 +11,7 @@ import TransferPage from "@/pages/transfer/TransferPage";
 import WalletsPage from "@/pages/wallets/WalletsPage";
 import HistoryPage from "@/pages/history/HistoryPage";
 import ProfilePage from "@/pages/profile/ProfilePage";
+import AssistantPage from "@/pages/assistant/AssistantPage";
 
 export const router = createBrowserRouter([
   {
@@ -68,6 +69,10 @@ export const router = createBrowserRouter([
       {
         path: "profile",
         element: <ProfilePage />,
+      },
+      {
+        path: "assistant",
+        element: <AssistantPage />,
       },
     ],
   },

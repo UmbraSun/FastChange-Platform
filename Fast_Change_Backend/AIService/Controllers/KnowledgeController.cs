@@ -33,14 +33,8 @@ public sealed class KnowledgeController
     public async Task<IActionResult> Index(
         CancellationToken cancellationToken)
     {
-        await _indexer.IndexAsync(
-            cancellationToken);
-
-        return Ok(
-            new
-            {
-                Message = "Knowledge indexing completed"
-            });
+        await _indexer.IndexAsync(cancellationToken);
+        return Ok(new { Message = "Knowledge indexing completed" });
     }
 
     /// <summary>
@@ -54,22 +48,14 @@ public sealed class KnowledgeController
     SearchKnowledgeRequest request,
     CancellationToken cancellationToken)
     {
-        var result =
-            await _retrievalService.SearchAsync(
-                request.Query,
-                request.Top,
-                cancellationToken);
-
-        return Ok(
-            new SearchKnowledgeResponse(
-                result
-                    .Select(x =>
-                        new SearchKnowledgeItem(
-                            x.DocumentName,
-                            x.Heading,
-                            x.ChunkIndex,
-                            x.Score,
-                            x.Content))
-                    .ToList()));
+        var result = await _retrievalService.SearchAsync(request.Query, request.Top, cancellationToken);
+        return Ok(new SearchKnowledgeResponse(result
+            .Select(x => new SearchKnowledgeItem(
+                x.DocumentName,
+                x.Heading,
+                x.ChunkIndex,
+                x.Score,
+                x.Content))
+            .ToList()));
     }
 }
