@@ -1,4 +1,3 @@
 ﻿namespace AIService.Contracts.Chat;
 
-public sealed record ChatRequest(
-    string Question);
+public sealed record ChatRequest(string Question);
