@@ -9,18 +9,21 @@ export function BalanceCard() {
 
   const formattedValue = data
     ? new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: data.currency,
-    }).format(data.currentValue)
+        style: "currency",
+        currency: data.currency,
+      }).format(data.currentValue)
     : null;
 
-  const changePercent = data?.changePercent ?? 0;
+  const changePercent = data?.changePercent ?? null;
+
   const changeClass =
-    changePercent > 0
-      ? "text-green-400"
-      : changePercent < 0
-        ? "text-red-400"
-        : "text-exchange-muted";
+    changePercent === null
+      ? "text-exchange-muted"
+      : changePercent > 0
+        ? "text-green-400"
+        : changePercent < 0
+          ? "text-red-400"
+          : "text-exchange-muted";
 
   return (
     <section
@@ -54,15 +57,20 @@ export function BalanceCard() {
       <div
         className="
           mt-4
+          min-h-11
           text-4xl
           font-bold
         "
       >
-        {isLoading
-          ? "..."
-          : isError
-            ? "—"
-            : formattedValue}
+        {isLoading ? (
+          <div className="h-10 w-48 animate-pulse rounded-xl bg-white/5" />
+        ) : isError ? (
+          <span className="text-exchange-muted">
+            —
+          </span>
+        ) : (
+          formattedValue
+        )}
       </div>
 
       <div
@@ -75,8 +83,9 @@ export function BalanceCard() {
         "
       >
         <span className={changeClass}>
-          {changePercent > 0 ? "+" : ""}
-          {changePercent.toFixed(2)}%
+          {changePercent === null
+            ? "—"
+            : `${changePercent > 0 ? "+" : ""}${changePercent.toFixed(2)}%`}
         </span>
 
         <span className="text-exchange-muted">
