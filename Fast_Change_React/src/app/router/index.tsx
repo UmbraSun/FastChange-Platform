@@ -2,7 +2,6 @@ import { createBrowserRouter } from "react-router-dom";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { PublicRoute } from "./PublicRoute";
 import { AppShell } from "@/widgets/app-shell";
-
 import LoginPage from "@/pages/auth/LoginPage";
 import RegisterPage from "@/pages/auth/RegisterPage";
 import DashboardPage from "@/pages/dashboard/DashboardPage";
@@ -14,14 +13,6 @@ import ProfilePage from "@/pages/profile/ProfilePage";
 import AssistantPage from "@/pages/assistant/AssistantPage";
 
 export const router = createBrowserRouter([
-  {
-    path: "/",
-    element: (
-      <PublicRoute>
-        <LoginPage />
-      </PublicRoute>
-    ),
-  },
   {
     path: "/login",
     element: (
@@ -46,6 +37,10 @@ export const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
+      {
+        index: true,
+        element: <DashboardPage />,
+      },
       {
         path: "dashboard",
         element: <DashboardPage />,

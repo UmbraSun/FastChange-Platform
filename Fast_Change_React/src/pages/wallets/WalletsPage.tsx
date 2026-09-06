@@ -1,5 +1,9 @@
 import { useState } from "react";
-import { ArrowDownToLine, ArrowLeftRight, ArrowUpFromLine } from "lucide-react";
+import {
+  ArrowDownToLine,
+  ArrowLeftRight,
+  ArrowUpFromLine,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 import { useWallets } from "@/entities/wallet/model/useWallets";
@@ -24,7 +28,7 @@ export default function WalletsPage() {
   return (
     <div className="space-y-6">
       <section>
-        <h1 className="text-2xl font-semibold">
+        <h1 className="text-2xl font-semibold tracking-tight">
           Wallets
         </h1>
 
@@ -34,33 +38,73 @@ export default function WalletsPage() {
       </section>
 
       {isLoading ? (
-        <div
-          className="
-            rounded-3xl
-            border
-            border-exchange-border
-            bg-exchange-card
-            p-6
-            text-sm
-            text-exchange-muted
-          "
-        >
-          Loading wallets...
-        </div>
+        <>
+          <section
+            className="
+              rounded-3xl
+              border
+              border-exchange-border
+              bg-exchange-card
+              p-6
+            "
+          >
+            <div className="h-4 w-24 animate-pulse rounded bg-white/5" />
+
+            <div className="mt-3 h-9 w-16 animate-pulse rounded-xl bg-white/5" />
+          </section>
+
+          <section className="grid grid-cols-3 gap-3">
+            {[1, 2, 3].map((item) => (
+              <div
+                key={item}
+                className="
+                  h-24
+                  animate-pulse
+                  rounded-2xl
+                  border
+                  border-exchange-border
+                  bg-exchange-card
+                "
+              />
+            ))}
+          </section>
+
+          <section className="space-y-3">
+            <div className="h-6 w-28 animate-pulse rounded bg-white/5" />
+
+            {[1, 2].map((item) => (
+              <div
+                key={item}
+                className="
+                  h-24
+                  animate-pulse
+                  rounded-3xl
+                  border
+                  border-exchange-border
+                  bg-exchange-card
+                "
+              />
+            ))}
+          </section>
+        </>
       ) : isError ? (
-        <div
+        <section
           className="
             rounded-3xl
             border
             border-exchange-border
             bg-exchange-card
             p-6
-            text-sm
-            text-red-400
           "
         >
-          Failed to load wallets
-        </div>
+          <p className="text-sm font-medium">
+            Unable to load wallets
+          </p>
+
+          <p className="mt-1 text-sm text-exchange-muted">
+            Please try again later.
+          </p>
+        </section>
       ) : (
         <>
           <section
@@ -93,21 +137,29 @@ export default function WalletsPage() {
               onClick={() => setIsDepositOpen(true)}
               className="
                 flex
+                min-h-24
                 flex-col
                 items-center
+                justify-center
                 gap-2
                 rounded-2xl
                 border
                 border-exchange-border
                 bg-exchange-card
                 p-4
+                text-sm
                 transition
-                hover:border-exchange-gold
+                hover:border-exchange-gold/60
+                hover:bg-exchange-gold/5
+                focus-visible:outline-none
+                focus-visible:ring-2
+                focus-visible:ring-exchange-gold/50
+                active:scale-[0.98]
               "
             >
               <ArrowDownToLine className="h-5 w-5 text-exchange-gold" />
 
-              <span className="text-sm">
+              <span>
                 Deposit
               </span>
             </button>
@@ -117,21 +169,29 @@ export default function WalletsPage() {
               onClick={() => setIsWithdrawOpen(true)}
               className="
                 flex
+                min-h-24
                 flex-col
                 items-center
+                justify-center
                 gap-2
                 rounded-2xl
                 border
                 border-exchange-border
                 bg-exchange-card
                 p-4
+                text-sm
                 transition
-                hover:border-exchange-gold
+                hover:border-exchange-gold/60
+                hover:bg-exchange-gold/5
+                focus-visible:outline-none
+                focus-visible:ring-2
+                focus-visible:ring-exchange-gold/50
+                active:scale-[0.98]
               "
             >
               <ArrowUpFromLine className="h-5 w-5 text-exchange-gold" />
 
-              <span className="text-sm">
+              <span>
                 Withdraw
               </span>
             </button>
@@ -141,52 +201,66 @@ export default function WalletsPage() {
               onClick={() => navigate("/exchange")}
               className="
                 flex
+                min-h-24
                 flex-col
                 items-center
+                justify-center
                 gap-2
                 rounded-2xl
                 border
                 border-exchange-border
                 bg-exchange-card
                 p-4
+                text-sm
                 transition
-                hover:border-exchange-gold
+                hover:border-exchange-gold/60
+                hover:bg-exchange-gold/5
+                focus-visible:outline-none
+                focus-visible:ring-2
+                focus-visible:ring-exchange-gold/50
+                active:scale-[0.98]
               "
             >
               <ArrowLeftRight className="h-5 w-5 text-exchange-gold" />
 
-              <span className="text-sm">
+              <span>
                 Exchange
               </span>
             </button>
           </section>
 
           {wallets.length === 0 ? (
-            <div
+            <section
               className="
                 rounded-3xl
                 border
                 border-exchange-border
                 bg-exchange-card
                 p-6
-                text-sm
-                text-exchange-muted
               "
             >
-              No wallets available
-            </div>
+              <p className="font-medium">
+                No wallets available
+              </p>
+
+              <p className="mt-1 text-sm text-exchange-muted">
+                Your wallets will appear here once they are available.
+              </p>
+            </section>
           ) : (
             <section className="space-y-3">
               <h2 className="text-lg font-semibold">
                 All wallets
               </h2>
 
-              {wallets.map((wallet) => (
-                <WalletCard
-                  key={wallet.walletId}
-                  wallet={wallet}
-                />
-              ))}
+              <div className="space-y-3">
+                {wallets.map((wallet) => (
+                  <WalletCard
+                    key={wallet.walletId}
+                    wallet={wallet}
+                  />
+                ))}
+              </div>
             </section>
           )}
         </>

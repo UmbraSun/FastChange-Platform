@@ -34,13 +34,14 @@ const currencyInfo: Record<
 };
 
 export function WalletCard({ wallet }: Props) {
-  const info =
-    currencyInfo[wallet.currency] ?? {
-      name: wallet.currency,
-      color: "bg-neutral-500",
-      icon: wallet.currency[0],
-      decimals: 2,
-    };
+  const currency = wallet.currency.toUpperCase();
+
+  const info = currencyInfo[currency] ?? {
+    name: currency,
+    color: "bg-neutral-500",
+    icon: currency[0] ?? "?",
+    decimals: 2,
+  };
 
   return (
     <div
@@ -55,14 +56,15 @@ export function WalletCard({ wallet }: Props) {
         hover:border-exchange-gold/50
       "
     >
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex min-w-0 items-center gap-3">
           <div
             className={`
               ${info.color}
               flex
               h-12
               w-12
+              shrink-0
               items-center
               justify-center
               rounded-full
@@ -74,24 +76,31 @@ export function WalletCard({ wallet }: Props) {
             {info.icon}
           </div>
 
-          <div>
+          <div className="min-w-0">
             <h3 className="font-semibold text-exchange-text">
-              {wallet.currency}
+              {currency}
             </h3>
 
-            <p className="text-sm text-exchange-muted">
+            <p className="truncate text-sm text-exchange-muted">
               {info.name}
             </p>
           </div>
         </div>
 
-        <div className="text-right">
-          <p className="font-semibold text-exchange-text">
+        <div className="shrink-0 text-right">
+          <p
+            className="
+              text-lg
+              font-semibold
+              tabular-nums
+              text-exchange-text
+            "
+          >
             {wallet.balance.toFixed(info.decimals)}
           </p>
 
-          <p className="text-sm text-exchange-muted">
-            {wallet.currency}
+          <p className="text-xs text-exchange-muted">
+            Balance
           </p>
         </div>
       </div>
