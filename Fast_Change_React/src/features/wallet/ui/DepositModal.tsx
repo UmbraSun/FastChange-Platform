@@ -81,7 +81,7 @@ export function DepositModal({
         handleKeyDown,
       );
     };
-  }, [open, onClose]);
+  }, [open, handleClose]);
 
   if (!open) {
     return null;

@@ -1,6 +1,7 @@
 ﻿using Application.Common.Interfaces;
 using Contracts.Enums;
 using Contracts.Events;
+using Mapster;
 using MediatR;
 
 namespace Application.Features.Wallets.Withdraw;
@@ -43,26 +44,27 @@ public sealed class WithdrawCommandHandler
         await _walletRepository.UpdateAsync(wallet, cancellationToken);
         await _transactionRepository.AddAsync(result.transaction, cancellationToken);
 
+        // Create integration event for withdrawal.
+        // Note: Withdrawal is a single-wallet operation (user sends funds out),
+        // so counterparty fields are not applicable.
         var integrationEvent = new TransactionCompletedEvent(
             operationId,
             wallet.Id,
-            Guid.Empty,
+            Guid.Empty,                          // No counterparty wallet for withdrawals
             request.Amount,
-            null,
+            null,                                // No received amount (funds leaving system)
             wallet.Currency,
-            wallet.Currency,
+            wallet.Currency,                     // Same currency (no conversion)
             TransactionType.Withdraw,
             result.newBalance,
-            0m,
+            0m,                                  // No counterparty balance update
             result.transaction.CreatedAtUtc,
-            null);
+            ExchangeRate: null);                 // No exchange rate for same-currency operation
 
         await _outboxWriter.AddAsync(integrationEvent, cancellationToken);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return new WithdrawResponse(
-            wallet.Id,
-            wallet.Balance);
+        return wallet.Adapt<WithdrawResponse>();
     }
 }

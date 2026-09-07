@@ -36,10 +36,12 @@ export function useWalletHub(
                     await walletHub.start();
                 }
             } catch (error) {
-                console.error(
-                    "[WalletHub] Connection failed",
-                    error,
-                );
+                if (import.meta.env.DEV) {
+                    console.error(
+                        "[WalletHub] Connection failed",
+                        error,
+                    );
+                }
             }
         };
 

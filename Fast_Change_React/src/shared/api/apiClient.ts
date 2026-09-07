@@ -67,8 +67,7 @@ apiClient.interceptors.response.use(
   (response: AxiosResponse) => response,
 
   async (error: AxiosError) => {
-    const originalRequest =
-      error.config;
+    const originalRequest = error.config;
 
     if (
       error.response?.status === 401 &&
@@ -82,22 +81,26 @@ apiClient.interceptors.response.use(
         const accessToken =
           await refreshToken();
 
-        originalRequest.headers.Authorization =
-          `Bearer ${accessToken}`;
+        originalRequest.headers.Authorization = `Bearer ${accessToken}`;
 
         return apiClient.request(
           originalRequest,
         );
-      } catch {
+      } catch (refreshError) {
         useAuthStore
           .getState()
           .clearTokens();
 
-        return Promise.reject(error);
+        return Promise.reject(
+          refreshError,
+        );
       }
     }
 
-    if (error.response?.data) {
+    if (
+      import.meta.env.DEV &&
+      error.response?.data
+    ) {
       const problem =
         error.response.data as {
           status?: number;
@@ -105,10 +108,12 @@ apiClient.interceptors.response.use(
           errors?: unknown;
         };
 
-      console.error(
-        `Backend Error [${problem.status}]: ${problem.title}`,
-        problem.errors,
-      );
+      if (import.meta.env.DEV) {
+        console.error(
+          `Backend Error [${problem.status}]: ${problem.title}`,
+          problem.errors,
+        );
+      }
     }
 
     return Promise.reject(error);

@@ -1,4 +1,5 @@
 using Application.Common.Interfaces;
+using Mapster;
 using MediatR;
 using Resources;
 
@@ -33,6 +34,6 @@ public sealed class LoginUserCommandHandler
 
         var tokens = _jwtTokenGenerator.GenerateTokens(user.Id, user.Email);
 
-        return new LoginUserResponse(tokens.AccessToken, tokens.RefreshToken);
+        return tokens.Adapt<LoginUserResponse>();
     }
 }

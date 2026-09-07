@@ -1,4 +1,5 @@
 ﻿using Application.Common.Interfaces;
+using Mapster;
 using MediatR;
 
 namespace Application.Features.Portfolio.GetPortfolio;
@@ -31,12 +32,9 @@ public sealed class GetPortfolioQueryHandler
 
             if (walletCurrency == targetCurrency)
             {
-                result.Add(new PortfolioWalletResponse(
-                    wallet.Id,
-                    wallet.Currency,
-                    wallet.Balance,
-                    1m,
-                    wallet.Balance));
+                // Same currency - use Mapster mapping with 1:1 exchange rate
+                var walletResponse = wallet.Adapt<PortfolioWalletResponse>();
+                result.Add(walletResponse);
                 continue;
             }
 

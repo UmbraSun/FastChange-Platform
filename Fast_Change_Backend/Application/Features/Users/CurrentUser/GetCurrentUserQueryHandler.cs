@@ -1,5 +1,6 @@
 ﻿using Application.Common.Interfaces;
 using Contracts.Exceptions;
+using Mapster;
 using MediatR;
 using Resources;
 
@@ -32,9 +33,6 @@ public sealed class GetCurrentUserQueryHandler
         if (user is null)
             throw new BusinessException(Localization.UserNotFound);
 
-        return new GetCurrentUserResponse(
-            user.Id,
-            user.Email,
-            user.IsVerified);
+        return user.Adapt<GetCurrentUserResponse>();
     }
 }

@@ -44,6 +44,7 @@ public sealed class OutboxRetryTests : OutboxTestBase
                         TransactionType.Transfer,
                         500m,
                         1500m,
+                        DateTime.UtcNow,
                         null)),
                 Topic = "transaction-events",
                 Key = eventId.ToString(),
