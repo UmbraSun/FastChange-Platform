@@ -38,7 +38,8 @@ public sealed class ExchangeCompletedConsumerIdempotencyTests
             "EUR",
             TransactionType.Transfer,
             500m,
-            1500m);
+            1500m,
+            DateTime.UtcNow);
 
         var producer = Factory.Services.GetRequiredService<IKafkaProducer>();
         var payload = JsonSerializer.Serialize(@event);

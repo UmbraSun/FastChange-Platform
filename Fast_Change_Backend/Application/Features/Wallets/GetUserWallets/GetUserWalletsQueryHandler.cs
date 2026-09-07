@@ -1,5 +1,6 @@
 ﻿using Application.Common.Interfaces;
 using Contracts.Exceptions;
+using Mapster;
 using MediatR;
 using Resources;
 
@@ -31,10 +32,6 @@ public sealed class GetUserWalletsQueryHandler
             throw new BusinessException(Localization.UserNotFound);
 
         return user.Wallets
-            .Select(x => new GetUserWalletsResponse(
-                x.Id,
-                x.Currency,
-                x.Balance))
-            .ToList();
+            .Adapt<List<GetUserWalletsResponse>>();
     }
 }

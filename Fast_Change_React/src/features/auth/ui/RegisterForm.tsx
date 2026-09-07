@@ -1,9 +1,13 @@
 ﻿import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
+
 import { Input } from "@/shared/ui/input";
 import { Button } from "@/shared/ui/button";
-import { registerSchema, type RegisterFormValues, } from "../model/schema";
+import {
+  registerSchema,
+  type RegisterFormValues,
+} from "../model/schema";
 import { useRegister } from "../model/useRegister";
 
 export function RegisterForm() {
@@ -21,7 +25,7 @@ export function RegisterForm() {
   });
 
   const onSubmit = (
-    values: RegisterFormValues
+    values: RegisterFormValues,
   ) => {
     registerMutation.mutate(
       values,
@@ -29,14 +33,7 @@ export function RegisterForm() {
         onSuccess: () => {
           navigate("/login");
         },
-
-        onError: (error) => {
-          console.error(
-            "Registration failed",
-            error
-          );
-        },
-      }
+      },
     );
   };
 
@@ -46,6 +43,7 @@ export function RegisterForm() {
         <h1 className="text-3xl font-bold">
           Create account
         </h1>
+
         <p className="mt-2 text-exchange-muted">
           Join FastChange exchange
         </p>
@@ -60,6 +58,7 @@ export function RegisterForm() {
           type="email"
           {...register("email")}
         />
+
         {errors.email && (
           <p className="text-sm text-exchange-danger">
             {errors.email.message}
@@ -71,9 +70,16 @@ export function RegisterForm() {
           type="password"
           {...register("password")}
         />
+
         {errors.password && (
           <p className="text-sm text-exchange-danger">
             {errors.password.message}
+          </p>
+        )}
+
+        {registerMutation.isError && (
+          <p className="text-sm text-exchange-danger">
+            Unable to create account. Please check your details and try again.
           </p>
         )}
 

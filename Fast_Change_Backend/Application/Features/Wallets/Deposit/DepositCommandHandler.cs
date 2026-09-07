@@ -1,6 +1,7 @@
 ﻿using Application.Common.Interfaces;
 using Contracts.Enums;
 using Contracts.Events;
+using Mapster;
 using MediatR;
 
 namespace Application.Features.Wallets.Deposit;
@@ -41,7 +42,7 @@ public sealed class DepositCommandHandler
 
         var operationId = Guid.NewGuid();
         var result = _walletOperationService.Deposit(wallet, request.Amount, operationId);
-        
+
         await _walletRepository.UpdateAsync(wallet, cancellationToken);
         await _transactionRepository.AddAsync(result.transaction, cancellationToken);
 
@@ -59,11 +60,9 @@ public sealed class DepositCommandHandler
             result.transaction.CreatedAtUtc);
 
         await _outboxWriter.AddAsync(integrationEvent, cancellationToken);
-        
+
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return new DepositResponse(
-            wallet.Id,
-            wallet.Balance);
+        return wallet.Adapt<DepositResponse>();
     }
 }

@@ -1,5 +1,5 @@
 import { Home, Wallet, ArrowLeftRight, History, User, } from "lucide-react";
-import { NavLink, useLocation, } from "react-router-dom";
+import { NavLink, } from "react-router-dom";
 
 const items = [
   {
@@ -30,13 +30,6 @@ const items = [
 ];
 
 export function BottomNavigation() {
-  const location = useLocation();
-
-  console.log(
-    "[BottomNavigation] location:",
-    location.pathname,
-  );
-
   return (
     <nav className="fixed bottom-0 left-0 right-0 border-t border-exchange-border bg-exchange-card">
       <div className="mx-auto grid max-w-7xl grid-cols-5">

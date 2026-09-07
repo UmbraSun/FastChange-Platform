@@ -40,7 +40,8 @@ public sealed class OutboxFailureTests
                         "EUR",
                         TransactionType.Exchange,
                         500m,
-                        1000m)),
+                        1000m,
+                        DateTime.UtcNow)),
                 Topic = "transaction-events",
                 Key = eventId.ToString(),
                 OccurredOnUtc = DateTime.UtcNow

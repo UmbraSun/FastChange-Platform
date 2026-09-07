@@ -1,4 +1,5 @@
 using Application.Common.Interfaces;
+using Mapster;
 using MediatR;
 using Resources;
 
@@ -35,6 +36,6 @@ public sealed class RefreshTokenCommandHandler
 
         var tokens = _jwtTokenGenerator.GenerateTokens(user.Id, user.Email);
 
-        return new RefreshTokenResponse(tokens.AccessToken, tokens.RefreshToken);
+        return tokens.Adapt<RefreshTokenResponse>();
     }
 }
