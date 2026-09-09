@@ -1,25 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<Shell
-    x:Class="Core.AppShell"
+<Shell x:Class="App.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:UI.Views"
+    xmlns:local="clr-namespace:UI.Views;assembly=UI"
     Title="FastChange">
 
-    <TabBar>
-        <Tab Title="Register">
-            <ShellContent
-                Title="Register"
-                ContentTemplate="{DataTemplate local:RegisterPage}"
-                Route="RegisterPage" />
-        </Tab>
-        
-        <Tab Title="Dashboard">
-            <ShellContent
-                Title="Dashboard"
-                ContentTemplate="{DataTemplate local:DashboardPage}"
-                Route="DashboardPage" />
-        </Tab>
-    </TabBar>
+    <!--
+        Authenticated navigation will be added later.
+        For now the shell is intentionally minimal.
+    -->
 
 </Shell>

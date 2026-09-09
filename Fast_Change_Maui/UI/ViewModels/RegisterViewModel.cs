@@ -2,7 +2,6 @@
 using CommunityToolkit.Mvvm.Input;
 using Core.DTOs.Auth;
 using Core.Interfaces;
-using Core.Services;
 
 namespace UI.ViewModels;
 
@@ -42,7 +41,7 @@ public partial class RegisterViewModel : ObservableObject
             await _alertService.ShowAlertAsync(
                 "Success",
                 "Account created with default multi-currency wallets!");
-                
+
             // Navigate to dashboard after successful registration
             // This would normally navigate using the application's navigation system
         }
