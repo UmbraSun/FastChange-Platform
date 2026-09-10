@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentPage
+    x:Class="UI.Views.LoginPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewModels="clr-namespace:UI.ViewModels"
+    x:DataType="viewModels:LoginViewModel"
+    Shell.NavBarIsVisible="False">
+
+    <ScrollView>
+        <Grid
+            Padding="24"
+            RowDefinitions="Auto,Auto,Auto,Auto,Auto,*"
+            RowSpacing="20"
+            BackgroundColor="{DynamicResource ExchangeBg}">
+
+            <VerticalStackLayout
+                Grid.Row="0"
+                Spacing="8"
+                Margin="0,48,0,24">
+
+                <Label
+                    Text="FastChange"
+                    FontSize="32"
+                    FontAttributes="Bold"
+                    TextColor="{DynamicResource ExchangeText}" />
+
+                <Label
+                    Text="Welcome back"
+                    FontSize="24"
+                    FontAttributes="Bold" />
+
+                <Label
+                    Text="Sign in to continue"
+                    FontSize="15"
+                    TextColor="{DynamicResource ExchangeMuted}" />
+
+            </VerticalStackLayout>
+
+            <VerticalStackLayout
+                Grid.Row="1"
+                Spacing="8">
+
+                <Label
+                    Text="Email"
+                    FontSize="14" />
+
+                <Entry
+                    Text="{Binding Email}"
+                    Placeholder="Enter your email"
+                    Keyboard="Email"
+                    ClearButtonVisibility="WhileEditing"
+                    ReturnType="Next" />
+
+            </VerticalStackLayout>
+
+            <VerticalStackLayout
+                Grid.Row="2"
+                Spacing="8">
+
+                <Label
+                    Text="Password"
+                    FontSize="14" />
+
+                <Entry
+                    Text="{Binding Password}"
+                    Placeholder="Enter your password"
+                    IsPassword="True"
+                    ReturnType="Done"
+                    ReturnCommand="{Binding LoginCommand}" />
+
+            </VerticalStackLayout>
+
+            <Label
+                Grid.Row="3"
+                Text="{Binding ErrorMessage}"
+                TextColor="#F6465D"
+                FontSize="14"
+                IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyConverter}}" />
+
+            <Button
+                Grid.Row="4"
+                Text="Sign In"
+                Command="{Binding LoginCommand}"
+                IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}"
+                HeightRequest="52" />
+
+            <HorizontalStackLayout
+                Grid.Row="5"
+                HorizontalOptions="Center"
+                Spacing="5">
+
+                <Label
+                    Text="Don't have an account?"
+                    TextColor="{DynamicResource ExchangeMuted}" />
+
+                <Button
+                    Text="Create account"
+                    Command="{Binding OpenRegisterCommand}"
+                    BackgroundColor="Transparent"
+                    TextColor="{DynamicResource ExchangeGold}"
+                    Padding="0" />
+
+            </HorizontalStackLayout>
+
+        </Grid>
+    </ScrollView>
+
+</ContentPage>
