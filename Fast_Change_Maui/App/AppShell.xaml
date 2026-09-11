@@ -1,13 +1,26 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<Shell x:Class="App.AppShell"
+<Shell
+    x:Class="App.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:UI.Views;assembly=UI"
-    Title="FastChange">
+    xmlns:views="clr-namespace:UI.Views;assembly=UI"
+    FlyoutBehavior="Disabled"
+    Shell.NavBarIsVisible="False">
 
-    <!--
-        Authenticated navigation will be added later.
-        For now the shell is intentionally minimal.
-    -->
+    <ShellContent
+        Route="login"
+        ContentTemplate="{DataTemplate views:LoginPage}" />
+
+    <ShellContent
+        Route="register"
+        ContentTemplate="{DataTemplate views:RegisterPage}" />
+
+    <ShellContent
+        Route="dashboard"
+        ContentTemplate="{DataTemplate views:DashboardPage}" />
+
+    <ShellContent
+        Route="wallets"
+        ContentTemplate="{DataTemplate views:WalletsPage}" />
 
 </Shell>

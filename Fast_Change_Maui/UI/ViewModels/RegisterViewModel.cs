@@ -2,60 +2,98 @@
 using CommunityToolkit.Mvvm.Input;
 using Core.DTOs.Auth;
 using Core.Interfaces;
+using Refit;
+using System.Net;
 
 namespace UI.ViewModels;
 
 public partial class RegisterViewModel : ObservableObject
 {
     private readonly IAuthService _authService;
-    private readonly IAlertService _alertService;
 
-    [ObservableProperty]
-    private string _email = string.Empty;
-
-    [ObservableProperty]
-    private string _password = string.Empty;
-
-    [ObservableProperty]
-    private bool _isBusy;
-
-    public RegisterViewModel(IAuthService authService, IAlertService alertService)
+    public RegisterViewModel(IAuthService authService)
     {
         _authService = authService;
-        _alertService = alertService;
     }
 
-    [RelayCommand()]
-    public async Task RegisterAsyncCommand()
+    [ObservableProperty]
+    private string email = string.Empty;
+
+    [ObservableProperty]
+    private string password = string.Empty;
+
+    [ObservableProperty]
+    private string confirmPassword = string.Empty;
+
+    [ObservableProperty]
+    private string errorMessage = string.Empty;
+
+    [ObservableProperty]
+    private bool isBusy;
+
+    [RelayCommand]
+    private async Task RegisterAsync()
     {
-        if (IsBusy) return;
+        if (IsBusy)
+        {
+            return;
+        }
+
+        ErrorMessage = string.Empty;
+
+        if (string.IsNullOrWhiteSpace(Email) ||
+            string.IsNullOrWhiteSpace(Password) ||
+            string.IsNullOrWhiteSpace(ConfirmPassword))
+        {
+            ErrorMessage = "All fields are required.";
+            return;
+        }
+
+        if (!string.Equals(Password, ConfirmPassword, StringComparison.Ordinal))
+        {
+            ErrorMessage = "Passwords do not match.";
+            return;
+        }
 
         try
         {
             IsBusy = true;
-
-            var request = new RegisterRequestDto(Email, Password);
-            var result = await _authService.RegisterAsync(request);
-
-            // Clean, mockable execution line compliant with .NET 10 specifications
-            await _alertService.ShowAlertAsync(
-                "Success",
-                "Account created with default multi-currency wallets!");
-
-            // Navigate to dashboard after successful registration
-            // This would normally navigate using the application's navigation system
+            await _authService.RegisterAsync(new RegisterRequestDto(Email.Trim(), Password));
+            await Shell.Current.GoToAsync("//login");
         }
-        catch (ApplicationException ex)
+        catch (Exception ex)
         {
-            await _alertService.ShowAlertAsync("Validation Error", ex.Message);
-        }
-        catch (Exception)
-        {
-            await _alertService.ShowAlertAsync("Error", "Could not connect to the server.");
+            ErrorMessage = GetErrorMessage(ex);
         }
         finally
         {
             IsBusy = false;
         }
+    }
+
+    [RelayCommand]
+    private async Task OpenLoginAsync()
+    {
+        await Shell.Current.GoToAsync("//login");
+    }
+
+    private static string GetErrorMessage(Exception exception)
+    {
+        return exception switch
+        {
+            ApiException
+            {
+                StatusCode: HttpStatusCode.Conflict
+            } => "An account with this email already exists.",
+            
+            ApiException
+            {
+                StatusCode: HttpStatusCode.UnprocessableEntity
+            } => "Please check the entered data.",
+            
+            HttpRequestException => "Unable to connect to the server.",
+            
+            _ => "Something went wrong. Please try again."
+        };
     }
 }

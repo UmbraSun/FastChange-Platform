@@ -9,6 +9,10 @@ public partial class App : Application
 
     protected override Window CreateWindow(IActivationState? activationState)
     {
-        return new Window(new AppShell());
+        var services = Handler?.MauiContext?.Services
+            ?? throw new InvalidOperationException("MAUI service provider is not available.");
+
+        var shell = services.GetRequiredService<AppShell>();
+        return new Window(shell);
     }
 }
