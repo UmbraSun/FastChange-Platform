@@ -2,11 +2,11 @@ using UI.ViewModels;
 
 namespace UI.Views;
 
-public partial class DashboardPage : ContentPage
+public partial class WalletsPage : ContentPage
 {
-    private readonly DashboardViewModel _viewModel;
+    private readonly WalletsViewModel _viewModel;
 
-    public DashboardPage(DashboardViewModel viewModel)
+    public WalletsPage(WalletsViewModel viewModel)
     {
         InitializeComponent();
 
