@@ -2,12 +2,12 @@
 using App.Services;
 using CommunityToolkit.Maui;
 using Core.Api.Auth;
+using Core.Api.Exchange;
 using Core.Api.Users;
 using Core.Interfaces;
 using Core.Services;
 using Microsoft.Extensions.Logging;
 using Refit;
-using System.Buffers.Text;
 using UI.ViewModels;
 using UI.Views;
 
@@ -38,6 +38,7 @@ public static class MauiProgram
 
     private static void ConfigureServices(MauiAppBuilder builder)
     {
+        builder.Services.AddSingleton<IExchangeService, ExchangeService>();
         builder.Services.AddSingleton<ITokenStorage, SecureTokenStorage>();
         builder.Services.AddSingleton<IAuthState, AuthState>();
         builder.Services.AddSingleton<IAuthService, AuthService>();
@@ -59,6 +60,9 @@ public static class MauiProgram
 
         builder.Services.AddTransient<WalletsViewModel>();
         builder.Services.AddTransient<WalletsPage>();
+
+        builder.Services.AddTransient<ExchangeViewModel>();
+        builder.Services.AddTransient<ExchangePage>();
     }
 
     private static void ConfigureApi(MauiAppBuilder builder)
@@ -72,6 +76,13 @@ public static class MauiProgram
             });
 
         builder.Services.AddRefitClient<IUserApi>()
+            .ConfigureHttpClient(client =>
+            {
+                client.BaseAddress = new Uri(baseUrl);
+            })
+            .AddHttpMessageHandler<AuthHandler>();
+
+        builder.Services.AddRefitClient<IExchangeApi>()
             .ConfigureHttpClient(client =>
             {
                 client.BaseAddress = new Uri(baseUrl);
