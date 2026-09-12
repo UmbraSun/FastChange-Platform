@@ -23,4 +23,8 @@
         Route="wallets"
         ContentTemplate="{DataTemplate views:WalletsPage}" />
 
+    <ShellContent
+        Route="exchange"
+        ContentTemplate="{DataTemplate views:ExchangePage}" />
+
 </Shell>
