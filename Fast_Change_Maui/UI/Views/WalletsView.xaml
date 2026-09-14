@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentView
+    x:Class="UI.Views.Sections.WalletsView"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewModels="clr-namespace:UI.ViewModels"
+    x:DataType="viewModels:WalletsViewModel"
+    BackgroundColor="{DynamicResource ExchangeBg}">
+
+    <Grid
+        Padding="20,18,20,0"
+        RowDefinitions="Auto,*">
+
+        <VerticalStackLayout
+            Grid.Row="0"
+            Margin="0,0,0,24"
+            Spacing="5">
+
+            <Label
+                Text="Wallets"
+                FontFamily="{DynamicResource Headline}"
+                FontSize="28"
+                TextColor="{DynamicResource ExchangeText}" />
+
+            <Label
+                Text="Your currency balances"
+                FontSize="14"
+                TextColor="{DynamicResource ExchangeMuted}" />
+
+        </VerticalStackLayout>
+
+        <CollectionView
+            Grid.Row="1"
+            ItemsSource="{Binding Wallets}"
+            SelectionMode="None">
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+
+                    <Border
+                        Padding="18"
+                        Margin="0,0,0,10"
+                        BackgroundColor="{DynamicResource ExchangeCard}"
+                        Stroke="{DynamicResource ExchangeBorder}"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 16">
+
+                        <Grid ColumnDefinitions="*,Auto">
+
+                            <VerticalStackLayout Spacing="4">
+
+                                <Label
+                                    Text="{Binding Currency}"
+                                    FontFamily="{DynamicResource Headline}"
+                                    FontSize="20"
+                                    TextColor="{DynamicResource ExchangeText}" />
+
+                                <Label
+                                    Text="Available balance"
+                                    FontSize="13"
+                                    TextColor="{DynamicResource ExchangeMuted}" />
+
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout
+                                Grid.Column="1"
+                                Spacing="2"
+                                HorizontalOptions="End">
+
+                                <Label
+                                    Text="{Binding Balance, StringFormat='{0:N2}'}"
+                                    FontFamily="{DynamicResource Headline}"
+                                    FontSize="18"
+                                    TextColor="{DynamicResource ExchangeText}"
+                                    HorizontalTextAlignment="End" />
+
+                                <Label
+                                    Text="{Binding Currency}"
+                                    FontSize="12"
+                                    TextColor="{DynamicResource ExchangeMuted}"
+                                    HorizontalTextAlignment="End" />
+
+                            </VerticalStackLayout>
+
+                        </Grid>
+
+                    </Border>
+
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+        </CollectionView>
+
+    </Grid>
+
+</ContentView>
+    

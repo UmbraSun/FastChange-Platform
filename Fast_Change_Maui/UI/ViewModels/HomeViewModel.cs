@@ -1,15 +1,14 @@
-﻿using System.Collections.ObjectModel;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Core.DTOs.Wallets;
 using Core.Interfaces;
+using System.Collections.ObjectModel;
 
 namespace UI.ViewModels;
 
-public partial class DashboardViewModel : ObservableObject
+public partial class HomeViewModel : ObservableObject
 {
     private readonly IUserService _userService;
-    private readonly IAuthService _authService;
 
     public ObservableCollection<WalletDto> Wallets { get; } = [];
 
@@ -28,12 +27,12 @@ public partial class DashboardViewModel : ObservableObject
     [ObservableProperty]
     private string errorMessage = string.Empty;
 
-    public DashboardViewModel(
-        IUserService userService,
-        IAuthService authService)
+    public string DisplayBalance =>
+        IsBalanceVisible ? TotalBalance.ToString("N2") : "••••••";
+
+    public HomeViewModel(IUserService userService)
     {
         _userService = userService;
-        _authService = authService;
     }
 
     [RelayCommand]
@@ -55,13 +54,14 @@ public partial class DashboardViewModel : ObservableObject
             var wallets = await walletsTask;
 
             UserName = user.Email;
-
             Wallets.Clear();
 
             foreach (var wallet in wallets)
                 Wallets.Add(wallet);
 
             TotalBalance = Wallets.Where(x => x.Currency == "USD").Sum(x => x.Balance);
+
+            OnPropertyChanged(nameof(DisplayBalance));
         }
         catch (Exception)
         {
@@ -77,33 +77,6 @@ public partial class DashboardViewModel : ObservableObject
     private void ToggleBalanceVisibility()
     {
         IsBalanceVisible = !IsBalanceVisible;
-    }
-
-    [RelayCommand]
-    private async Task LogoutAsync()
-    {
-        if (IsBusy) return;
-
-        try
-        {
-            IsBusy = true;
-            ErrorMessage = string.Empty;
-
-            await _authService.LogoutAsync();
-
-            Wallets.Clear();
-            UserName = string.Empty;
-            TotalBalance = 0;
-
-            await Shell.Current.GoToAsync("//login");
-        }
-        catch (Exception)
-        {
-            ErrorMessage = "Unable to sign out.";
-        }
-        finally
-        {
-            IsBusy = false;
-        }
+        OnPropertyChanged(nameof(DisplayBalance));
     }
 }

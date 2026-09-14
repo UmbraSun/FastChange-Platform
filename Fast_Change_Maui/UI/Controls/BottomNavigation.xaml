@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentView
+    x:Class="UI.Controls.BottomNavigation"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    BackgroundColor="{DynamicResource ExchangeCard}">
+
+    <Grid
+        Padding="8,6"
+        ColumnDefinitions="*,*,*,*,*">
+
+        <Grid Grid.Column="0">
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Tapped="Home_Tapped" />
+            </Grid.GestureRecognizers>
+
+            <VerticalStackLayout
+                Spacing="3"
+                HorizontalOptions="Center">
+
+                <Label
+                    Text="⌂"
+                    FontSize="22"
+                    HorizontalOptions="Center"
+                    TextColor="{DynamicResource ExchangeGold}" />
+
+                <Label
+                    Text="Home"
+                    FontSize="11"
+                    TextColor="{DynamicResource ExchangeGold}" />
+
+            </VerticalStackLayout>
+        </Grid>
+
+        <Grid Grid.Column="1">
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Tapped="Wallets_Tapped" />
+            </Grid.GestureRecognizers>
+
+            <VerticalStackLayout
+                Spacing="3"
+                HorizontalOptions="Center">
+
+                <Label
+                    Text="▣"
+                    FontSize="20"
+                    HorizontalOptions="Center"
+                    TextColor="{DynamicResource ExchangeMuted}" />
+
+                <Label
+                    Text="Wallets"
+                    FontSize="11"
+                    TextColor="{DynamicResource ExchangeMuted}" />
+
+            </VerticalStackLayout>
+        </Grid>
+
+        <Grid Grid.Column="2">
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Tapped="Exchange_Tapped" />
+            </Grid.GestureRecognizers>
+
+            <VerticalStackLayout
+                Spacing="3"
+                HorizontalOptions="Center">
+
+                <Label
+                    Text="⇅"
+                    FontSize="22"
+                    HorizontalOptions="Center"
+                    TextColor="{DynamicResource ExchangeMuted}" />
+
+                <Label
+                    Text="Exchange"
+                    FontSize="11"
+                    TextColor="{DynamicResource ExchangeMuted}" />
+
+            </VerticalStackLayout>
+        </Grid>
+
+        <Grid Grid.Column="3">
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Tapped="History_Tapped" />
+            </Grid.GestureRecognizers>
+
+            <VerticalStackLayout
+                Spacing="3"
+                HorizontalOptions="Center">
+
+                <Label
+                    Text="◷"
+                    FontSize="21"
+                    HorizontalOptions="Center"
+                    TextColor="{DynamicResource ExchangeMuted}" />
+
+                <Label
+                    Text="History"
+                    FontSize="11"
+                    TextColor="{DynamicResource ExchangeMuted}" />
+
+            </VerticalStackLayout>
+        </Grid>
+
+        <Grid Grid.Column="4">
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Tapped="Profile_Tapped" />
+            </Grid.GestureRecognizers>
+
+            <VerticalStackLayout
+                Spacing="3"
+                HorizontalOptions="Center">
+
+                <Label
+                    Text="○"
+                    FontSize="22"
+                    HorizontalOptions="Center"
+                    TextColor="{DynamicResource ExchangeMuted}" />
+
+                <Label
+                    Text="Profile"
+                    FontSize="11"
+                    TextColor="{DynamicResource ExchangeMuted}" />
+
+            </VerticalStackLayout>
+        </Grid>
+
+    </Grid>
+
+</ContentView>
+    
