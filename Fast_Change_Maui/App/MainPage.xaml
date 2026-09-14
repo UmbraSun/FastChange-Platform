@@ -15,7 +15,7 @@
             <Label Text="Welcome to FastChange" TextColor="{DynamicResource ExchangeText}" FontSize="26" FontAttributes="Bold"/>
             <Label Text="The next-generation cryptocurrency exchange platform" TextColor="{DynamicResource ExchangeMuted}" FontSize="14"/>
 
-<Border BackgroundColor="{DynamicResource ExchangeCard}" StrokeThickness="0" StrokeShape="RoundRectangle 12" Padding="20">
+            <Border BackgroundColor="{DynamicResource ExchangeCard}" StrokeThickness="0" StrokeShape="RoundRectangle 12" Padding="20">
                 <VerticalStackLayout Spacing="10">
                     <Label Text="Secure &amp; Reliable" TextColor="{DynamicResource ExchangeText}" FontSize="16" FontAttributes="Bold"/>
                     <Label Text="Advanced security protocols and multi-signature wallets to keep your assets safe." TextColor="{DynamicResource ExchangeMuted}" FontSize="12"/>

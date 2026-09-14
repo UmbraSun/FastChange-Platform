@@ -45,7 +45,7 @@ public partial class LoginViewModel : ObservableObject
         {
             IsBusy = true;
             await _authService.LoginAsync(new LoginRequestDto(Email.Trim(), Password));
-            await Shell.Current.GoToAsync("//dashboard");
+            await Shell.Current.GoToAsync("//main");
         }
         catch (Exception ex)
         {

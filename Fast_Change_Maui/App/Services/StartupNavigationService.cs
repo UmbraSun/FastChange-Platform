@@ -14,7 +14,7 @@ public sealed class StartupNavigationService
     public async Task NavigateAsync(CancellationToken cancellationToken = default)
     {
         var isAuthenticated = await _authState.IsAuthenticatedAsync(cancellationToken);
-        var route = isAuthenticated ? "//dashboard" : "//login";
+        var route = isAuthenticated ? "//main" : "//login";
         await Shell.Current.GoToAsync(route);
     }
 }

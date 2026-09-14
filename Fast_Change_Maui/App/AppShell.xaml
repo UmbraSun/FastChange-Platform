@@ -27,4 +27,8 @@
         Route="exchange"
         ContentTemplate="{DataTemplate views:ExchangePage}" />
 
+    <ShellContent
+        Route="main"
+        ContentTemplate="{DataTemplate views:MainPage}" />
+
 </Shell>

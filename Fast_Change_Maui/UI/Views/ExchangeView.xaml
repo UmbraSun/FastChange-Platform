@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentView
+    x:Class="UI.Views.Sections.ExchangeView"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewModels="clr-namespace:UI.ViewModels"
+    x:DataType="viewModels:ExchangeViewModel"
+    BackgroundColor="{DynamicResource ExchangeBg}">
+
+    <Grid
+        Padding="20,18,20,0"
+        RowDefinitions="Auto,*">
+
+        <VerticalStackLayout
+            Grid.Row="0"
+            Spacing="5"
+            Margin="0,0,0,24">
+
+            <Label
+                Text="Exchange"
+                FontFamily="{DynamicResource Headline}"
+                FontSize="28"
+                TextColor="{DynamicResource ExchangeText}" />
+
+            <Label
+                Text="Exchange currencies instantly"
+                FontSize="14"
+                TextColor="{DynamicResource ExchangeMuted}" />
+
+        </VerticalStackLayout>
+
+        <ScrollView Grid.Row="1">
+
+            <VerticalStackLayout Spacing="16">
+
+                <!-- From -->
+
+                <VerticalStackLayout Spacing="8">
+
+                    <Label
+                        Text="From"
+                        FontSize="13"
+                        TextColor="{DynamicResource ExchangeMuted}" />
+
+                    <Border
+                        Padding="14,4"
+                        BackgroundColor="{DynamicResource ExchangeCard}"
+                        Stroke="{DynamicResource ExchangeBorder}"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 14">
+
+                        <Grid ColumnDefinitions="*,Auto">
+
+                            <Picker
+                                Grid.Column="0"
+                                ItemsSource="{Binding Wallets}"
+                                SelectedItem="{Binding FromWallet, Mode=TwoWay}"
+                                ItemDisplayBinding="{Binding Currency}"
+                                SelectedIndexChanged="WalletPicker_SelectedIndexChanged"
+                                Title="Select wallet"
+                                FontSize="16"
+                                TextColor="{DynamicResource ExchangeText}"
+                                TitleColor="{DynamicResource ExchangeMuted}" />
+
+                            <Label
+                                Grid.Column="1"
+                                Text="{Binding FromWallet.Balance, StringFormat='{0:N2}'}"
+                                VerticalOptions="Center"
+                                FontFamily="{DynamicResource Headline}"
+                                FontSize="15"
+                                TextColor="{DynamicResource ExchangeText}" />
+
+                        </Grid>
+
+                    </Border>
+
+                </VerticalStackLayout>
+
+                <!-- Amount -->
+
+                <VerticalStackLayout Spacing="8">
+
+                    <Label
+                        Text="Amount"
+                        FontSize="13"
+                        TextColor="{DynamicResource ExchangeMuted}" />
+
+                    <Border
+                        Padding="16,4"
+                        BackgroundColor="{DynamicResource ExchangeCard}"
+                        Stroke="{DynamicResource ExchangeBorder}"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 14">
+
+                        <Entry
+                            Text="{Binding Amount, Mode=TwoWay}"
+                            TextChanged="AmountEntry_TextChanged"
+                            Completed="AmountEntry_Completed"
+                            Keyboard="Numeric"
+                            Placeholder="0.00"
+                            FontFamily="{DynamicResource Headline}"
+                            FontSize="22"
+                            TextColor="{DynamicResource ExchangeText}"
+                            PlaceholderColor="{DynamicResource ExchangeMuted}"
+                            ClearButtonVisibility="WhileEditing" />
+
+                    </Border>
+
+                </VerticalStackLayout>
+
+                <!-- Swap -->
+
+                <Grid
+                    HeightRequest="42"
+                    ColumnDefinitions="*,Auto,*">
+
+                    <BoxView
+                        Grid.Column="0"
+                        HeightRequest="1"
+                        VerticalOptions="Center"
+                        BackgroundColor="{DynamicResource ExchangeBorder}" />
+
+                    <Border
+                        Grid.Column="1"
+                        WidthRequest="42"
+                        HeightRequest="42"
+                        BackgroundColor="{DynamicResource ExchangeCard}"
+                        Stroke="{DynamicResource ExchangeBorder}"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 21">
+
+                        <Border.GestureRecognizers>
+
+                            <TapGestureRecognizer
+                                Command="{Binding SwapWalletsCommand}" />
+
+                        </Border.GestureRecognizers>
+
+                        <Label
+                            Text="⇅"
+                            FontSize="20"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center"
+                            TextColor="{DynamicResource ExchangeGold}" />
+
+                    </Border>
+
+                    <BoxView
+                        Grid.Column="2"
+                        HeightRequest="1"
+                        VerticalOptions="Center"
+                        BackgroundColor="{DynamicResource ExchangeBorder}" />
+
+                </Grid>
+
+                <!-- To -->
+
+                <VerticalStackLayout Spacing="8">
+
+                    <Label
+                        Text="To"
+                        FontSize="13"
+                        TextColor="{DynamicResource ExchangeMuted}" />
+
+                    <Border
+                        Padding="14,4"
+                        BackgroundColor="{DynamicResource ExchangeCard}"
+                        Stroke="{DynamicResource ExchangeBorder}"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 14">
+
+                        <Grid ColumnDefinitions="*,Auto">
+
+                            <Picker
+                                Grid.Column="0"
+                                ItemsSource="{Binding Wallets}"
+                                SelectedItem="{Binding ToWallet, Mode=TwoWay}"
+                                ItemDisplayBinding="{Binding Currency}"
+                                SelectedIndexChanged="WalletPicker_SelectedIndexChanged"
+                                Title="Select wallet"
+                                FontSize="16"
+                                TextColor="{DynamicResource ExchangeText}"
+                                TitleColor="{DynamicResource ExchangeMuted}" />
+
+                            <Label
+                                Grid.Column="1"
+                                Text="{Binding ToWallet.Balance, StringFormat='{0:N2}'}"
+                                VerticalOptions="Center"
+                                FontFamily="{DynamicResource Headline}"
+                                FontSize="15"
+                                TextColor="{DynamicResource ExchangeText}" />
+
+                        </Grid>
+
+                    </Border>
+
+                </VerticalStackLayout>
+
+                <!-- Preview -->
+
+                <Border
+                    Padding="18"
+                    BackgroundColor="{DynamicResource ExchangeCard}"
+                    Stroke="{DynamicResource ExchangeBorder}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 16">
+
+                    <VerticalStackLayout Spacing="10">
+
+                        <Grid ColumnDefinitions="*,Auto">
+
+                            <Label
+                                Text="Exchange rate"
+                                FontSize="13"
+                                TextColor="{DynamicResource ExchangeMuted}" />
+
+                            <ActivityIndicator
+                                Grid.Column="1"
+                                IsRunning="{Binding IsPreviewLoading}"
+                                IsVisible="{Binding IsPreviewLoading}"
+                                WidthRequest="20"
+                                HeightRequest="20"
+                                Color="{DynamicResource ExchangeGold}" />
+
+                        </Grid>
+
+                        <Label
+                            Text="{Binding ExchangeRate, StringFormat='{0:N8}'}"
+                            IsVisible="{Binding ExchangeRate, Converter={StaticResource NullableDecimalToBoolConverter}}"
+                            FontFamily="{DynamicResource Headline}"
+                            FontSize="17"
+                            TextColor="{DynamicResource ExchangeText}" />
+
+                        <Grid
+                            ColumnDefinitions="*,Auto"
+                            Margin="0,4,0,0">
+
+                            <Label
+                                Text="You receive"
+                                FontSize="13"
+                                TextColor="{DynamicResource ExchangeMuted}" />
+
+                            <Label
+                                Grid.Column="1"
+                                Text="{Binding ReceivedAmount, StringFormat='{0:N2}'}"
+                                IsVisible="{Binding ReceivedAmount, Converter={StaticResource NullableDecimalToBoolConverter}}"
+                                FontFamily="{DynamicResource Headline}"
+                                FontSize="20"
+                                TextColor="{DynamicResource ExchangeGold}" />
+
+                        </Grid>
+
+                    </VerticalStackLayout>
+
+                </Border>
+
+                <!-- Messages -->
+
+                <Label
+                    Text="{Binding ErrorMessage}"
+                    IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyConverter}}"
+                    FontSize="13"
+                    TextColor="#F6465D" />
+
+                <Label
+                    Text="{Binding SuccessMessage}"
+                    IsVisible="{Binding SuccessMessage, Converter={StaticResource StringNotEmptyConverter}}"
+                    FontSize="13"
+                    TextColor="{DynamicResource ExchangeGreen}" />
+
+                <!-- Exchange -->
+
+                <Button
+                    Text="Exchange"
+                    Command="{Binding ExchangeCommand}"
+                    IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}"
+                    HeightRequest="52"
+                    CornerRadius="12"
+                    BackgroundColor="{DynamicResource ExchangeGold}"
+                    TextColor="#0B0E11"
+                    FontFamily="{DynamicResource Headline}"
+                    FontSize="16" />
+
+                <ActivityIndicator
+                    IsRunning="{Binding IsBusy}"
+                    IsVisible="{Binding IsBusy}"
+                    HorizontalOptions="Center"
+                    Color="{DynamicResource ExchangeGold}"
+                    Margin="0,4,0,24" />
+
+            </VerticalStackLayout>
+
+        </ScrollView>
+
+    </Grid>
+
+</ContentView>
+    

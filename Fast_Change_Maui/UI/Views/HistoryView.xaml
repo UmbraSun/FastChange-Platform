@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentView
+    x:Class="UI.Views.Sections.HistoryView"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewModels="clr-namespace:UI.ViewModels"
+    x:DataType="viewModels:HistoryViewModel"
+    BackgroundColor="{DynamicResource ExchangeBg}">
+
+    <Grid
+        Padding="20,18,20,0"
+        RowDefinitions="Auto,*">
+
+        <VerticalStackLayout
+            Grid.Row="0"
+            Spacing="5"
+            Margin="0,0,0,24">
+
+            <Label
+                Text="History"
+                FontFamily="{DynamicResource Headline}"
+                FontSize="28"
+                TextColor="{DynamicResource ExchangeText}" />
+
+            <Label
+                Text="Your recent transactions"
+                FontSize="14"
+                TextColor="{DynamicResource ExchangeMuted}" />
+
+        </VerticalStackLayout>
+
+        <CollectionView
+            Grid.Row="1"
+            ItemsSource="{Binding Transactions}"
+            SelectionMode="None">
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+
+                    <Border
+                        Padding="16"
+                        Margin="0,0,0,10"
+                        BackgroundColor="{DynamicResource ExchangeCard}"
+                        Stroke="{DynamicResource ExchangeBorder}"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 14">
+
+                        <Grid
+                            ColumnDefinitions="*,Auto"
+                            RowDefinitions="Auto,Auto">
+
+                            <VerticalStackLayout
+                                Grid.Row="0"
+                                Spacing="3">
+
+                                <Label
+                                    Text="{Binding Type}"
+                                    FontFamily="{DynamicResource Title}"
+                                    FontSize="15"
+                                    TextColor="{DynamicResource ExchangeText}" />
+
+                                <Label
+                                    Text="{Binding CreatedAtUtc, StringFormat='{0:dd MMM yyyy, HH:mm}'}"
+                                    FontSize="12"
+                                    TextColor="{DynamicResource ExchangeMuted}" />
+
+                            </VerticalStackLayout>
+
+                            <Label
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                Text="{Binding Amount, StringFormat='{0:N2}'}"
+                                FontFamily="{DynamicResource Headline}"
+                                FontSize="16"
+                                TextColor="{DynamicResource ExchangeText}"
+                                VerticalOptions="Center" />
+
+                            <Label
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                Text="{Binding Currency}"
+                                FontSize="12"
+                                TextColor="{DynamicResource ExchangeMuted}"
+                                Margin="0,6,0,0" />
+
+                        </Grid>
+
+                    </Border>
+
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+        </CollectionView>
+
+    </Grid>
+
+</ContentView>

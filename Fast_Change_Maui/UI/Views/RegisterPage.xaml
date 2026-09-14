@@ -1,57 +1,170 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:vm="clr-namespace:UI.ViewModels"
-             x:Class="UI.Views.RegisterPage"
-             x:DataType="vm:RegisterViewModel"
-             BackgroundColor="{DynamicResource ExchangeBg}"
-             NavigationPage.HasNavigationBar="False">
 
-    <Grid RowDefinitions="Auto, *, Auto" Padding="20">
-        <!-- Header -->
-        <HorizontalStackLayout Grid.Row="0" Margin="0,10,0,0">
-            <Label Text="FastChange" TextColor="{DynamicResource ExchangeGreen}" FontSize="22" FontAttributes="Bold"/>
-        </HorizontalStackLayout>
+<ContentPage
+    x:Class="UI.Views.RegisterPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewModels="clr-namespace:UI.ViewModels"
+    x:DataType="viewModels:RegisterViewModel"
+    Shell.NavBarIsVisible="False"
+    BackgroundColor="{DynamicResource ExchangeBg}">
 
-        <!-- Main Form -->
-        <VerticalStackLayout Grid.Row="1" VerticalOptions="Center" Spacing="16" MaximumWidthRequest="400">
-            <Label Text="Create your account" TextColor="{DynamicResource ExchangeText}" FontSize="26" FontAttributes="Bold"/>
-            <Label Text="Register to start trading." TextColor="{DynamicResource ExchangeMuted}" FontSize="14"/>
+    <ScrollView>
+        <Grid
+            Padding="24"
+            RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,*"
+            RowSpacing="18">
 
-            <VerticalStackLayout Spacing="6">
-                <Label Text="EMAIL ADDRESS" TextColor="{DynamicResource ExchangeMuted}" FontSize="11" FontAttributes="Bold"/>
-                <Entry Text="{Binding Email}" Placeholder="you@example.com" Keyboard="Email" 
-                       TextColor="{DynamicResource ExchangeText}" 
-                       BackgroundColor="{DynamicResource ExchangeCard}"
-                       PlaceholderColor="{DynamicResource ExchangeMuted}"
-                       FontSize="14"
-                       HeightRequest="45"/>
+            <!-- Back -->
+            <HorizontalStackLayout
+                Grid.Row="0"
+                Margin="0,16,0,12"
+                Spacing="6">
+
+                <Label
+                    Text="‹"
+                    FontSize="30"
+                    TextColor="{DynamicResource ExchangeMuted}"
+                    VerticalTextAlignment="Center" />
+
+                <Label
+                    Text="Back to sign in"
+                    FontSize="14"
+                    TextColor="{DynamicResource ExchangeMuted}"
+                    VerticalTextAlignment="Center">
+
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer
+                            Command="{Binding OpenLoginCommand}" />
+                    </Label.GestureRecognizers>
+
+                </Label>
+
+            </HorizontalStackLayout>
+
+            <!-- Header -->
+            <VerticalStackLayout
+                Grid.Row="1"
+                Margin="0,20,0,8"
+                Spacing="8">
+
+                <Label
+                    Text="FastChange"
+                    FontSize="32"
+                    FontAttributes="Bold"
+                    TextColor="{DynamicResource ExchangeGold}" />
+
+                <Label
+                    Text="Create your account"
+                    FontSize="25"
+                    FontAttributes="Bold"
+                    TextColor="{DynamicResource ExchangeText}" />
+
+                <Label
+                    Text="Register to start using FastChange."
+                    FontSize="15"
+                    TextColor="{DynamicResource ExchangeMuted}" />
+
             </VerticalStackLayout>
 
-            <VerticalStackLayout Spacing="6">
-                <Label Text="PASSWORD" TextColor="{DynamicResource ExchangeMuted}" FontSize="11" FontAttributes="Bold"/>
-                <Entry Text="{Binding Password}" Placeholder="••••••••" IsPassword="True" 
-                       TextColor="{DynamicResource ExchangeText}" 
-                       BackgroundColor="{DynamicResource ExchangeCard}"
-                       PlaceholderColor="{DynamicResource ExchangeMuted}"
-                       FontSize="14"
-                       HeightRequest="45"/>
+            <!-- Email -->
+            <VerticalStackLayout
+                Grid.Row="2"
+                Spacing="8">
+
+                <Label
+                    Text="Email"
+                    FontSize="14"
+                    TextColor="{DynamicResource ExchangeText}" />
+
+                <Entry
+                    Text="{Binding Email}"
+                    Placeholder="Enter your email"
+                    Keyboard="Email"
+                    ClearButtonVisibility="WhileEditing"
+                    ReturnType="Next"
+                    HeightRequest="52" />
+
             </VerticalStackLayout>
 
-            <ActivityIndicator IsRunning="{Binding IsBusy}" Color="{DynamicResource ExchangeGreen}" HeightRequest="30"/>
+            <!-- Password -->
+            <VerticalStackLayout
+                Grid.Row="3"
+                Spacing="8">
 
-            <Button Text="Sign Up" 
-                    Command="{Binding RegisterAsyncCommand}"
-                    BackgroundColor="{DynamicResource ExchangeGreen}" 
-                    TextColor="{DynamicResource ExchangeBg}" 
-                    FontAttributes="Bold" 
-                    HeightRequest="50"
+                <Label
+                    Text="Password"
+                    FontSize="14"
+                    TextColor="{DynamicResource ExchangeText}" />
+
+                <Entry
+                    Text="{Binding Password}"
+                    Placeholder="Create a password"
+                    IsPassword="True"
+                    ReturnType="Next"
+                    HeightRequest="52" />
+
+            </VerticalStackLayout>
+
+            <!-- Confirm password -->
+            <VerticalStackLayout
+                Grid.Row="4"
+                Spacing="8">
+
+                <Label
+                    Text="Confirm password"
+                    FontSize="14"
+                    TextColor="{DynamicResource ExchangeText}" />
+
+                <Entry
+                    Text="{Binding ConfirmPassword}"
+                    Placeholder="Repeat your password"
+                    IsPassword="True"
+                    ReturnType="Done"
+                    HeightRequest="52" />
+
+            </VerticalStackLayout>
+
+            <!-- Bottom area -->
+            <VerticalStackLayout
+                Grid.Row="5"
+                Spacing="12">
+
+                <Label
+                    Text="{Binding ErrorMessage}"
+                    TextColor="#F6465D"
+                    FontSize="14"
+                    IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyConverter}}" />
+
+                <Button
+                    Text="Create account"
+                    Command="{Binding RegisterCommand}"
+                    IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}"
+                    HeightRequest="52"
                     CornerRadius="12"
-                    FontSize="16"/>
-        </VerticalStackLayout>
+                    BackgroundColor="{DynamicResource ExchangeGold}"
+                    TextColor="{DynamicResource ExchangeBg}"
+                    FontSize="16"
+                    FontAttributes="Bold" />
 
-        <!-- Footer -->
-        <Label Grid.Row="2" Text="By creating an account, you agree to our Terms." TextColor="{DynamicResource ExchangeMuted}" FontSize="11" HorizontalTextAlignment="Center"/>
-    </Grid>
+                <ActivityIndicator
+                    IsRunning="{Binding IsBusy}"
+                    IsVisible="{Binding IsBusy}"
+                    Color="{DynamicResource ExchangeGold}"
+                    HeightRequest="24" />
+
+            </VerticalStackLayout>
+
+            <!-- Terms -->
+            <Label
+                Grid.Row="6"
+                Margin="0,8,0,20"
+                Text="By creating an account, you agree to our Terms."
+                TextColor="{DynamicResource ExchangeMuted}"
+                FontSize="11"
+                HorizontalTextAlignment="Center" />
+
+        </Grid>
+    </ScrollView>
 
 </ContentPage>

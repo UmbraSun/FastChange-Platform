@@ -8,8 +8,10 @@ using Core.Interfaces;
 using Core.Services;
 using Microsoft.Extensions.Logging;
 using Refit;
+using UI.Controls;
 using UI.ViewModels;
 using UI.Views;
+using UI.Views.Sections;
 
 namespace App;
 
@@ -38,14 +40,29 @@ public static class MauiProgram
 
     private static void ConfigureServices(MauiAppBuilder builder)
     {
+        builder.Services.AddSingleton<ITransactionService, TransactionService>();
         builder.Services.AddSingleton<IExchangeService, ExchangeService>();
         builder.Services.AddSingleton<ITokenStorage, SecureTokenStorage>();
         builder.Services.AddSingleton<IAuthState, AuthState>();
         builder.Services.AddSingleton<IAuthService, AuthService>();
         builder.Services.AddSingleton<IUserService, UserService>();
 
+        builder.Services.AddTransient<MainViewModel>();
+        builder.Services.AddTransient<MainPage>();
+
+        builder.Services.AddTransient<HomeViewModel>();
+        builder.Services.AddTransient<HomeView>();
+
+        builder.Services.AddTransient<WalletsViewModel>();
+        builder.Services.AddTransient<WalletsView>();
+
+        builder.Services.AddTransient<ExchangeViewModel>();
+        builder.Services.AddTransient<ExchangeView>();
+
         builder.Services.AddSingleton<StartupNavigationService>();
         builder.Services.AddSingleton<AppShell>();
+
+        builder.Services.AddTransient<BottomNavigation>();
 
         builder.Services.AddTransient<AuthHandler>();
 
@@ -58,31 +75,38 @@ public static class MauiProgram
         builder.Services.AddTransient<DashboardViewModel>();
         builder.Services.AddTransient<DashboardPage>();
 
-        builder.Services.AddTransient<WalletsViewModel>();
         builder.Services.AddTransient<WalletsPage>();
-
-        builder.Services.AddTransient<ExchangeViewModel>();
         builder.Services.AddTransient<ExchangePage>();
+
+        builder.Services.AddTransient<HistoryViewModel>();
+        builder.Services.AddTransient<HistoryView>();
     }
 
     private static void ConfigureApi(MauiAppBuilder builder)
     {
         var baseUrl = GetApiBaseUrl();
 
-        builder.Services.AddRefitClient<IAuthApi>()
+        builder.Services.AddRefitGeneratedClient<IAuthApi>()
             .ConfigureHttpClient(client =>
             {
                 client.BaseAddress = new Uri(baseUrl);
             });
 
-        builder.Services.AddRefitClient<IUserApi>()
+        builder.Services.AddRefitGeneratedClient<IUserApi>()
             .ConfigureHttpClient(client =>
             {
                 client.BaseAddress = new Uri(baseUrl);
             })
             .AddHttpMessageHandler<AuthHandler>();
 
-        builder.Services.AddRefitClient<IExchangeApi>()
+        builder.Services.AddRefitGeneratedClient<IExchangeApi>()
+            .ConfigureHttpClient(client =>
+            {
+                client.BaseAddress = new Uri(baseUrl);
+            })
+            .AddHttpMessageHandler<AuthHandler>();
+
+        builder.Services.AddRefitGeneratedClient<IWalletApi>()
             .ConfigureHttpClient(client =>
             {
                 client.BaseAddress = new Uri(baseUrl);
