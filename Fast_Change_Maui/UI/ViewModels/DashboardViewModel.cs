@@ -9,7 +9,6 @@ namespace UI.ViewModels;
 public partial class DashboardViewModel : ObservableObject
 {
     private readonly IUserService _userService;
-    private readonly IAuthService _authService;
 
     public ObservableCollection<WalletDto> Wallets { get; } = [];
 
@@ -28,12 +27,9 @@ public partial class DashboardViewModel : ObservableObject
     [ObservableProperty]
     private string errorMessage = string.Empty;
 
-    public DashboardViewModel(
-        IUserService userService,
-        IAuthService authService)
+    public DashboardViewModel(IUserService userService)
     {
         _userService = userService;
-        _authService = authService;
     }
 
     [RelayCommand]
@@ -77,33 +73,5 @@ public partial class DashboardViewModel : ObservableObject
     private void ToggleBalanceVisibility()
     {
         IsBalanceVisible = !IsBalanceVisible;
-    }
-
-    [RelayCommand]
-    private async Task LogoutAsync()
-    {
-        if (IsBusy) return;
-
-        try
-        {
-            IsBusy = true;
-            ErrorMessage = string.Empty;
-
-            await _authService.LogoutAsync();
-
-            Wallets.Clear();
-            UserName = string.Empty;
-            TotalBalance = 0;
-
-            await Shell.Current.GoToAsync("//login");
-        }
-        catch (Exception)
-        {
-            ErrorMessage = "Unable to sign out.";
-        }
-        finally
-        {
-            IsBusy = false;
-        }
     }
 }

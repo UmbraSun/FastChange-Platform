@@ -42,14 +42,14 @@ public partial class MainPage : ContentPage
         _viewModel.ShowExchange();
     }
 
-    private void OnHistorySelected(object? sender, EventArgs e)
+    private async void OnHistorySelected(object? sender, EventArgs e)
     {
-        // HistoryView will be added next.
+        await _viewModel.ShowHistoryAsync();
     }
 
-    private void OnProfileSelected(object? sender, EventArgs e)
+    private async void OnProfileSelected(object? sender, EventArgs e)
     {
-        // ProfileView will be added next.
+        await _viewModel.ShowProfileAsync();
     }
 
     protected override void OnDisappearing()

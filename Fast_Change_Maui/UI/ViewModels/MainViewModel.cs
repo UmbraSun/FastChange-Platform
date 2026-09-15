@@ -10,6 +10,7 @@ public partial class MainViewModel : ObservableObject
     private readonly WalletsView _walletsView;
     private readonly ExchangeView _exchangeView;
     private readonly HistoryView _historyView;
+    private readonly ProfileView _profileView;
 
     [ObservableProperty]
     private ContentView currentView;
@@ -18,12 +19,14 @@ public partial class MainViewModel : ObservableObject
         HomeView homeView,
         WalletsView walletsView,
         ExchangeView exchangeView,
-        HistoryView historyView)
+        HistoryView historyView,
+        ProfileView profileView)
     {
         _homeView = homeView;
         _walletsView = walletsView;
         _exchangeView = exchangeView;
         _historyView = historyView;
+        _profileView = profileView;
 
         CurrentView = _homeView;
     }
@@ -38,6 +41,12 @@ public partial class MainViewModel : ObservableObject
     private Task LoadHistoryAsync()
     {
         return _historyView.LoadAsync();
+    }
+
+    [RelayCommand]
+    private Task LoadProfileAsync()
+    {
+        return _profileView.LoadAsync();
     }
 
     public void ShowHome()
@@ -58,7 +67,12 @@ public partial class MainViewModel : ObservableObject
     public async Task ShowHistoryAsync()
     {
         CurrentView = _historyView;
-
         await LoadHistoryAsync();
+    }
+
+    public async Task ShowProfileAsync()
+    {
+        CurrentView = _profileView;
+        await LoadProfileAsync();
     }
 }

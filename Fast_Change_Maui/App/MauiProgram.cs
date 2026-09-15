@@ -80,6 +80,9 @@ public static class MauiProgram
 
         builder.Services.AddTransient<HistoryViewModel>();
         builder.Services.AddTransient<HistoryView>();
+
+        builder.Services.AddTransient<ProfileViewModel>();
+        builder.Services.AddTransient<ProfileView>();
     }
 
     private static void ConfigureApi(MauiAppBuilder builder)
