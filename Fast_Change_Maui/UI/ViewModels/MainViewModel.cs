@@ -59,11 +59,6 @@ public partial class MainViewModel : ObservableObject
         CurrentView = _walletsView;
     }
 
-    public void ShowExchange()
-    {
-        CurrentView = _exchangeView;
-    }
-
     public async Task ShowHistoryAsync()
     {
         CurrentView = _historyView;
@@ -74,5 +69,17 @@ public partial class MainViewModel : ObservableObject
     {
         CurrentView = _profileView;
         await LoadProfileAsync();
+    }
+
+    public async Task ShowExchangeAsync()
+    {
+        CurrentView = _exchangeView;
+        await _exchangeView.LoadAsync();
+    }
+
+    public async Task ShowWalletsAsync()
+    {
+        CurrentView = _walletsView;
+        await _walletsView.LoadAsync();
     }
 }

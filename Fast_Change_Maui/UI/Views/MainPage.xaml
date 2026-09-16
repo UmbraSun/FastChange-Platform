@@ -18,7 +18,8 @@
 
         <controls:BottomNavigation
             x:Name="BottomNavigation"
-            Grid.Row="1" />
+            Grid.Row="1"
+            SelectedTab="Home" />
 
     </Grid>
 

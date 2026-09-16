@@ -4,128 +4,167 @@
     x:Class="UI.Controls.BottomNavigation"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Name="Root"
     BackgroundColor="{DynamicResource ExchangeCard}">
 
-    <Grid
-        Padding="8,6"
-        ColumnDefinitions="*,*,*,*,*">
+    <Border
+        BackgroundColor="{DynamicResource ExchangeCard}"
+        Stroke="{DynamicResource ExchangeBorder}"
+        StrokeThickness="1"
+        StrokeShape="RoundRectangle 0">
 
-        <Grid Grid.Column="0">
-            <Grid.GestureRecognizers>
-                <TapGestureRecognizer Tapped="Home_Tapped" />
-            </Grid.GestureRecognizers>
+        <Grid
+            Padding="8,8,8,10"
+            ColumnDefinitions="*,*,*,*,*"
+            HeightRequest="72">
 
-            <VerticalStackLayout
-                Spacing="3"
-                HorizontalOptions="Center">
+            <!-- Home -->
+
+            <Grid
+                Grid.Column="0"
+                RowDefinitions="Auto,Auto"
+                RowSpacing="4">
+
+                <Grid.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="Home_Tapped" />
+                </Grid.GestureRecognizers>
 
                 <Label
+                    Grid.Row="0"
                     Text="⌂"
-                    FontSize="22"
+                    FontSize="23"
                     HorizontalOptions="Center"
-                    TextColor="{DynamicResource ExchangeGold}" />
+                    TextColor="{Binding HomeColor,
+                                        Source={x:Reference Root}}" />
 
                 <Label
+                    Grid.Row="1"
                     Text="Home"
                     FontSize="11"
-                    TextColor="{DynamicResource ExchangeGold}" />
+                    HorizontalOptions="Center"
+                    TextColor="{Binding HomeColor,
+                                        Source={x:Reference Root}}" />
 
-            </VerticalStackLayout>
-        </Grid>
+            </Grid>
 
-        <Grid Grid.Column="1">
-            <Grid.GestureRecognizers>
-                <TapGestureRecognizer Tapped="Wallets_Tapped" />
-            </Grid.GestureRecognizers>
+            <!-- Wallets -->
 
-            <VerticalStackLayout
-                Spacing="3"
-                HorizontalOptions="Center">
+            <Grid
+                Grid.Column="1"
+                RowDefinitions="Auto,Auto"
+                RowSpacing="4">
+
+                <Grid.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="Wallets_Tapped" />
+                </Grid.GestureRecognizers>
 
                 <Label
+                    Grid.Row="0"
                     Text="▣"
-                    FontSize="20"
-                    HorizontalOptions="Center"
-                    TextColor="{DynamicResource ExchangeMuted}" />
-
-                <Label
-                    Text="Wallets"
-                    FontSize="11"
-                    TextColor="{DynamicResource ExchangeMuted}" />
-
-            </VerticalStackLayout>
-        </Grid>
-
-        <Grid Grid.Column="2">
-            <Grid.GestureRecognizers>
-                <TapGestureRecognizer Tapped="Exchange_Tapped" />
-            </Grid.GestureRecognizers>
-
-            <VerticalStackLayout
-                Spacing="3"
-                HorizontalOptions="Center">
-
-                <Label
-                    Text="⇅"
-                    FontSize="22"
-                    HorizontalOptions="Center"
-                    TextColor="{DynamicResource ExchangeMuted}" />
-
-                <Label
-                    Text="Exchange"
-                    FontSize="11"
-                    TextColor="{DynamicResource ExchangeMuted}" />
-
-            </VerticalStackLayout>
-        </Grid>
-
-        <Grid Grid.Column="3">
-            <Grid.GestureRecognizers>
-                <TapGestureRecognizer Tapped="History_Tapped" />
-            </Grid.GestureRecognizers>
-
-            <VerticalStackLayout
-                Spacing="3"
-                HorizontalOptions="Center">
-
-                <Label
-                    Text="◷"
                     FontSize="21"
                     HorizontalOptions="Center"
-                    TextColor="{DynamicResource ExchangeMuted}" />
+                    TextColor="{Binding WalletsColor,
+                                        Source={x:Reference Root}}" />
 
                 <Label
-                    Text="History"
+                    Grid.Row="1"
+                    Text="Wallets"
                     FontSize="11"
-                    TextColor="{DynamicResource ExchangeMuted}" />
+                    HorizontalOptions="Center"
+                    TextColor="{Binding WalletsColor,
+                                        Source={x:Reference Root}}" />
 
-            </VerticalStackLayout>
-        </Grid>
+            </Grid>
 
-        <Grid Grid.Column="4">
-            <Grid.GestureRecognizers>
-                <TapGestureRecognizer Tapped="Profile_Tapped" />
-            </Grid.GestureRecognizers>
+            <!-- Exchange -->
 
-            <VerticalStackLayout
-                Spacing="3"
-                HorizontalOptions="Center">
+            <Grid
+                Grid.Column="2"
+                RowDefinitions="Auto,Auto"
+                RowSpacing="4">
+
+                <Grid.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="Exchange_Tapped" />
+                </Grid.GestureRecognizers>
 
                 <Label
-                    Text="○"
+                    Grid.Row="0"
+                    Text="⇄"
+                    FontSize="23"
+                    HorizontalOptions="Center"
+                    TextColor="{Binding ExchangeColor,
+                                        Source={x:Reference Root}}" />
+
+                <Label
+                    Grid.Row="1"
+                    Text="Exchange"
+                    FontSize="11"
+                    HorizontalOptions="Center"
+                    TextColor="{Binding ExchangeColor,
+                                        Source={x:Reference Root}}" />
+
+            </Grid>
+
+            <!-- History -->
+
+            <Grid
+                Grid.Column="3"
+                RowDefinitions="Auto,Auto"
+                RowSpacing="4">
+
+                <Grid.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="History_Tapped" />
+                </Grid.GestureRecognizers>
+
+                <Label
+                    Grid.Row="0"
+                    Text="◷"
                     FontSize="22"
                     HorizontalOptions="Center"
-                    TextColor="{DynamicResource ExchangeMuted}" />
+                    TextColor="{Binding HistoryColor,
+                                        Source={x:Reference Root}}" />
 
                 <Label
+                    Grid.Row="1"
+                    Text="History"
+                    FontSize="11"
+                    HorizontalOptions="Center"
+                    TextColor="{Binding HistoryColor,
+                                        Source={x:Reference Root}}" />
+
+            </Grid>
+
+            <!-- Profile -->
+
+            <Grid
+                Grid.Column="4"
+                RowDefinitions="Auto,Auto"
+                RowSpacing="4">
+
+                <Grid.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="Profile_Tapped" />
+                </Grid.GestureRecognizers>
+
+                <Label
+                    Grid.Row="0"
+                    Text="◉"
+                    FontSize="21"
+                    HorizontalOptions="Center"
+                    TextColor="{Binding ProfileColor,
+                                        Source={x:Reference Root}}" />
+
+                <Label
+                    Grid.Row="1"
                     Text="Profile"
                     FontSize="11"
-                    TextColor="{DynamicResource ExchangeMuted}" />
+                    HorizontalOptions="Center"
+                    TextColor="{Binding ProfileColor,
+                                        Source={x:Reference Root}}" />
 
-            </VerticalStackLayout>
+            </Grid>
+
         </Grid>
 
-    </Grid>
+    </Border>
 
 </ContentView>
-    
