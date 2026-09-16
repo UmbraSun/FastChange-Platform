@@ -26,11 +26,6 @@ public partial class ExchangeView : ContentView
         await DebouncePreviewAsync();
     }
 
-    private async void WalletPicker_SelectedIndexChanged(object? sender, EventArgs e)
-    {
-        await DebouncePreviewAsync();
-    }
-
     private async void AmountEntry_Completed(object? sender, EventArgs e)
     {
         CancelPreviewDebounce();

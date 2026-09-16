@@ -37,9 +37,9 @@ public partial class MainPage : ContentPage
         _viewModel.ShowWallets();
     }
 
-    private void OnExchangeSelected(object? sender, EventArgs e)
+    private async void OnExchangeSelected(object? sender, EventArgs e)
     {
-        _viewModel.ShowExchange();
+        await _viewModel.ShowExchangeAsync();
     }
 
     private async void OnHistorySelected(object? sender, EventArgs e)
@@ -50,16 +50,5 @@ public partial class MainPage : ContentPage
     private async void OnProfileSelected(object? sender, EventArgs e)
     {
         await _viewModel.ShowProfileAsync();
-    }
-
-    protected override void OnDisappearing()
-    {
-        BottomNavigation.HomeSelected -= OnHomeSelected;
-        BottomNavigation.WalletsSelected -= OnWalletsSelected;
-        BottomNavigation.ExchangeSelected -= OnExchangeSelected;
-        BottomNavigation.HistorySelected -= OnHistorySelected;
-        BottomNavigation.ProfileSelected -= OnProfileSelected;
-
-        base.OnDisappearing();
     }
 }

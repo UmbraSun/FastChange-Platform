@@ -37,7 +37,16 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Controls\WalletSelector.xaml.cs">
+	    <DependentUpon>WalletSelector.xaml</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
 	  <MauiXaml Update="Controls\BottomNavigation.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Controls\WalletSelector.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Styles\ExchangeStyles.xaml">
