@@ -5,17 +5,18 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:viewModels="clr-namespace:UI.ViewModels"
+    xmlns:controls="clr-namespace:UI.Controls"
     x:DataType="viewModels:HistoryViewModel"
     BackgroundColor="{DynamicResource ExchangeBg}">
 
     <Grid
         Padding="20,18,20,0"
-        RowDefinitions="Auto,*">
+        RowDefinitions="Auto,Auto,*">
 
         <VerticalStackLayout
             Grid.Row="0"
             Spacing="5"
-            Margin="0,0,0,24">
+            Margin="0,0,0,18">
 
             <Label
                 Text="History"
@@ -30,8 +31,15 @@
 
         </VerticalStackLayout>
 
-        <CollectionView
+        <controls:WalletSelector
             Grid.Row="1"
+            Margin="0,0,0,18"
+            Wallets="{Binding Wallets}"
+            SelectedWallet="{Binding SelectedWallet, Mode=TwoWay}"
+            SelectorTitle="Wallet" />
+
+        <CollectionView
+            Grid.Row="2"
             ItemsSource="{Binding Transactions}"
             SelectionMode="None">
 
@@ -90,9 +98,9 @@
 
                 </DataTemplate>
             </CollectionView.ItemTemplate>
-
         </CollectionView>
 
     </Grid>
 
 </ContentView>
+    

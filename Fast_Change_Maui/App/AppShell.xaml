@@ -16,18 +16,6 @@
         ContentTemplate="{DataTemplate views:RegisterPage}" />
 
     <ShellContent
-        Route="dashboard"
-        ContentTemplate="{DataTemplate views:DashboardPage}" />
-
-    <ShellContent
-        Route="wallets"
-        ContentTemplate="{DataTemplate views:WalletsPage}" />
-
-    <ShellContent
-        Route="exchange"
-        ContentTemplate="{DataTemplate views:ExchangePage}" />
-
-    <ShellContent
         Route="main"
         ContentTemplate="{DataTemplate views:MainPage}" />
 
