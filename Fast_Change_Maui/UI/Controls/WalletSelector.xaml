@@ -8,11 +8,9 @@
 
     <Grid RowDefinitions="Auto,Auto">
 
-        <!-- Selected wallet -->
-
         <Border
             Grid.Row="0"
-            Padding="14,11"
+            Padding="14,12"
             BackgroundColor="{DynamicResource ExchangeCard}"
             Stroke="{DynamicResource ExchangeBorder}"
             StrokeThickness="1"
@@ -53,17 +51,31 @@
 
                 <Label
                     Grid.Column="1"
-                    Margin="12,0,2,0"
+                    Margin="16,0,2,0"
                     Text="⌄"
                     FontSize="20"
                     TextColor="{DynamicResource ExchangeMuted}"
-                    VerticalOptions="Center" />
+                    VerticalOptions="Center">
+
+                    <Label.Triggers>
+                        <DataTrigger
+                            TargetType="Label"
+                            Binding="{Binding IsExpanded,
+                                      Source={x:Reference Root}}"
+                            Value="True">
+
+                            <Setter
+                                Property="Text"
+                                Value="⌃" />
+
+                        </DataTrigger>
+                    </Label.Triggers>
+
+                </Label>
 
             </Grid>
 
         </Border>
-
-        <!-- Wallet list -->
 
         <Border
             Grid.Row="1"
@@ -82,10 +94,9 @@
                 SelectionMode="None">
 
                 <CollectionView.ItemTemplate>
-
                     <DataTemplate>
 
-                        <Grid Padding="12,10">
+                        <Grid Padding="12,11">
 
                             <Grid.GestureRecognizers>
                                 <TapGestureRecognizer
@@ -113,7 +124,6 @@
                         </Grid>
 
                     </DataTemplate>
-
                 </CollectionView.ItemTemplate>
 
             </CollectionView>
