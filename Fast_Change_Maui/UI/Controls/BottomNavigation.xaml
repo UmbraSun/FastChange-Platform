@@ -4,26 +4,23 @@
     x:Class="UI.Controls.BottomNavigation"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    x:Name="Root"
     BackgroundColor="{DynamicResource ExchangeCard}">
 
     <Border
+        Margin="0"
+        Padding="8,8,8,10"
         BackgroundColor="{DynamicResource ExchangeCard}"
         Stroke="{DynamicResource ExchangeBorder}"
         StrokeThickness="1"
-        StrokeShape="RoundRectangle 0">
+        StrokeShape="RoundRectangle 20,20,0,0">
 
         <Grid
-            Padding="8,8,8,10"
             ColumnDefinitions="*,*,*,*,*"
-            HeightRequest="72">
+            ColumnSpacing="2">
 
             <!-- Home -->
 
-            <Grid
-                Grid.Column="0"
-                RowDefinitions="Auto,Auto"
-                RowSpacing="4">
+            <Grid Grid.Column="0" RowDefinitions="Auto,Auto">
 
                 <Grid.GestureRecognizers>
                     <TapGestureRecognizer Tapped="Home_Tapped" />
@@ -32,27 +29,23 @@
                 <Label
                     Grid.Row="0"
                     Text="⌂"
-                    FontSize="23"
+                    FontSize="21"
                     HorizontalOptions="Center"
-                    TextColor="{Binding HomeColor,
-                                        Source={x:Reference Root}}" />
+                    TextColor="{Binding HomeColor}" />
 
                 <Label
                     Grid.Row="1"
                     Text="Home"
-                    FontSize="11"
+                    FontSize="10"
+                    Margin="0,3,0,0"
                     HorizontalOptions="Center"
-                    TextColor="{Binding HomeColor,
-                                        Source={x:Reference Root}}" />
+                    TextColor="{Binding HomeColor}" />
 
             </Grid>
 
             <!-- Wallets -->
 
-            <Grid
-                Grid.Column="1"
-                RowDefinitions="Auto,Auto"
-                RowSpacing="4">
+            <Grid Grid.Column="1" RowDefinitions="Auto,Auto">
 
                 <Grid.GestureRecognizers>
                     <TapGestureRecognizer Tapped="Wallets_Tapped" />
@@ -61,27 +54,23 @@
                 <Label
                     Grid.Row="0"
                     Text="▣"
-                    FontSize="21"
+                    FontSize="20"
                     HorizontalOptions="Center"
-                    TextColor="{Binding WalletsColor,
-                                        Source={x:Reference Root}}" />
+                    TextColor="{Binding WalletsColor}" />
 
                 <Label
                     Grid.Row="1"
                     Text="Wallets"
-                    FontSize="11"
+                    FontSize="10"
+                    Margin="0,3,0,0"
                     HorizontalOptions="Center"
-                    TextColor="{Binding WalletsColor,
-                                        Source={x:Reference Root}}" />
+                    TextColor="{Binding WalletsColor}" />
 
             </Grid>
 
             <!-- Exchange -->
 
-            <Grid
-                Grid.Column="2"
-                RowDefinitions="Auto,Auto"
-                RowSpacing="4">
+            <Grid Grid.Column="2" RowDefinitions="Auto,Auto">
 
                 <Grid.GestureRecognizers>
                     <TapGestureRecognizer Tapped="Exchange_Tapped" />
@@ -90,27 +79,23 @@
                 <Label
                     Grid.Row="0"
                     Text="⇄"
-                    FontSize="23"
+                    FontSize="21"
                     HorizontalOptions="Center"
-                    TextColor="{Binding ExchangeColor,
-                                        Source={x:Reference Root}}" />
+                    TextColor="{Binding ExchangeColor}" />
 
                 <Label
                     Grid.Row="1"
                     Text="Exchange"
-                    FontSize="11"
+                    FontSize="10"
+                    Margin="0,3,0,0"
                     HorizontalOptions="Center"
-                    TextColor="{Binding ExchangeColor,
-                                        Source={x:Reference Root}}" />
+                    TextColor="{Binding ExchangeColor}" />
 
             </Grid>
 
             <!-- History -->
 
-            <Grid
-                Grid.Column="3"
-                RowDefinitions="Auto,Auto"
-                RowSpacing="4">
+            <Grid Grid.Column="3" RowDefinitions="Auto,Auto">
 
                 <Grid.GestureRecognizers>
                     <TapGestureRecognizer Tapped="History_Tapped" />
@@ -119,27 +104,23 @@
                 <Label
                     Grid.Row="0"
                     Text="◷"
-                    FontSize="22"
+                    FontSize="21"
                     HorizontalOptions="Center"
-                    TextColor="{Binding HistoryColor,
-                                        Source={x:Reference Root}}" />
+                    TextColor="{Binding HistoryColor}" />
 
                 <Label
                     Grid.Row="1"
                     Text="History"
-                    FontSize="11"
+                    FontSize="10"
+                    Margin="0,3,0,0"
                     HorizontalOptions="Center"
-                    TextColor="{Binding HistoryColor,
-                                        Source={x:Reference Root}}" />
+                    TextColor="{Binding HistoryColor}" />
 
             </Grid>
 
             <!-- Profile -->
 
-            <Grid
-                Grid.Column="4"
-                RowDefinitions="Auto,Auto"
-                RowSpacing="4">
+            <Grid Grid.Column="4" RowDefinitions="Auto,Auto">
 
                 <Grid.GestureRecognizers>
                     <TapGestureRecognizer Tapped="Profile_Tapped" />
@@ -150,16 +131,15 @@
                     Text="◉"
                     FontSize="21"
                     HorizontalOptions="Center"
-                    TextColor="{Binding ProfileColor,
-                                        Source={x:Reference Root}}" />
+                    TextColor="{Binding ProfileColor}" />
 
                 <Label
                     Grid.Row="1"
                     Text="Profile"
-                    FontSize="11"
+                    FontSize="10"
+                    Margin="0,3,0,0"
                     HorizontalOptions="Center"
-                    TextColor="{Binding ProfileColor,
-                                        Source={x:Reference Root}}" />
+                    TextColor="{Binding ProfileColor}" />
 
             </Grid>
 

@@ -16,16 +16,18 @@
         <Grid
             Grid.Row="0"
             ColumnDefinitions="*,Auto"
-            Margin="0,0,0,28">
+            Margin="0,0,0,24">
 
             <VerticalStackLayout
                 Grid.Column="0"
-                Spacing="4">
+                Spacing="4"
+                VerticalOptions="Center">
 
                 <Label
                     Text="{Binding UserName}"
                     FontFamily="{DynamicResource Headline}"
                     FontSize="24"
+                    LineBreakMode="TailTruncation"
                     TextColor="{DynamicResource ExchangeText}" />
 
                 <Label
@@ -38,69 +40,80 @@
 
             <Border
                 Grid.Column="1"
-                WidthRequest="44"
-                HeightRequest="44"
-                StrokeThickness="1"
-                Stroke="{DynamicResource ExchangeBorder}"
+                WidthRequest="46"
+                HeightRequest="46"
                 BackgroundColor="{DynamicResource ExchangeCard}"
-                StrokeShape="RoundRectangle 22">
+                Stroke="{DynamicResource ExchangeBorder}"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 23"
+                VerticalOptions="Center">
 
                 <Label
                     Text="U"
-                    HorizontalOptions="Center"
-                    VerticalOptions="Center"
                     FontFamily="{DynamicResource Headline}"
                     FontSize="16"
-                    TextColor="{DynamicResource ExchangeText}" />
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    TextColor="{DynamicResource ExchangeGold}" />
 
             </Border>
 
         </Grid>
 
-        <!-- Balance -->
+        <!-- Total balance -->
         <Border
             Grid.Row="1"
             Padding="20"
-            Margin="0,0,0,24"
+            Margin="0,0,0,26"
             BackgroundColor="{DynamicResource ExchangeCard}"
             Stroke="{DynamicResource ExchangeBorder}"
             StrokeThickness="1"
             StrokeShape="RoundRectangle 18">
 
-            <VerticalStackLayout Spacing="10">
+            <Grid RowDefinitions="Auto,Auto,Auto">
 
-                <Grid ColumnDefinitions="*,Auto">
+                <Grid
+                    Grid.Row="0"
+                    ColumnDefinitions="*,Auto">
 
                     <Label
                         Text="Total balance"
                         FontFamily="{DynamicResource Body}"
                         FontSize="14"
+                        VerticalOptions="Center"
                         TextColor="{DynamicResource ExchangeMuted}" />
 
                     <Button
                         Grid.Column="1"
+                        WidthRequest="36"
+                        HeightRequest="36"
                         Text="•••"
                         Command="{Binding ToggleBalanceVisibilityCommand}"
                         BackgroundColor="Transparent"
-                        TextColor="{DynamicResource ExchangeMuted}"
-                        Padding="8,0"
-                        FontSize="18" />
+                        BorderWidth="0"
+                        Padding="0"
+                        FontSize="17"
+                        TextColor="{DynamicResource ExchangeMuted}" />
 
                 </Grid>
 
                 <Label
+                    Grid.Row="1"
+                    Margin="0,8,0,0"
                     Text="{Binding DisplayBalance}"
                     FontFamily="{DynamicResource Headline}"
-                    FontSize="34"
+                    FontSize="36"
                     TextColor="{DynamicResource ExchangeText}" />
 
                 <Label
+                    Grid.Row="2"
+                    Margin="0,2,0,0"
                     Text="USD"
                     FontFamily="{DynamicResource Body}"
                     FontSize="13"
                     TextColor="{DynamicResource ExchangeMuted}" />
 
-            </VerticalStackLayout>
+            </Grid>
 
         </Border>
 
@@ -108,7 +121,7 @@
         <VerticalStackLayout
             Grid.Row="2"
             Spacing="12"
-            Margin="0,0,0,28">
+            Margin="0,0,0,26">
 
             <Label
                 Text="Quick actions"
@@ -122,23 +135,26 @@
 
                 <Border
                     Grid.Column="0"
-                    Padding="10,16"
+                    Padding="8,15"
                     BackgroundColor="{DynamicResource ExchangeCard}"
                     Stroke="{DynamicResource ExchangeBorder}"
                     StrokeThickness="1"
                     StrokeShape="RoundRectangle 14">
 
-                    <VerticalStackLayout Spacing="8">
+                    <VerticalStackLayout
+                        Spacing="7"
+                        HorizontalOptions="Center">
 
                         <Label
-                            Text="↔"
-                            FontSize="24"
+                            Text="⇄"
+                            FontSize="23"
                             HorizontalOptions="Center"
                             TextColor="{DynamicResource ExchangeGold}" />
 
                         <Label
                             Text="Exchange"
-                            FontSize="13"
+                            FontFamily="{DynamicResource Body}"
+                            FontSize="12"
                             HorizontalOptions="Center"
                             TextColor="{DynamicResource ExchangeText}" />
 
@@ -148,23 +164,26 @@
 
                 <Border
                     Grid.Column="1"
-                    Padding="10,16"
+                    Padding="8,15"
                     BackgroundColor="{DynamicResource ExchangeCard}"
                     Stroke="{DynamicResource ExchangeBorder}"
                     StrokeThickness="1"
                     StrokeShape="RoundRectangle 14">
 
-                    <VerticalStackLayout Spacing="8">
+                    <VerticalStackLayout
+                        Spacing="7"
+                        HorizontalOptions="Center">
 
                         <Label
                             Text="→"
-                            FontSize="24"
+                            FontSize="23"
                             HorizontalOptions="Center"
                             TextColor="{DynamicResource ExchangeGold}" />
 
                         <Label
                             Text="Transfer"
-                            FontSize="13"
+                            FontFamily="{DynamicResource Body}"
+                            FontSize="12"
                             HorizontalOptions="Center"
                             TextColor="{DynamicResource ExchangeText}" />
 
@@ -174,23 +193,26 @@
 
                 <Border
                     Grid.Column="2"
-                    Padding="10,16"
+                    Padding="8,15"
                     BackgroundColor="{DynamicResource ExchangeCard}"
                     Stroke="{DynamicResource ExchangeBorder}"
                     StrokeThickness="1"
                     StrokeShape="RoundRectangle 14">
 
-                    <VerticalStackLayout Spacing="8">
+                    <VerticalStackLayout
+                        Spacing="7"
+                        HorizontalOptions="Center">
 
                         <Label
                             Text="+"
-                            FontSize="24"
+                            FontSize="23"
                             HorizontalOptions="Center"
                             TextColor="{DynamicResource ExchangeGold}" />
 
                         <Label
                             Text="Deposit"
-                            FontSize="13"
+                            FontFamily="{DynamicResource Body}"
+                            FontSize="12"
                             HorizontalOptions="Center"
                             TextColor="{DynamicResource ExchangeText}" />
 
@@ -202,11 +224,11 @@
 
         </VerticalStackLayout>
 
-        <!-- Wallets title -->
+        <!-- Wallets header -->
         <Grid
             Grid.Row="3"
             ColumnDefinitions="*,Auto"
-            Margin="0,0,0,20">
+            Margin="0,0,0,16">
 
             <Label
                 Text="Wallets"
@@ -217,7 +239,9 @@
             <Label
                 Grid.Column="1"
                 Text="View all"
+                FontFamily="{DynamicResource Body}"
                 FontSize="13"
+                VerticalOptions="Center"
                 TextColor="{DynamicResource ExchangeGold}" />
 
         </Grid>
@@ -229,19 +253,23 @@
             SelectionMode="None">
 
             <CollectionView.ItemTemplate>
+
                 <DataTemplate>
 
                     <Border
                         Padding="16"
-                        Margin="0,0,0,8"
+                        Margin="0,0,0,9"
                         BackgroundColor="{DynamicResource ExchangeCard}"
                         Stroke="{DynamicResource ExchangeBorder}"
                         StrokeThickness="1"
                         StrokeShape="RoundRectangle 14">
 
-                        <Grid ColumnDefinitions="*,Auto">
+                        <Grid
+                            ColumnDefinitions="*,Auto"
+                            VerticalOptions="Center">
 
-                            <VerticalStackLayout Spacing="3">
+                            <VerticalStackLayout
+                                Spacing="4">
 
                                 <Label
                                     Text="{Binding Currency}"
@@ -251,24 +279,40 @@
 
                                 <Label
                                     Text="Available balance"
+                                    FontFamily="{DynamicResource Body}"
                                     FontSize="12"
                                     TextColor="{DynamicResource ExchangeMuted}" />
 
                             </VerticalStackLayout>
 
-                            <Label
+                            <VerticalStackLayout
                                 Grid.Column="1"
-                                Text="{Binding Balance, StringFormat='{0:N2}'}"
-                                FontFamily="{DynamicResource Headline}"
-                                FontSize="17"
-                                VerticalOptions="Center"
-                                TextColor="{DynamicResource ExchangeText}" />
+                                Spacing="2"
+                                HorizontalOptions="End"
+                                VerticalOptions="Center">
+
+                                <Label
+                                    Text="{Binding Balance, StringFormat='{0:N2}'}"
+                                    FontFamily="{DynamicResource Headline}"
+                                    FontSize="17"
+                                    HorizontalTextAlignment="End"
+                                    TextColor="{DynamicResource ExchangeText}" />
+
+                                <Label
+                                    Text="{Binding Currency}"
+                                    FontFamily="{DynamicResource Body}"
+                                    FontSize="11"
+                                    HorizontalTextAlignment="End"
+                                    TextColor="{DynamicResource ExchangeMuted}" />
+
+                            </VerticalStackLayout>
 
                         </Grid>
 
                     </Border>
 
                 </DataTemplate>
+
             </CollectionView.ItemTemplate>
 
         </CollectionView>

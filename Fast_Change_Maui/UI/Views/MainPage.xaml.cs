@@ -23,7 +23,7 @@ public partial class MainPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-
+        BottomNavigation.SelectedTab = "Home";
         await _viewModel.LoadHomeCommand.ExecuteAsync(null);
     }
 
