@@ -12,13 +12,12 @@
 
         <VerticalStackLayout
             Padding="20,18,20,24"
-            Spacing="20">
+            Spacing="22">
 
             <!-- Header -->
-
             <VerticalStackLayout
                 Spacing="5"
-                Margin="0,0,0,4">
+                Margin="0,0,20,0">
 
                 <Label
                     Text="Profile"
@@ -28,13 +27,13 @@
 
                 <Label
                     Text="Manage your account"
+                    FontFamily="{DynamicResource Body}"
                     FontSize="14"
                     TextColor="{DynamicResource ExchangeMuted}" />
 
             </VerticalStackLayout>
 
-            <!-- User -->
-
+            <!-- User card -->
             <Border
                 Padding="18"
                 BackgroundColor="{DynamicResource ExchangeCard}"
@@ -46,39 +45,55 @@
                     ColumnDefinitions="Auto,*"
                     ColumnSpacing="16">
 
+                    <!-- Avatar -->
                     <Border
-                        WidthRequest="56"
-                        HeightRequest="56"
+                        Grid.Column="0"
+                        WidthRequest="58"
+                        HeightRequest="58"
                         BackgroundColor="{DynamicResource ExchangeBg}"
                         Stroke="{DynamicResource ExchangeBorder}"
                         StrokeThickness="1"
-                        StrokeShape="RoundRectangle 28">
+                        StrokeShape="RoundRectangle 29"
+                        VerticalOptions="Center">
 
                         <Label
                             Text="{Binding Initial}"
                             FontFamily="{DynamicResource Headline}"
                             FontSize="22"
-                            TextColor="{DynamicResource ExchangeGold}"
                             HorizontalOptions="Center"
-                            VerticalOptions="Center" />
+                            VerticalOptions="Center"
+                            TextColor="{DynamicResource ExchangeGold}" />
 
                     </Border>
 
+                    <!-- User information -->
                     <VerticalStackLayout
                         Grid.Column="1"
-                        Spacing="5"
+                        Spacing="6"
                         VerticalOptions="Center">
 
                         <Label
                             Text="{Binding Email}"
                             FontFamily="{DynamicResource Title}"
                             FontSize="16"
+                            LineBreakMode="TailTruncation"
                             TextColor="{DynamicResource ExchangeText}" />
 
-                        <Label
-                            Text="{Binding VerificationStatus}"
-                            FontSize="13"
-                            TextColor="{DynamicResource ExchangeMuted}" />
+                        <Border
+                            Padding="9,4"
+                            HorizontalOptions="Start"
+                            BackgroundColor="{DynamicResource ExchangeBg}"
+                            Stroke="{DynamicResource ExchangeBorder}"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 8">
+
+                            <Label
+                                Text="{Binding VerificationStatus}"
+                                FontFamily="{DynamicResource Body}"
+                                FontSize="11"
+                                TextColor="{DynamicResource ExchangeGold}" />
+
+                        </Border>
 
                     </VerticalStackLayout>
 
@@ -87,8 +102,8 @@
             </Border>
 
             <!-- Account -->
-
-            <VerticalStackLayout Spacing="10">
+            <VerticalStackLayout
+                Spacing="10">
 
                 <Label
                     Text="Account"
@@ -103,31 +118,31 @@
                     StrokeThickness="1"
                     StrokeShape="RoundRectangle 14">
 
-                    <Grid ColumnDefinitions="*,Auto">
+                    <VerticalStackLayout
+                        Spacing="5">
 
-                        <VerticalStackLayout Spacing="3">
+                        <Label
+                            Text="Email"
+                            FontFamily="{DynamicResource Body}"
+                            FontSize="12"
+                            TextColor="{DynamicResource ExchangeMuted}" />
 
-                            <Label
-                                Text="Email"
-                                FontSize="13"
-                                TextColor="{DynamicResource ExchangeMuted}" />
+                        <Label
+                            Text="{Binding Email}"
+                            FontFamily="{DynamicResource Body}"
+                            FontSize="15"
+                            LineBreakMode="TailTruncation"
+                            TextColor="{DynamicResource ExchangeText}" />
 
-                            <Label
-                                Text="{Binding Email}"
-                                FontSize="15"
-                                TextColor="{DynamicResource ExchangeText}" />
-
-                        </VerticalStackLayout>
-
-                    </Grid>
+                    </VerticalStackLayout>
 
                 </Border>
 
             </VerticalStackLayout>
 
             <!-- Session -->
-
-            <VerticalStackLayout Spacing="10">
+            <VerticalStackLayout
+                Spacing="10">
 
                 <Label
                     Text="Session"
@@ -150,15 +165,18 @@
 
             </VerticalStackLayout>
 
+            <!-- Loading -->
             <ActivityIndicator
                 IsRunning="{Binding IsBusy}"
                 IsVisible="{Binding IsBusy}"
                 HorizontalOptions="Center"
                 Color="{DynamicResource ExchangeGold}" />
 
+            <!-- Error -->
             <Label
                 Text="{Binding ErrorMessage}"
                 IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyConverter}}"
+                FontFamily="{DynamicResource Body}"
                 FontSize="13"
                 TextColor="#F6465D" />
 

@@ -11,6 +11,7 @@ public partial class ExchangeViewModel : ObservableObject
 {
     private readonly IUserService _userService;
     private readonly IExchangeService _exchangeService;
+    private CancellationTokenSource? _previewCts;
 
     public ObservableCollection<WalletDto> Wallets { get; } = [];
 
@@ -123,7 +124,13 @@ public partial class ExchangeViewModel : ObservableObject
     [RelayCommand]
     private async Task PreviewAsync()
     {
-        if (IsPreviewLoading) return;
+        _previewCts?.Cancel();
+        _previewCts?.Dispose();
+
+        var cts = new CancellationTokenSource();
+        _previewCts = cts;
+
+        var cancellationToken = cts.Token;
 
         ErrorMessage = string.Empty;
 
@@ -156,7 +163,13 @@ public partial class ExchangeViewModel : ObservableObject
         {
             IsPreviewLoading = true;
 
-            var response = await _exchangeService.PreviewAsync(FromWallet.WalletId, ToWallet.WalletId, parsedAmount);
+            var response = await _exchangeService.PreviewAsync(
+                FromWallet.WalletId,
+                ToWallet.WalletId,
+                parsedAmount,
+                cancellationToken);
+
+            cancellationToken.ThrowIfCancellationRequested();
 
             ExchangeRate = response.ExchangeRate;
             ReceivedAmount = response.ReceivedAmount;
@@ -172,7 +185,13 @@ public partial class ExchangeViewModel : ObservableObject
         }
         finally
         {
-            IsPreviewLoading = false;
+            if (ReferenceEquals(_previewCts, cts))
+            {
+                IsPreviewLoading = false;
+                _previewCts = null;
+            }
+
+            cts.Dispose();
         }
     }
 

@@ -1,8 +1,8 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Core.DTOs.Wallets;
 using Core.Interfaces;
-using System.Collections.ObjectModel;
 
 namespace UI.ViewModels;
 
@@ -27,8 +27,21 @@ public partial class HomeViewModel : ObservableObject
     [ObservableProperty]
     private string errorMessage = string.Empty;
 
-    public string DisplayBalance =>
-        IsBalanceVisible ? TotalBalance.ToString("N2") : "••••••";
+    public string DisplayBalance => IsBalanceVisible ? TotalBalance.ToString("N2") : "••••••";
+
+    public bool HasWallets => Wallets.Count > 0;
+
+    public bool IsErrorVisible => !string.IsNullOrWhiteSpace(ErrorMessage);
+
+    public bool IsEmptyVisible =>
+        !IsBusy &&
+        !IsErrorVisible &&
+        !HasWallets;
+
+    public bool IsContentVisible =>
+        !IsBusy &&
+        !IsErrorVisible &&
+        HasWallets;
 
     public HomeViewModel(IUserService userService)
     {
@@ -45,6 +58,8 @@ public partial class HomeViewModel : ObservableObject
             IsBusy = true;
             ErrorMessage = string.Empty;
 
+            NotifyStateChanged();
+
             var userTask = _userService.GetCurrentUserAsync();
             var walletsTask = _userService.GetWalletsAsync();
 
@@ -59,17 +74,22 @@ public partial class HomeViewModel : ObservableObject
             foreach (var wallet in wallets)
                 Wallets.Add(wallet);
 
-            TotalBalance = Wallets.Where(x => x.Currency == "USD").Sum(x => x.Balance);
+            TotalBalance = Wallets
+                .Where(wallet => wallet.Currency == "USD")
+                .Sum(wallet => wallet.Balance);
 
             OnPropertyChanged(nameof(DisplayBalance));
+            NotifyStateChanged();
         }
         catch (Exception)
         {
             ErrorMessage = "Unable to load account data.";
+            NotifyStateChanged();
         }
         finally
         {
             IsBusy = false;
+            NotifyStateChanged();
         }
     }
 
@@ -77,6 +97,15 @@ public partial class HomeViewModel : ObservableObject
     private void ToggleBalanceVisibility()
     {
         IsBalanceVisible = !IsBalanceVisible;
+
         OnPropertyChanged(nameof(DisplayBalance));
+    }
+
+    private void NotifyStateChanged()
+    {
+        OnPropertyChanged(nameof(HasWallets));
+        OnPropertyChanged(nameof(IsErrorVisible));
+        OnPropertyChanged(nameof(IsEmptyVisible));
+        OnPropertyChanged(nameof(IsContentVisible));
     }
 }
