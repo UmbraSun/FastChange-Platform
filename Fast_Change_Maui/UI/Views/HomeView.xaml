@@ -48,6 +48,10 @@
                 StrokeShape="RoundRectangle 23"
                 VerticalOptions="Center">
 
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="Profile_Tapped" />
+                </Border.GestureRecognizers>
+
                 <Label
                     Text="U"
                     FontFamily="{DynamicResource Headline}"
@@ -133,6 +137,7 @@
                 ColumnDefinitions="*,*,*"
                 ColumnSpacing="10">
 
+                <!-- Exchange -->
                 <Border
                     Grid.Column="0"
                     Padding="8,15"
@@ -140,6 +145,10 @@
                     Stroke="{DynamicResource ExchangeBorder}"
                     StrokeThickness="1"
                     StrokeShape="RoundRectangle 14">
+
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="Exchange_Tapped" />
+                    </Border.GestureRecognizers>
 
                     <VerticalStackLayout
                         Spacing="7"
@@ -162,6 +171,7 @@
 
                 </Border>
 
+                <!-- Transfer -->
                 <Border
                     Grid.Column="1"
                     Padding="8,15"
@@ -191,6 +201,7 @@
 
                 </Border>
 
+                <!-- Deposit -->
                 <Border
                     Grid.Column="2"
                     Padding="8,15"
@@ -198,6 +209,10 @@
                     Stroke="{DynamicResource ExchangeBorder}"
                     StrokeThickness="1"
                     StrokeShape="RoundRectangle 14">
+
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="Deposit_Tapped" />
+                    </Border.GestureRecognizers>
 
                     <VerticalStackLayout
                         Spacing="7"
@@ -242,7 +257,13 @@
                 FontFamily="{DynamicResource Body}"
                 FontSize="13"
                 VerticalOptions="Center"
-                TextColor="{DynamicResource ExchangeGold}" />
+                TextColor="{DynamicResource ExchangeGold}">
+
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="ViewAll_Tapped" />
+                </Label.GestureRecognizers>
+
+            </Label>
 
         </Grid>
 

@@ -11,6 +11,7 @@ public partial class MainViewModel : ObservableObject
     private readonly ExchangeView _exchangeView;
     private readonly HistoryView _historyView;
     private readonly ProfileView _profileView;
+    private readonly DepositView _depositView;
 
     [ObservableProperty]
     private ContentView currentView;
@@ -20,13 +21,20 @@ public partial class MainViewModel : ObservableObject
         WalletsView walletsView,
         ExchangeView exchangeView,
         HistoryView historyView,
-        ProfileView profileView)
+        ProfileView profileView,
+        DepositView depositView)
     {
         _homeView = homeView;
         _walletsView = walletsView;
         _exchangeView = exchangeView;
         _historyView = historyView;
         _profileView = profileView;
+        _depositView = depositView;
+
+        _homeView.ExchangeRequested = ShowExchangeAsync;
+        _homeView.DepositRequested = ShowDepositAsync;
+        _homeView.ViewAllWalletsRequested = ShowWalletsAsync;
+        _homeView.ProfileRequested = ShowProfileAsync;
 
         CurrentView = _homeView;
     }
@@ -54,9 +62,16 @@ public partial class MainViewModel : ObservableObject
         CurrentView = _homeView;
     }
 
-    public void ShowWallets()
+    public async Task ShowWalletsAsync()
     {
         CurrentView = _walletsView;
+        await _walletsView.LoadAsync();
+    }
+
+    public async Task ShowExchangeAsync()
+    {
+        CurrentView = _exchangeView;
+        await _exchangeView.LoadAsync();
     }
 
     public async Task ShowHistoryAsync()
@@ -71,15 +86,9 @@ public partial class MainViewModel : ObservableObject
         await LoadProfileAsync();
     }
 
-    public async Task ShowExchangeAsync()
+    public async Task ShowDepositAsync()
     {
-        CurrentView = _exchangeView;
-        await _exchangeView.LoadAsync();
-    }
-
-    public async Task ShowWalletsAsync()
-    {
-        CurrentView = _walletsView;
-        await _walletsView.LoadAsync();
+        CurrentView = _depositView;
+        await _depositView.LoadAsync();
     }
 }

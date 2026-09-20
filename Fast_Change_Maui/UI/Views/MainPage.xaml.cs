@@ -32,9 +32,9 @@ public partial class MainPage : ContentPage
         _viewModel.ShowHome();
     }
 
-    private void OnWalletsSelected(object? sender, EventArgs e)
+    private async void OnWalletsSelected(object? sender, EventArgs e)
     {
-        _viewModel.ShowWallets();
+        await _viewModel.ShowWalletsAsync();
     }
 
     private async void OnExchangeSelected(object? sender, EventArgs e)

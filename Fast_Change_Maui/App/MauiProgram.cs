@@ -3,7 +3,9 @@ using App.Services;
 using CommunityToolkit.Maui;
 using Core.Api.Auth;
 using Core.Api.Exchange;
+using Core.Api.Transfers;
 using Core.Api.Users;
+using Core.Api.Wallets;
 using Core.Interfaces;
 using Core.Services;
 using Microsoft.Extensions.Logging;
@@ -41,6 +43,8 @@ public static class MauiProgram
     private static void ConfigureServices(MauiAppBuilder builder)
     {
         builder.Services.AddSingleton<ITransactionService, TransactionService>();
+        builder.Services.AddSingleton<IWalletOperationsService, WalletOperationsService>();
+        builder.Services.AddSingleton<ITransferService, TransferService>();
         builder.Services.AddSingleton<IExchangeService, ExchangeService>();
         builder.Services.AddSingleton<ITokenStorage, SecureTokenStorage>();
         builder.Services.AddSingleton<IAuthState, AuthState>();
@@ -77,6 +81,9 @@ public static class MauiProgram
 
         builder.Services.AddTransient<ProfileViewModel>();
         builder.Services.AddTransient<ProfileView>();
+
+        builder.Services.AddTransient<DepositViewModel>();
+        builder.Services.AddTransient<DepositView>();
     }
 
     private static void ConfigureApi(MauiAppBuilder builder)
@@ -104,6 +111,20 @@ public static class MauiProgram
             .AddHttpMessageHandler<AuthHandler>();
 
         builder.Services.AddRefitGeneratedClient<IWalletApi>()
+            .ConfigureHttpClient(client =>
+            {
+                client.BaseAddress = new Uri(baseUrl);
+            })
+            .AddHttpMessageHandler<AuthHandler>();
+
+        builder.Services.AddRefitGeneratedClient<IWalletOperationsApi>()
+            .ConfigureHttpClient(client =>
+            {
+                client.BaseAddress = new Uri(baseUrl);
+            })
+            .AddHttpMessageHandler<AuthHandler>();
+
+        builder.Services.AddRefitGeneratedClient<ITransferApi>()
             .ConfigureHttpClient(client =>
             {
                 client.BaseAddress = new Uri(baseUrl);
