@@ -1,5 +1,5 @@
 ﻿namespace Core.DTOs.Wallets;
 
-public sealed record DepositRequestDto(
+public sealed record WithdrawRequestDto(
     Guid WalletId,
     decimal Amount);

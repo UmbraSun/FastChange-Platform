@@ -50,6 +50,16 @@ export function DepositModal({
     (wallet) => wallet.walletId === walletId,
   );
 
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+
+    setWalletId("");
+    setAmount("");
+    reset();
+  }, [open, reset]);
+
   const handleClose = useCallback(() => {
     setWalletId("");
     setAmount("");
@@ -93,7 +103,8 @@ export function DepositModal({
     Boolean(selectedWallet) &&
     Number.isFinite(numericAmount) &&
     numericAmount > 0 &&
-    !isPending;
+    !isPending &&
+    !isSuccess;
 
   const handleDeposit = () => {
     if (!canDeposit) {
@@ -359,7 +370,9 @@ export function DepositModal({
           >
             {isPending
               ? "Processing..."
-              : "Deposit"}
+              : isSuccess
+                ? "Deposit successful"
+                : "Deposit"}
           </button>
         </div>
       </div>

@@ -12,6 +12,20 @@ export interface SelectOption {
   label: string;
 }
 
+const EMPTY_GUID = "00000000-0000-0000-0000-000000000000";
+
+const isPlaceholderValue = (
+  value: string | null | undefined,
+) => {
+  if (typeof value !== "string") {
+    return true;
+  }
+
+  const trimmed = value.trim();
+
+  return trimmed === "" || trimmed.toLowerCase() === EMPTY_GUID;
+};
+
 interface SelectProps {
   value: string;
   onChange: (value: string) => void;
@@ -30,12 +44,23 @@ export function Select({
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const selectedOption = options.find(
+  const normalizedOptions = Array.from(
+    new Map(
+      options
+        .filter(
+          (option) =>
+            !isPlaceholderValue(option.value),
+        )
+        .map((option) => [option.value, option]),
+    ).values(),
+  );
+
+  const selectedOption = normalizedOptions.find(
     (option) => option.value === value,
   );
 
   useEffect(() => {
-    const handleClickOutside = (
+    const handlePointerDown = (
       event: MouseEvent,
     ) => {
       if (
@@ -50,18 +75,32 @@ export function Select({
 
     document.addEventListener(
       "mousedown",
-      handleClickOutside,
+      handlePointerDown,
     );
 
     return () => {
       document.removeEventListener(
         "mousedown",
-        handleClickOutside,
+        handlePointerDown,
       );
     };
   }, []);
 
+  useEffect(() => {
+    if (disabled || normalizedOptions.length === 0) {
+      setIsOpen(false);
+    }
+  }, [disabled, normalizedOptions.length]);
+
+  useEffect(() => {
+    setIsOpen(false);
+  }, [value]);
+
   const handleSelect = (optionValue: string) => {
+    if (isPlaceholderValue(optionValue)) {
+      return;
+    }
+
     onChange(optionValue);
     setIsOpen(false);
   };
@@ -74,7 +113,13 @@ export function Select({
       <button
         type="button"
         disabled={disabled}
-        onClick={() => setIsOpen((open) => !open)}
+        aria-expanded={isOpen}
+        aria-haspopup="listbox"
+        onClick={() => {
+          if (!disabled) {
+            setIsOpen((open) => !open);
+          }
+        }}
         className="
           flex
           w-full
@@ -112,6 +157,7 @@ export function Select({
 
       {isOpen && (
         <div
+          role="listbox"
           className="
             absolute
             left-0
@@ -127,18 +173,18 @@ export function Select({
             shadow-2xl
           "
         >
-          {options.length === 0 ? (
+          {normalizedOptions.length === 0 ? (
             <div className="p-4 text-sm text-exchange-muted">
               No options
             </div>
           ) : (
-            options.map((option) => {
+            normalizedOptions.map((option) => {
               const isSelected =
                 option.value === value;
 
               return (
                 <button
-                  key={option.value}
+                  key={`${option.value}-${option.label}`}
                   type="button"
                   onClick={() =>
                     handleSelect(option.value)

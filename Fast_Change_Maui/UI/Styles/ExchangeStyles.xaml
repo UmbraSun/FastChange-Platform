@@ -6,6 +6,7 @@
 
     <converters:StringNotEmptyConverter x:Key="StringNotEmptyConverter" />
     <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
+    <converters:NullableDecimalToBoolConverter x:Key="NullableDecimalToBoolConverter" />
 
     <!-- Theme Palette -->
     <Color x:Key="ExchangeBg">#0B0E11</Color>
