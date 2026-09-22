@@ -134,12 +134,50 @@
                 TextColor="{DynamicResource ExchangeText}" />
 
             <Grid
-                ColumnDefinitions="*,*,*"
+                RowDefinitions="Auto,Auto"
+                ColumnDefinitions="*,*"
+                RowSpacing="10"
                 ColumnSpacing="10">
+
+                <!-- Deposit -->
+                <Border
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Padding="8,15"
+                    BackgroundColor="{DynamicResource ExchangeCard}"
+                    Stroke="{DynamicResource ExchangeBorder}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 14">
+
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="Deposit_Tapped" />
+                    </Border.GestureRecognizers>
+
+                    <VerticalStackLayout
+                        Spacing="7"
+                        HorizontalOptions="Center">
+
+                        <Label
+                            Text="+"
+                            FontSize="23"
+                            HorizontalOptions="Center"
+                            TextColor="{DynamicResource ExchangeGold}" />
+
+                        <Label
+                            Text="Deposit"
+                            FontFamily="{DynamicResource Body}"
+                            FontSize="12"
+                            HorizontalOptions="Center"
+                            TextColor="{DynamicResource ExchangeText}" />
+
+                    </VerticalStackLayout>
+
+                </Border>
 
                 <!-- Exchange -->
                 <Border
-                    Grid.Column="0"
+                    Grid.Row="0"
+                    Grid.Column="1"
                     Padding="8,15"
                     BackgroundColor="{DynamicResource ExchangeCard}"
                     Stroke="{DynamicResource ExchangeBorder}"
@@ -171,8 +209,44 @@
 
                 </Border>
 
+                <!-- Withdraw -->
+                <Border
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Padding="8,15"
+                    BackgroundColor="{DynamicResource ExchangeCard}"
+                    Stroke="{DynamicResource ExchangeBorder}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 14">
+
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="Withdraw_Tapped" />
+                    </Border.GestureRecognizers>
+
+                    <VerticalStackLayout
+                        Spacing="7"
+                        HorizontalOptions="Center">
+
+                        <Label
+                            Text="−"
+                            FontSize="23"
+                            HorizontalOptions="Center"
+                            TextColor="{DynamicResource ExchangeGold}" />
+
+                        <Label
+                            Text="Withdraw"
+                            FontFamily="{DynamicResource Body}"
+                            FontSize="12"
+                            HorizontalOptions="Center"
+                            TextColor="{DynamicResource ExchangeText}" />
+
+                    </VerticalStackLayout>
+
+                </Border>
+
                 <!-- Transfer -->
                 <Border
+                    Grid.Row="1"
                     Grid.Column="1"
                     Padding="8,15"
                     BackgroundColor="{DynamicResource ExchangeCard}"
@@ -192,40 +266,6 @@
 
                         <Label
                             Text="Transfer"
-                            FontFamily="{DynamicResource Body}"
-                            FontSize="12"
-                            HorizontalOptions="Center"
-                            TextColor="{DynamicResource ExchangeText}" />
-
-                    </VerticalStackLayout>
-
-                </Border>
-
-                <!-- Deposit -->
-                <Border
-                    Grid.Column="2"
-                    Padding="8,15"
-                    BackgroundColor="{DynamicResource ExchangeCard}"
-                    Stroke="{DynamicResource ExchangeBorder}"
-                    StrokeThickness="1"
-                    StrokeShape="RoundRectangle 14">
-
-                    <Border.GestureRecognizers>
-                        <TapGestureRecognizer Tapped="Deposit_Tapped" />
-                    </Border.GestureRecognizers>
-
-                    <VerticalStackLayout
-                        Spacing="7"
-                        HorizontalOptions="Center">
-
-                        <Label
-                            Text="+"
-                            FontSize="23"
-                            HorizontalOptions="Center"
-                            TextColor="{DynamicResource ExchangeGold}" />
-
-                        <Label
-                            Text="Deposit"
                             FontFamily="{DynamicResource Body}"
                             FontSize="12"
                             HorizontalOptions="Center"

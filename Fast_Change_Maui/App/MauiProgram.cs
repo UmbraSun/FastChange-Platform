@@ -84,6 +84,9 @@ public static class MauiProgram
 
         builder.Services.AddTransient<DepositViewModel>();
         builder.Services.AddTransient<DepositView>();
+
+        builder.Services.AddTransient<WithdrawViewModel>();
+        builder.Services.AddTransient<WithdrawView>();
     }
 
     private static void ConfigureApi(MauiAppBuilder builder)

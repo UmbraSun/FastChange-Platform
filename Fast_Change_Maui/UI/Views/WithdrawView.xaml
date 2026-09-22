@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentView
+    x:Class="UI.Views.Sections.WithdrawView"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:UI.Controls"
+    xmlns:viewModels="clr-namespace:UI.ViewModels"
+    x:DataType="viewModels:WithdrawViewModel"
+    BackgroundColor="{DynamicResource ExchangeBg}">
+
+    <ScrollView>
+        <VerticalStackLayout
+            Padding="20,18,20,24"
+            Spacing="20">
+
+            <VerticalStackLayout Spacing="4">
+
+                <Label
+                    Text="Withdraw"
+                    FontFamily="{DynamicResource Headline}"
+                    FontSize="28"
+                    TextColor="{DynamicResource ExchangeText}" />
+
+                <Label
+                    Text="Withdraw funds from your wallet"
+                    FontFamily="{DynamicResource Body}"
+                    FontSize="14"
+                    TextColor="{DynamicResource ExchangeMuted}" />
+
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Spacing="8">
+
+                <Label
+                    Text="Wallet"
+                    FontFamily="{DynamicResource Title}"
+                    FontSize="14"
+                    TextColor="{DynamicResource ExchangeText}" />
+
+                <controls:WalletSelector
+                    Wallets="{Binding Wallets}"
+                    SelectedWallet="{Binding SelectedWallet, Mode=TwoWay}"
+                    SelectorTitle="Wallet" />
+
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Spacing="8">
+
+                <Label
+                    Text="Amount"
+                    FontFamily="{DynamicResource Title}"
+                    FontSize="14"
+                    TextColor="{DynamicResource ExchangeText}" />
+
+                <Border
+                    Padding="16,2"
+                    BackgroundColor="{DynamicResource ExchangeCard}"
+                    Stroke="{DynamicResource ExchangeBorder}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 14">
+
+                    <Grid ColumnDefinitions="*,Auto">
+
+                        <Entry
+                            Text="{Binding AmountText}"
+                            Keyboard="Numeric"
+                            Placeholder="0.00"
+                            FontFamily="{DynamicResource Body}"
+                            FontSize="20"
+                            TextColor="{DynamicResource ExchangeText}"
+                            PlaceholderColor="{DynamicResource ExchangeMuted}"
+                            BackgroundColor="Transparent" />
+
+                        <Label
+                            Grid.Column="1"
+                            Text="{Binding SelectedWallet.Currency}"
+                            FontFamily="{DynamicResource Title}"
+                            FontSize="14"
+                            VerticalOptions="Center"
+                            TextColor="{DynamicResource ExchangeGold}" />
+
+                    </Grid>
+
+                </Border>
+
+            </VerticalStackLayout>
+
+            <Label
+                Text="{Binding ErrorMessage}"
+                IsVisible="{Binding IsErrorVisible}"
+                FontFamily="{DynamicResource Body}"
+                FontSize="13"
+                TextColor="{DynamicResource ExchangeGold}" />
+
+            <Label
+                Text="{Binding SuccessMessage}"
+                IsVisible="{Binding IsSuccessVisible}"
+                FontFamily="{DynamicResource Body}"
+                FontSize="13"
+                TextColor="{DynamicResource ExchangeGold}" />
+
+            <Button
+                Text="Withdraw"
+                Command="{Binding WithdrawCommand}"
+                HeightRequest="52"
+                CornerRadius="14"
+                BackgroundColor="{DynamicResource ExchangeGold}"
+                TextColor="{DynamicResource ExchangeBg}"
+                FontFamily="{DynamicResource Title}"
+                FontSize="15" />
+
+            <ActivityIndicator
+                IsRunning="{Binding IsBusy}"
+                IsVisible="{Binding IsBusy}"
+                HorizontalOptions="Center"
+                Color="{DynamicResource ExchangeGold}" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentView>
