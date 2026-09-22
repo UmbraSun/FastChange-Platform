@@ -9,6 +9,8 @@ public partial class HomeView : ContentView
     public Func<Task>? ExchangeRequested { get; set; }
 
     public Func<Task>? DepositRequested { get; set; }
+    
+    public Func<Task>? WithdrawRequested { get; set; }
 
     public Func<Task>? ViewAllWalletsRequested { get; set; }
 
@@ -37,6 +39,12 @@ public partial class HomeView : ContentView
     {
         if (DepositRequested is not null)
             await DepositRequested();
+    }
+
+    private async void Withdraw_Tapped(object? sender, TappedEventArgs e)
+    {
+        if (WithdrawRequested is not null)
+            await WithdrawRequested();
     }
 
     private async void ViewAll_Tapped(object? sender, TappedEventArgs e)
