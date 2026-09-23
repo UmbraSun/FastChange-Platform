@@ -27,9 +27,9 @@ public partial class MainPage : ContentPage
         await _viewModel.LoadHomeCommand.ExecuteAsync(null);
     }
 
-    private void OnHomeSelected(object? sender, EventArgs e)
+    private async void OnHomeSelected(object? sender, EventArgs e)
     {
-        _viewModel.ShowHome();
+        await _viewModel.ShowHomeAsync();
     }
 
     private async void OnWalletsSelected(object? sender, EventArgs e)

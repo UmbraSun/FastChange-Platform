@@ -12,6 +12,8 @@ public partial class HomeView : ContentView
     
     public Func<Task>? WithdrawRequested { get; set; }
 
+    public Func<Task>? TransferRequested { get; set; }
+
     public Func<Task>? ViewAllWalletsRequested { get; set; }
 
     public Func<Task>? ProfileRequested { get; set; }
@@ -45,6 +47,12 @@ public partial class HomeView : ContentView
     {
         if (WithdrawRequested is not null)
             await WithdrawRequested();
+    }
+
+    private async void Transfer_Tapped(object? sender, TappedEventArgs e)
+    {
+        if (TransferRequested is not null)
+            await TransferRequested();
     }
 
     private async void ViewAll_Tapped(object? sender, TappedEventArgs e)

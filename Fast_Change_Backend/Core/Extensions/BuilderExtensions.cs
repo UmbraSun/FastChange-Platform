@@ -29,6 +29,8 @@ using Infrastructure.Observability;
 using Infrastructure.Redis;
 using Infrastructure.SignalR.Providers;
 using Infrastructure.SignalR.Services;
+using Mapster;
+using MapsterMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.SignalR;
@@ -51,6 +53,7 @@ using Persistence.Outbox;
 using Persistence.Repositories;
 using Polly;
 using StackExchange.Redis;
+using System.Reflection;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.RateLimiting;
@@ -70,6 +73,7 @@ public static class BuilderExtensions
         services.AddDatabase(configuration);
         services.AddMiddlewares();
         services.AddApplicationInfrastructure();
+        services.AddMapster();
         services.AddUserLogin(builder.Configuration);
         services.AddRateLimiting();
         services.AddInfrastructure(builder.Configuration);
@@ -226,6 +230,14 @@ public static class BuilderExtensions
         });
 
         services.AddValidatorsFromAssembly(assembly);
+    }
+
+    private static void AddMapster(this IServiceCollection services)
+    {
+        var config = TypeAdapterConfig.GlobalSettings;
+        config.Scan(typeof(Application.AssemblyReference).Assembly);
+        services.AddSingleton(config);
+        services.AddScoped<IMapper, ServiceMapper>();
     }
 
     // User login configuration

@@ -254,6 +254,10 @@
                     StrokeThickness="1"
                     StrokeShape="RoundRectangle 14">
 
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="Transfer_Tapped" />
+                    </Border.GestureRecognizers>
+
                     <VerticalStackLayout
                         Spacing="7"
                         HorizontalOptions="Center">
