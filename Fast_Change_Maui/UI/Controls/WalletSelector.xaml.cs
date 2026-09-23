@@ -67,7 +67,6 @@ public partial class WalletSelector : ContentView
     private static void OnWalletsChanged(BindableObject bindable, object oldValue, object newValue)
     {
         var selector = (WalletSelector)bindable;
-
         selector.EnsureValidSelection();
     }
 
@@ -78,14 +77,12 @@ public partial class WalletSelector : ContentView
         IsExpanded = !IsExpanded;
     }
 
-    private void WalletItem_Tapped(object? sender, TappedEventArgs e)
+    private void Wallets_SelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
-        if (sender is not TapGestureRecognizer recognizer || recognizer.CommandParameter is not WalletDto wallet)
+        if (e.CurrentSelection.FirstOrDefault() is not WalletDto wallet)
             return;
 
-        if (SelectedWallet?.WalletId != wallet.WalletId)
-            SelectedWallet = wallet;
-
+        SelectedWallet = wallet;
         IsExpanded = false;
     }
 

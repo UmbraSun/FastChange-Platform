@@ -10,6 +10,7 @@ public sealed class WalletMappings
     public void Register(TypeAdapterConfig config)
     {
         config.NewConfig<Wallet, GetUserWalletsResponse>()
-            .Map(dest => dest.WalletId, src => src.Id);
+            .Map(dest => dest.WalletId, src => src.Id)
+            .TwoWays();
     }
 }

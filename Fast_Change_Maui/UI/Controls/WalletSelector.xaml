@@ -6,8 +6,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     x:Name="Root">
 
-    <Grid RowDefinitions="Auto,Auto">
+    <Grid
+        RowDefinitions="Auto,Auto">
 
+        <!-- Selected wallet -->
         <Border
             Grid.Row="0"
             Padding="14,12"
@@ -77,6 +79,7 @@
 
         </Border>
 
+        <!-- Wallet options -->
         <Border
             Grid.Row="1"
             Margin="0,6,0,0"
@@ -89,20 +92,16 @@
             StrokeShape="RoundRectangle 14">
 
             <CollectionView
+                HeightRequest="180"
                 ItemsSource="{Binding Wallets,
                                       Source={x:Reference Root}}"
-                SelectionMode="None">
+                SelectionMode="Single"
+                SelectionChanged="Wallets_SelectionChanged">
 
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
 
                         <Grid Padding="12,11">
-
-                            <Grid.GestureRecognizers>
-                                <TapGestureRecognizer
-                                    Tapped="WalletItem_Tapped"
-                                    CommandParameter="{Binding .}" />
-                            </Grid.GestureRecognizers>
 
                             <VerticalStackLayout
                                 Spacing="2">

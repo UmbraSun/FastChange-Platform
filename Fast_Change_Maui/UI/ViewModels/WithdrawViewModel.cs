@@ -2,7 +2,6 @@
 using CommunityToolkit.Mvvm.Input;
 using Core.DTOs.Wallets;
 using Core.Interfaces;
-using IntelliJ.Lang.Annotations;
 using Refit;
 using System.Collections.ObjectModel;
 using System.Net;
