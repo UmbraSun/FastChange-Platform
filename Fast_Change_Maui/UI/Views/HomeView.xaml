@@ -74,7 +74,7 @@
             StrokeThickness="1"
             StrokeShape="RoundRectangle 18">
 
-            <Grid RowDefinitions="Auto,Auto,Auto">
+            <Grid RowDefinitions="Auto,Auto,Auto,Auto">
 
                 <Grid
                     Grid.Row="0"
@@ -117,10 +117,58 @@
                     FontSize="13"
                     TextColor="{DynamicResource ExchangeMuted}" />
 
+                <HorizontalStackLayout
+                    Grid.Row="3"
+                    Margin="0,10,0,0"
+                    Spacing="8">
+
+                    <Label
+                        Text="{Binding DisplayBalanceChange}"
+                        FontFamily="{DynamicResource Body}"
+                        FontSize="13"
+                        TextColor="{DynamicResource ExchangeGold}"
+                        IsVisible="{Binding HasPositiveBalanceChange}" />
+
+                    <Label
+                        Text="{Binding DisplayBalanceChangePercent}"
+                        FontFamily="{DynamicResource Body}"
+                        FontSize="13"
+                        TextColor="{DynamicResource ExchangeGold}"
+                        IsVisible="{Binding HasPositiveBalanceChange}" />
+
+                    <Label
+                        Text="{Binding DisplayBalanceChange}"
+                        FontFamily="{DynamicResource Body}"
+                        FontSize="13"
+                        TextColor="{DynamicResource ExchangeMuted}"
+                        IsVisible="{Binding HasNegativeBalanceChange}" />
+
+                    <Label
+                        Text="{Binding DisplayBalanceChangePercent}"
+                        FontFamily="{DynamicResource Body}"
+                        FontSize="13"
+                        TextColor="{DynamicResource ExchangeMuted}"
+                        IsVisible="{Binding HasNegativeBalanceChange}" />
+
+                    <Label
+                        Text="{Binding DisplayBalanceChange}"
+                        FontFamily="{DynamicResource Body}"
+                        FontSize="13"
+                        TextColor="{DynamicResource ExchangeMuted}"
+                        IsVisible="{Binding HasNoBalanceChange}" />
+
+                    <Label
+                        Text="{Binding DisplayBalanceChangePercent}"
+                        FontFamily="{DynamicResource Body}"
+                        FontSize="13"
+                        TextColor="{DynamicResource ExchangeMuted}"
+                        IsVisible="{Binding HasNoBalanceChange}" />
+
+                </HorizontalStackLayout>
+
             </Grid>
 
         </Border>
-
         <!-- Quick actions -->
         <VerticalStackLayout
             Grid.Row="2"
