@@ -8,428 +8,647 @@
     x:DataType="viewModels:HomeViewModel"
     BackgroundColor="{DynamicResource ExchangeBg}">
 
-    <Grid
-        Padding="20,18,20,0"
-        RowDefinitions="Auto,Auto,Auto,Auto,*">
+    <ScrollView
+        Orientation="Vertical">
 
-        <!-- Header -->
         <Grid
-            Grid.Row="0"
-            ColumnDefinitions="*,Auto"
-            Margin="0,0,0,24">
+            Padding="20,18,20,24"
+            RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto">
 
-            <VerticalStackLayout
-                Grid.Column="0"
-                Spacing="4"
-                VerticalOptions="Center">
+            <!-- Header -->
+            <Grid
+                Grid.Row="0"
+                ColumnDefinitions="*,Auto"
+                Margin="0,0,0,24">
 
-                <Label
-                    Text="{Binding UserName}"
-                    FontFamily="{DynamicResource Headline}"
-                    FontSize="24"
-                    LineBreakMode="TailTruncation"
-                    TextColor="{DynamicResource ExchangeText}" />
+                <VerticalStackLayout
+                    Grid.Column="0"
+                    Spacing="4"
+                    VerticalOptions="Center">
 
-                <Label
-                    Text="Manage your finances"
-                    FontFamily="{DynamicResource Body}"
-                    FontSize="14"
-                    TextColor="{DynamicResource ExchangeMuted}" />
+                    <Label
+                        Text="{Binding UserName}"
+                        FontFamily="{DynamicResource Headline}"
+                        FontSize="24"
+                        LineBreakMode="TailTruncation"
+                        TextColor="{DynamicResource ExchangeText}" />
 
-            </VerticalStackLayout>
+                    <Label
+                        Text="Manage your finances"
+                        FontFamily="{DynamicResource Body}"
+                        FontSize="14"
+                        TextColor="{DynamicResource ExchangeMuted}" />
 
+                </VerticalStackLayout>
+
+                <Border
+                    Grid.Column="1"
+                    WidthRequest="46"
+                    HeightRequest="46"
+                    BackgroundColor="{DynamicResource ExchangeCard}"
+                    Stroke="{DynamicResource ExchangeBorder}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 23"
+                    VerticalOptions="Center">
+
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="Profile_Tapped" />
+                    </Border.GestureRecognizers>
+
+                    <Label
+                        Text="U"
+                        FontFamily="{DynamicResource Headline}"
+                        FontSize="16"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"
+                        TextColor="{DynamicResource ExchangeGold}" />
+
+                </Border>
+            </Grid>
+
+            <!-- Total balance -->
             <Border
-                Grid.Column="1"
-                WidthRequest="46"
-                HeightRequest="46"
+                Grid.Row="1"
+                Padding="20"
+                Margin="0,0,0,26"
                 BackgroundColor="{DynamicResource ExchangeCard}"
                 Stroke="{DynamicResource ExchangeBorder}"
                 StrokeThickness="1"
-                StrokeShape="RoundRectangle 23"
-                VerticalOptions="Center">
+                StrokeShape="RoundRectangle 18">
 
-                <Border.GestureRecognizers>
-                    <TapGestureRecognizer Tapped="Profile_Tapped" />
-                </Border.GestureRecognizers>
+                <Grid RowDefinitions="Auto,Auto,Auto,Auto">
 
-                <Label
-                    Text="U"
-                    FontFamily="{DynamicResource Headline}"
-                    FontSize="16"
-                    HorizontalOptions="Center"
-                    VerticalOptions="Center"
-                    TextColor="{DynamicResource ExchangeGold}" />
+                    <Grid
+                        Grid.Row="0"
+                        ColumnDefinitions="*,Auto">
 
+                        <Label
+                            Text="Total balance"
+                            FontFamily="{DynamicResource Body}"
+                            FontSize="14"
+                            VerticalOptions="Center"
+                            TextColor="{DynamicResource ExchangeMuted}" />
+
+                        <Button
+                            Grid.Column="1"
+                            WidthRequest="36"
+                            HeightRequest="36"
+                            Text="•••"
+                            Command="{Binding ToggleBalanceVisibilityCommand}"
+                            BackgroundColor="Transparent"
+                            BorderWidth="0"
+                            Padding="0"
+                            FontSize="17"
+                            TextColor="{DynamicResource ExchangeMuted}" />
+
+                    </Grid>
+
+                    <Label
+                        Grid.Row="1"
+                        Margin="0,8,0,0"
+                        Text="{Binding DisplayBalance}"
+                        FontFamily="{DynamicResource Headline}"
+                        FontSize="36"
+                        TextColor="{DynamicResource ExchangeText}" />
+
+                    <Label
+                        Grid.Row="2"
+                        Margin="0,2,0,0"
+                        Text="USD"
+                        FontFamily="{DynamicResource Body}"
+                        FontSize="13"
+                        TextColor="{DynamicResource ExchangeMuted}" />
+
+                    <HorizontalStackLayout
+                        Grid.Row="3"
+                        Margin="0,10,0,0"
+                        Spacing="8">
+
+                        <Label
+                            Text="{Binding DisplayBalanceChange}"
+                            FontFamily="{DynamicResource Body}"
+                            FontSize="13"
+                            TextColor="{DynamicResource ExchangeGold}"
+                            IsVisible="{Binding HasPositiveBalanceChange}" />
+
+                        <Label
+                            Text="{Binding DisplayBalanceChangePercent}"
+                            FontFamily="{DynamicResource Body}"
+                            FontSize="13"
+                            TextColor="{DynamicResource ExchangeGold}"
+                            IsVisible="{Binding HasPositiveBalanceChange}" />
+
+                        <Label
+                            Text="{Binding DisplayBalanceChange}"
+                            FontFamily="{DynamicResource Body}"
+                            FontSize="13"
+                            TextColor="{DynamicResource ExchangeMuted}"
+                            IsVisible="{Binding HasNegativeBalanceChange}" />
+
+                        <Label
+                            Text="{Binding DisplayBalanceChangePercent}"
+                            FontFamily="{DynamicResource Body}"
+                            FontSize="13"
+                            TextColor="{DynamicResource ExchangeMuted}"
+                            IsVisible="{Binding HasNegativeBalanceChange}" />
+
+                        <Label
+                            Text="{Binding DisplayBalanceChange}"
+                            FontFamily="{DynamicResource Body}"
+                            FontSize="13"
+                            TextColor="{DynamicResource ExchangeMuted}"
+                            IsVisible="{Binding HasNoBalanceChange}" />
+
+                        <Label
+                            Text="{Binding DisplayBalanceChangePercent}"
+                            FontFamily="{DynamicResource Body}"
+                            FontSize="13"
+                            TextColor="{DynamicResource ExchangeMuted}"
+                            IsVisible="{Binding HasNoBalanceChange}" />
+
+                    </HorizontalStackLayout>
+                </Grid>
             </Border>
 
-        </Grid>
-
-        <!-- Total balance -->
-        <Border
-            Grid.Row="1"
-            Padding="20"
-            Margin="0,0,0,26"
-            BackgroundColor="{DynamicResource ExchangeCard}"
-            Stroke="{DynamicResource ExchangeBorder}"
-            StrokeThickness="1"
-            StrokeShape="RoundRectangle 18">
-
-            <Grid RowDefinitions="Auto,Auto,Auto,Auto">
-
-                <Grid
-                    Grid.Row="0"
-                    ColumnDefinitions="*,Auto">
-
-                    <Label
-                        Text="Total balance"
-                        FontFamily="{DynamicResource Body}"
-                        FontSize="14"
-                        VerticalOptions="Center"
-                        TextColor="{DynamicResource ExchangeMuted}" />
-
-                    <Button
-                        Grid.Column="1"
-                        WidthRequest="36"
-                        HeightRequest="36"
-                        Text="•••"
-                        Command="{Binding ToggleBalanceVisibilityCommand}"
-                        BackgroundColor="Transparent"
-                        BorderWidth="0"
-                        Padding="0"
-                        FontSize="17"
-                        TextColor="{DynamicResource ExchangeMuted}" />
-
-                </Grid>
+            <!-- Quick actions -->
+            <VerticalStackLayout
+                Grid.Row="2"
+                Spacing="12"
+                Margin="0,0,0,26">
 
                 <Label
-                    Grid.Row="1"
-                    Margin="0,8,0,0"
-                    Text="{Binding DisplayBalance}"
-                    FontFamily="{DynamicResource Headline}"
-                    FontSize="36"
+                    Text="Quick actions"
+                    FontFamily="{DynamicResource Title}"
+                    FontSize="18"
                     TextColor="{DynamicResource ExchangeText}" />
 
-                <Label
-                    Grid.Row="2"
-                    Margin="0,2,0,0"
-                    Text="USD"
-                    FontFamily="{DynamicResource Body}"
-                    FontSize="13"
-                    TextColor="{DynamicResource ExchangeMuted}" />
+                <Grid
+                    RowDefinitions="Auto,Auto"
+                    ColumnDefinitions="*,*"
+                    RowSpacing="10"
+                    ColumnSpacing="10">
 
-                <HorizontalStackLayout
-                    Grid.Row="3"
-                    Margin="0,10,0,0"
-                    Spacing="8">
-
-                    <Label
-                        Text="{Binding DisplayBalanceChange}"
-                        FontFamily="{DynamicResource Body}"
-                        FontSize="13"
-                        TextColor="{DynamicResource ExchangeGold}"
-                        IsVisible="{Binding HasPositiveBalanceChange}" />
-
-                    <Label
-                        Text="{Binding DisplayBalanceChangePercent}"
-                        FontFamily="{DynamicResource Body}"
-                        FontSize="13"
-                        TextColor="{DynamicResource ExchangeGold}"
-                        IsVisible="{Binding HasPositiveBalanceChange}" />
-
-                    <Label
-                        Text="{Binding DisplayBalanceChange}"
-                        FontFamily="{DynamicResource Body}"
-                        FontSize="13"
-                        TextColor="{DynamicResource ExchangeMuted}"
-                        IsVisible="{Binding HasNegativeBalanceChange}" />
-
-                    <Label
-                        Text="{Binding DisplayBalanceChangePercent}"
-                        FontFamily="{DynamicResource Body}"
-                        FontSize="13"
-                        TextColor="{DynamicResource ExchangeMuted}"
-                        IsVisible="{Binding HasNegativeBalanceChange}" />
-
-                    <Label
-                        Text="{Binding DisplayBalanceChange}"
-                        FontFamily="{DynamicResource Body}"
-                        FontSize="13"
-                        TextColor="{DynamicResource ExchangeMuted}"
-                        IsVisible="{Binding HasNoBalanceChange}" />
-
-                    <Label
-                        Text="{Binding DisplayBalanceChangePercent}"
-                        FontFamily="{DynamicResource Body}"
-                        FontSize="13"
-                        TextColor="{DynamicResource ExchangeMuted}"
-                        IsVisible="{Binding HasNoBalanceChange}" />
-
-                </HorizontalStackLayout>
-
-            </Grid>
-
-        </Border>
-        <!-- Quick actions -->
-        <VerticalStackLayout
-            Grid.Row="2"
-            Spacing="12"
-            Margin="0,0,0,26">
-
-            <Label
-                Text="Quick actions"
-                FontFamily="{DynamicResource Title}"
-                FontSize="18"
-                TextColor="{DynamicResource ExchangeText}" />
-
-            <Grid
-                RowDefinitions="Auto,Auto"
-                ColumnDefinitions="*,*"
-                RowSpacing="10"
-                ColumnSpacing="10">
-
-                <!-- Deposit -->
-                <Border
-                    Grid.Row="0"
-                    Grid.Column="0"
-                    Padding="8,15"
-                    BackgroundColor="{DynamicResource ExchangeCard}"
-                    Stroke="{DynamicResource ExchangeBorder}"
-                    StrokeThickness="1"
-                    StrokeShape="RoundRectangle 14">
-
-                    <Border.GestureRecognizers>
-                        <TapGestureRecognizer Tapped="Deposit_Tapped" />
-                    </Border.GestureRecognizers>
-
-                    <VerticalStackLayout
-                        Spacing="7"
-                        HorizontalOptions="Center">
-
-                        <Label
-                            Text="+"
-                            FontSize="23"
-                            HorizontalOptions="Center"
-                            TextColor="{DynamicResource ExchangeGold}" />
-
-                        <Label
-                            Text="Deposit"
-                            FontFamily="{DynamicResource Body}"
-                            FontSize="12"
-                            HorizontalOptions="Center"
-                            TextColor="{DynamicResource ExchangeText}" />
-
-                    </VerticalStackLayout>
-
-                </Border>
-
-                <!-- Exchange -->
-                <Border
-                    Grid.Row="0"
-                    Grid.Column="1"
-                    Padding="8,15"
-                    BackgroundColor="{DynamicResource ExchangeCard}"
-                    Stroke="{DynamicResource ExchangeBorder}"
-                    StrokeThickness="1"
-                    StrokeShape="RoundRectangle 14">
-
-                    <Border.GestureRecognizers>
-                        <TapGestureRecognizer Tapped="Exchange_Tapped" />
-                    </Border.GestureRecognizers>
-
-                    <VerticalStackLayout
-                        Spacing="7"
-                        HorizontalOptions="Center">
-
-                        <Label
-                            Text="⇄"
-                            FontSize="23"
-                            HorizontalOptions="Center"
-                            TextColor="{DynamicResource ExchangeGold}" />
-
-                        <Label
-                            Text="Exchange"
-                            FontFamily="{DynamicResource Body}"
-                            FontSize="12"
-                            HorizontalOptions="Center"
-                            TextColor="{DynamicResource ExchangeText}" />
-
-                    </VerticalStackLayout>
-
-                </Border>
-
-                <!-- Withdraw -->
-                <Border
-                    Grid.Row="1"
-                    Grid.Column="0"
-                    Padding="8,15"
-                    BackgroundColor="{DynamicResource ExchangeCard}"
-                    Stroke="{DynamicResource ExchangeBorder}"
-                    StrokeThickness="1"
-                    StrokeShape="RoundRectangle 14">
-
-                    <Border.GestureRecognizers>
-                        <TapGestureRecognizer Tapped="Withdraw_Tapped" />
-                    </Border.GestureRecognizers>
-
-                    <VerticalStackLayout
-                        Spacing="7"
-                        HorizontalOptions="Center">
-
-                        <Label
-                            Text="−"
-                            FontSize="23"
-                            HorizontalOptions="Center"
-                            TextColor="{DynamicResource ExchangeGold}" />
-
-                        <Label
-                            Text="Withdraw"
-                            FontFamily="{DynamicResource Body}"
-                            FontSize="12"
-                            HorizontalOptions="Center"
-                            TextColor="{DynamicResource ExchangeText}" />
-
-                    </VerticalStackLayout>
-
-                </Border>
-
-                <!-- Transfer -->
-                <Border
-                    Grid.Row="1"
-                    Grid.Column="1"
-                    Padding="8,15"
-                    BackgroundColor="{DynamicResource ExchangeCard}"
-                    Stroke="{DynamicResource ExchangeBorder}"
-                    StrokeThickness="1"
-                    StrokeShape="RoundRectangle 14">
-
-                    <Border.GestureRecognizers>
-                        <TapGestureRecognizer Tapped="Transfer_Tapped" />
-                    </Border.GestureRecognizers>
-
-                    <VerticalStackLayout
-                        Spacing="7"
-                        HorizontalOptions="Center">
-
-                        <Label
-                            Text="→"
-                            FontSize="23"
-                            HorizontalOptions="Center"
-                            TextColor="{DynamicResource ExchangeGold}" />
-
-                        <Label
-                            Text="Transfer"
-                            FontFamily="{DynamicResource Body}"
-                            FontSize="12"
-                            HorizontalOptions="Center"
-                            TextColor="{DynamicResource ExchangeText}" />
-
-                    </VerticalStackLayout>
-
-                </Border>
-
-            </Grid>
-
-        </VerticalStackLayout>
-
-        <!-- Wallets header -->
-        <Grid
-            Grid.Row="3"
-            ColumnDefinitions="*,Auto"
-            Margin="0,0,0,16">
-
-            <Label
-                Text="Wallets"
-                FontFamily="{DynamicResource Title}"
-                FontSize="18"
-                TextColor="{DynamicResource ExchangeText}" />
-
-            <Label
-                Grid.Column="1"
-                Text="View all"
-                FontFamily="{DynamicResource Body}"
-                FontSize="13"
-                VerticalOptions="Center"
-                TextColor="{DynamicResource ExchangeGold}">
-
-                <Label.GestureRecognizers>
-                    <TapGestureRecognizer Tapped="ViewAll_Tapped" />
-                </Label.GestureRecognizers>
-
-            </Label>
-
-        </Grid>
-
-        <!-- Wallet list -->
-        <CollectionView
-            Grid.Row="4"
-            ItemsSource="{Binding Wallets}"
-            SelectionMode="None">
-
-            <CollectionView.ItemTemplate>
-
-                <DataTemplate>
-
+                    <!-- Deposit -->
                     <Border
-                        Padding="16"
-                        Margin="0,0,0,9"
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Padding="8,15"
                         BackgroundColor="{DynamicResource ExchangeCard}"
                         Stroke="{DynamicResource ExchangeBorder}"
                         StrokeThickness="1"
                         StrokeShape="RoundRectangle 14">
 
-                        <Grid
-                            ColumnDefinitions="*,Auto"
-                            VerticalOptions="Center">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="Deposit_Tapped" />
+                        </Border.GestureRecognizers>
 
-                            <VerticalStackLayout
-                                Spacing="4">
+                        <VerticalStackLayout
+                            Spacing="7"
+                            HorizontalOptions="Center">
 
-                                <Label
-                                    Text="{Binding Currency}"
-                                    FontFamily="{DynamicResource Title}"
-                                    FontSize="16"
-                                    TextColor="{DynamicResource ExchangeText}" />
+                            <Label
+                                Text="+"
+                                FontSize="23"
+                                HorizontalOptions="Center"
+                                TextColor="{DynamicResource ExchangeGold}" />
 
-                                <Label
-                                    Text="Available balance"
-                                    FontFamily="{DynamicResource Body}"
-                                    FontSize="12"
-                                    TextColor="{DynamicResource ExchangeMuted}" />
+                            <Label
+                                Text="Deposit"
+                                FontFamily="{DynamicResource Body}"
+                                FontSize="12"
+                                HorizontalOptions="Center"
+                                TextColor="{DynamicResource ExchangeText}" />
 
-                            </VerticalStackLayout>
+                        </VerticalStackLayout>
+                    </Border>
 
-                            <VerticalStackLayout
-                                Grid.Column="1"
-                                Spacing="2"
-                                HorizontalOptions="End"
+                    <!-- Exchange -->
+                    <Border
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        Padding="8,15"
+                        BackgroundColor="{DynamicResource ExchangeCard}"
+                        Stroke="{DynamicResource ExchangeBorder}"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 14">
+
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="Exchange_Tapped" />
+                        </Border.GestureRecognizers>
+
+                        <VerticalStackLayout
+                            Spacing="7"
+                            HorizontalOptions="Center">
+
+                            <Label
+                                Text="⇄"
+                                FontSize="23"
+                                HorizontalOptions="Center"
+                                TextColor="{DynamicResource ExchangeGold}" />
+
+                            <Label
+                                Text="Exchange"
+                                FontFamily="{DynamicResource Body}"
+                                FontSize="12"
+                                HorizontalOptions="Center"
+                                TextColor="{DynamicResource ExchangeText}" />
+
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Withdraw -->
+                    <Border
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Padding="8,15"
+                        BackgroundColor="{DynamicResource ExchangeCard}"
+                        Stroke="{DynamicResource ExchangeBorder}"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 14">
+
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="Withdraw_Tapped" />
+                        </Border.GestureRecognizers>
+
+                        <VerticalStackLayout
+                            Spacing="7"
+                            HorizontalOptions="Center">
+
+                            <Label
+                                Text="−"
+                                FontSize="23"
+                                HorizontalOptions="Center"
+                                TextColor="{DynamicResource ExchangeGold}" />
+
+                            <Label
+                                Text="Withdraw"
+                                FontFamily="{DynamicResource Body}"
+                                FontSize="12"
+                                HorizontalOptions="Center"
+                                TextColor="{DynamicResource ExchangeText}" />
+
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Transfer -->
+                    <Border
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Padding="8,15"
+                        BackgroundColor="{DynamicResource ExchangeCard}"
+                        Stroke="{DynamicResource ExchangeBorder}"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 14">
+
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="Transfer_Tapped" />
+                        </Border.GestureRecognizers>
+
+                        <VerticalStackLayout
+                            Spacing="7"
+                            HorizontalOptions="Center">
+
+                            <Label
+                                Text="→"
+                                FontSize="23"
+                                HorizontalOptions="Center"
+                                TextColor="{DynamicResource ExchangeGold}" />
+
+                            <Label
+                                Text="Transfer"
+                                FontFamily="{DynamicResource Body}"
+                                FontSize="12"
+                                HorizontalOptions="Center"
+                                TextColor="{DynamicResource ExchangeText}" />
+
+                        </VerticalStackLayout>
+                    </Border>
+                </Grid>
+            </VerticalStackLayout>
+
+            <!-- Wallets header -->
+            <Grid
+                Grid.Row="3"
+                ColumnDefinitions="*,Auto"
+                Margin="0,0,0,16">
+
+                <Label
+                    Text="Wallets"
+                    FontFamily="{DynamicResource Title}"
+                    FontSize="18"
+                    TextColor="{DynamicResource ExchangeText}" />
+
+                <Label
+                    Grid.Column="1"
+                    Text="View all"
+                    FontFamily="{DynamicResource Body}"
+                    FontSize="13"
+                    VerticalOptions="Center"
+                    TextColor="{DynamicResource ExchangeGold}">
+
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="ViewAll_Tapped" />
+                    </Label.GestureRecognizers>
+
+                </Label>
+            </Grid>
+
+            <!-- Wallet list -->
+            <VerticalStackLayout
+                Grid.Row="4"
+                Spacing="12"
+                Margin="0,0,0,24"
+                BindableLayout.ItemsSource="{Binding Wallets}">
+
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate>
+
+                        <Border
+                            Padding="16"
+                            BackgroundColor="{DynamicResource ExchangeCard}"
+                            Stroke="{DynamicResource ExchangeBorder}"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 14">
+
+                            <Grid
+                                ColumnDefinitions="*,Auto"
                                 VerticalOptions="Center">
 
-                                <Label
-                                    Text="{Binding Balance, StringFormat='{0:N2}'}"
-                                    FontFamily="{DynamicResource Headline}"
-                                    FontSize="17"
-                                    HorizontalTextAlignment="End"
-                                    TextColor="{DynamicResource ExchangeText}" />
+                                <VerticalStackLayout
+                                    Spacing="4">
 
-                                <Label
-                                    Text="{Binding Currency}"
-                                    FontFamily="{DynamicResource Body}"
-                                    FontSize="11"
-                                    HorizontalTextAlignment="End"
-                                    TextColor="{DynamicResource ExchangeMuted}" />
+                                    <Label
+                                        Text="{Binding Currency}"
+                                        FontFamily="{DynamicResource Title}"
+                                        FontSize="16"
+                                        TextColor="{DynamicResource ExchangeText}" />
+
+                                    <Label
+                                        Text="Available balance"
+                                        FontFamily="{DynamicResource Body}"
+                                        FontSize="12"
+                                        TextColor="{DynamicResource ExchangeMuted}" />
+
+                                </VerticalStackLayout>
+
+                                <VerticalStackLayout
+                                    Grid.Column="1"
+                                    Spacing="2"
+                                    HorizontalOptions="End"
+                                    VerticalOptions="Center">
+
+                                    <Label
+                                        Text="{Binding Balance, StringFormat='{0:N2}'}"
+                                        FontFamily="{DynamicResource Headline}"
+                                        FontSize="17"
+                                        HorizontalTextAlignment="End"
+                                        TextColor="{DynamicResource ExchangeText}" />
+
+                                    <Label
+                                        Text="{Binding Currency}"
+                                        FontFamily="{DynamicResource Body}"
+                                        FontSize="11"
+                                        HorizontalTextAlignment="End"
+                                        TextColor="{DynamicResource ExchangeMuted}" />
+
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
+
+            <!-- Markets -->
+            <Border
+                Grid.Row="5"
+                Padding="18"
+                Margin="0,0,0,24"
+                BackgroundColor="{DynamicResource ExchangeCard}"
+                Stroke="{DynamicResource ExchangeBorder}"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 18">
+
+                <Grid
+                    RowDefinitions="Auto,Auto">
+
+                    <Label
+                        Grid.Row="0"
+                        Text="Markets"
+                        FontFamily="{DynamicResource Title}"
+                        FontSize="18"
+                        Margin="0,0,0,16"
+                        TextColor="{DynamicResource ExchangeText}" />
+
+                    <!-- Loading -->
+                    <VerticalStackLayout
+                        Grid.Row="1"
+                        Spacing="14"
+                        IsVisible="{Binding IsBusy}">
+
+                        <Grid ColumnDefinitions="*,Auto">
+                            <VerticalStackLayout Spacing="6">
+
+                                <BoxView
+                                    HeightRequest="14"
+                                    WidthRequest="70"
+                                    HorizontalOptions="Start"
+                                    CornerRadius="5"
+                                    Color="#15191D" />
+
+                                <BoxView
+                                    HeightRequest="10"
+                                    WidthRequest="105"
+                                    HorizontalOptions="Start"
+                                    CornerRadius="5"
+                                    Color="#15191D" />
 
                             </VerticalStackLayout>
+
+                            <BoxView
+                                Grid.Column="1"
+                                HeightRequest="14"
+                                WidthRequest="55"
+                                HorizontalOptions="End"
+                                CornerRadius="5"
+                                Color="#15191D" />
 
                         </Grid>
 
+                        <Grid ColumnDefinitions="*,Auto">
+                            <VerticalStackLayout Spacing="6">
+
+                                <BoxView
+                                    HeightRequest="14"
+                                    WidthRequest="70"
+                                    HorizontalOptions="Start"
+                                    CornerRadius="5"
+                                    Color="#15191D" />
+
+                                <BoxView
+                                    HeightRequest="10"
+                                    WidthRequest="105"
+                                    HorizontalOptions="Start"
+                                    CornerRadius="5"
+                                    Color="#15191D" />
+
+                            </VerticalStackLayout>
+
+                            <BoxView
+                                Grid.Column="1"
+                                HeightRequest="14"
+                                WidthRequest="55"
+                                HorizontalOptions="End"
+                                CornerRadius="5"
+                                Color="#15191D" />
+
+                        </Grid>
+
+                        <Grid ColumnDefinitions="*,Auto">
+                            <VerticalStackLayout Spacing="6">
+
+                                <BoxView
+                                    HeightRequest="14"
+                                    WidthRequest="70"
+                                    HorizontalOptions="Start"
+                                    CornerRadius="5"
+                                    Color="#15191D" />
+
+                                <BoxView
+                                    HeightRequest="10"
+                                    WidthRequest="105"
+                                    HorizontalOptions="Start"
+                                    CornerRadius="5"
+                                    Color="#15191D" />
+
+                            </VerticalStackLayout>
+
+                            <BoxView
+                                Grid.Column="1"
+                                HeightRequest="14"
+                                WidthRequest="55"
+                                HorizontalOptions="End"
+                                CornerRadius="5"
+                                Color="#15191D" />
+
+                        </Grid>
+                    </VerticalStackLayout>
+
+                    <!-- Error -->
+                    <Border
+                        Grid.Row="1"
+                        Padding="14"
+                        BackgroundColor="#15191D"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 14"
+                        IsVisible="{Binding IsErrorVisible}">
+
+                        <Label
+                            Text="Failed to load market data."
+                            FontFamily="{DynamicResource Body}"
+                            FontSize="13"
+                            TextColor="{DynamicResource ExchangeMuted}" />
+
                     </Border>
 
-                </DataTemplate>
+                    <!-- Empty -->
+                    <Border
+                        Grid.Row="1"
+                        Padding="14"
+                        BackgroundColor="#15191D"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 14"
+                        IsVisible="{Binding IsMarketsEmpty}">
 
-            </CollectionView.ItemTemplate>
+                        <Label
+                            Text="No market data available."
+                            FontFamily="{DynamicResource Body}"
+                            FontSize="13"
+                            TextColor="{DynamicResource ExchangeMuted}" />
 
-        </CollectionView>
+                    </Border>
 
-    </Grid>
+                    <!-- Market data -->
+                    <VerticalStackLayout
+                        Grid.Row="1"
+                        Spacing="14"
+                        BindableLayout.ItemsSource="{Binding Markets}"
+                        IsVisible="{Binding HasMarkets}">
 
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="viewModels:MarketItemViewModel">
+
+                                <Grid
+                                    ColumnDefinitions="*,Auto">
+
+                                    <VerticalStackLayout
+                                        Grid.Column="0"
+                                        Spacing="3">
+
+                                        <Label
+                                            Text="{Binding Pair}"
+                                            FontFamily="{DynamicResource Body}"
+                                            FontSize="14"
+                                            TextColor="{DynamicResource ExchangeText}" />
+
+                                        <Label
+                                            Text="{Binding DisplayPrice}"
+                                            FontFamily="{DynamicResource Body}"
+                                            FontSize="12"
+                                            TextColor="{DynamicResource ExchangeMuted}" />
+
+                                    </VerticalStackLayout>
+
+                                    <Label
+                                        Grid.Column="1"
+                                        Text="{Binding DisplayChange}"
+                                        FontFamily="{DynamicResource Body}"
+                                        FontSize="13"
+                                        VerticalOptions="Center"
+                                        HorizontalTextAlignment="End">
+
+                                        <Label.Triggers>
+
+                                            <DataTrigger
+                                                TargetType="Label"
+                                                Binding="{Binding IsPositive}"
+                                                Value="True">
+
+                                                <Setter
+                                                    Property="TextColor"
+                                                    Value="#22C55E" />
+
+                                            </DataTrigger>
+
+                                            <DataTrigger
+                                                TargetType="Label"
+                                                Binding="{Binding IsNegative}"
+                                                Value="True">
+
+                                                <Setter
+                                                    Property="TextColor"
+                                                    Value="#EF4444" />
+
+                                            </DataTrigger>
+
+                                            <DataTrigger
+                                                TargetType="Label"
+                                                Binding="{Binding IsNeutral}"
+                                                Value="True">
+
+                                                <Setter
+                                                    Property="TextColor"
+                                                    Value="{DynamicResource ExchangeMuted}" />
+
+                                            </DataTrigger>
+                                        </Label.Triggers>
+                                    </Label>
+                                </Grid>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+        </Grid>
+    </ScrollView>
 </ContentView>
+    

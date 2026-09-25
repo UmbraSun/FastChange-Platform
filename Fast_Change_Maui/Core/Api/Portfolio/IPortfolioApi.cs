@@ -25,4 +25,15 @@ public interface IPortfolioApi
     /// <returns></returns>
     [Get("/api/Portfolio/performance")]
     Task<PortfolioPerformanceResponseDto> GetPerformanceAsync(string currency = "USD", CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Retrieves the market overview for the specified currencies and quote currency.
+    /// </summary>
+    /// <param name="currencies"></param>
+    /// <param name="currency"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    [Get("/api/Portfolio/market")]
+    Task<IReadOnlyList<MarketDataItemDto>> GetMarketOverviewAsync(
+    [Query(CollectionFormat.Multi)] IReadOnlyCollection<string> currencies, string currency = "USD", CancellationToken cancellationToken = default);
 }

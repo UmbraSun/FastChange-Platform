@@ -22,4 +22,9 @@ public sealed class PortfolioService : IPortfolioService
     {
         return _portfolioApi.GetPerformanceAsync(currency, cancellationToken);
     }
+
+    public Task<IReadOnlyList<MarketDataItemDto>> GetMarketOverviewAsync(IReadOnlyCollection<string> currencies, string currency = "USD", CancellationToken cancellationToken = default)
+    {
+        return _portfolioApi.GetMarketOverviewAsync(currencies, currency, cancellationToken);
+    }
 }
