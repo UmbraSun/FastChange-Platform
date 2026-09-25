@@ -1,8 +1,8 @@
-﻿using System.Collections.ObjectModel;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Core.DTOs.Wallets;
 using Core.Interfaces;
+using System.Collections.ObjectModel;
 
 namespace UI.ViewModels;
 
@@ -12,6 +12,8 @@ public partial class HomeViewModel : ObservableObject
     private readonly IPortfolioService _portfolioService;
 
     public ObservableCollection<WalletDto> Wallets { get; } = [];
+
+    public ObservableCollection<MarketItemViewModel> Markets { get; } = [];
 
     [ObservableProperty]
     private string userName = string.Empty;
@@ -48,11 +50,17 @@ public partial class HomeViewModel : ObservableObject
 
     public bool HasWallets => Wallets.Count > 0;
 
+    public bool HasMarkets => Markets.Count > 0;
+
+    public bool IsMarketsEmpty => !IsBusy && !IsErrorVisible && !HasMarkets;
+
     public bool IsErrorVisible => !string.IsNullOrWhiteSpace(ErrorMessage);
 
     public bool IsEmptyVisible => !IsBusy && !IsErrorVisible && !HasWallets;
 
     public bool IsContentVisible => !IsBusy && !IsErrorVisible && HasWallets;
+
+    private static readonly string[] MarketCurrencies = [ "BTC", "ETH", "SOL" ];
 
     public HomeViewModel(
         IUserService userService,
@@ -78,25 +86,29 @@ public partial class HomeViewModel : ObservableObject
             var walletsTask = _userService.GetWalletsAsync();
             var portfolioTask = _portfolioService.GetPortfolioAsync("USD");
             var performanceTask = _portfolioService.GetPerformanceAsync("USD");
+            var marketTask = _portfolioService.GetMarketOverviewAsync(MarketCurrencies, "USD");
 
-            await Task.WhenAll(userTask, walletsTask, portfolioTask, performanceTask);
+            await Task.WhenAll(userTask, walletsTask, portfolioTask, performanceTask, marketTask);
 
             var user = await userTask;
             var wallets = await walletsTask;
             var portfolio = await portfolioTask;
             var performance = await performanceTask;
+            var markets = await marketTask;
 
             UserName = user.Email;
 
             Wallets.Clear();
-
             foreach (var wallet in wallets)
                 Wallets.Add(wallet);
 
             TotalBalance = portfolio.TotalBalance;
-
             BalanceChange = performance.ChangeAmount;
             BalanceChangePercent = performance.ChangePercent;
+            
+            Markets.Clear();
+            foreach (var market in markets)
+                Markets.Add(new MarketItemViewModel(market));
 
             NotifyStateChanged();
             NotifyBalanceStateChanged();
@@ -134,6 +146,8 @@ public partial class HomeViewModel : ObservableObject
     private void NotifyStateChanged()
     {
         OnPropertyChanged(nameof(HasWallets));
+        OnPropertyChanged(nameof(HasMarkets));
+        OnPropertyChanged(nameof(IsMarketsEmpty));
         OnPropertyChanged(nameof(IsErrorVisible));
         OnPropertyChanged(nameof(IsEmptyVisible));
         OnPropertyChanged(nameof(IsContentVisible));

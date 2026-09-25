@@ -22,4 +22,13 @@ public interface IPortfolioService
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<PortfolioPerformanceResponseDto> GetPerformanceAsync(string currency = "USD", CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Retrieves the market overview for the specified currencies and quote currency.
+    /// </summary>
+    /// <param name="currencies"></param>
+    /// <param name="currency"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<IReadOnlyList<MarketDataItemDto>> GetMarketOverviewAsync(IReadOnlyCollection<string> currencies, string currency = "USD", CancellationToken cancellationToken = default);
 }
