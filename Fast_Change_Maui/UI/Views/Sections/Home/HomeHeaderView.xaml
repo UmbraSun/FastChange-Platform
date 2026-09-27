@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentView
+    x:Class="UI.Views.Sections.Home.HomeHeaderView"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewModels="clr-namespace:UI.ViewModels"
+    x:DataType="viewModels:HomeViewModel">
+
+    <Grid ColumnDefinitions="*,Auto">
+
+        <VerticalStackLayout
+            Grid.Column="0"
+            Spacing="4"
+            VerticalOptions="Center">
+
+            <Label
+                Text="{Binding UserName}"
+                FontFamily="{DynamicResource Headline}"
+                FontSize="24"
+                LineBreakMode="TailTruncation"
+                TextColor="{DynamicResource ExchangeText}" />
+
+            <Label
+                Text="Manage your finances"
+                FontFamily="{DynamicResource Body}"
+                FontSize="14"
+                TextColor="{DynamicResource ExchangeMuted}" />
+
+        </VerticalStackLayout>
+
+        <Border
+            Grid.Column="1"
+            WidthRequest="46"
+            HeightRequest="46"
+            BackgroundColor="{DynamicResource ExchangeCard}"
+            Stroke="{DynamicResource ExchangeBorder}"
+            StrokeThickness="1"
+            StrokeShape="RoundRectangle 23"
+            VerticalOptions="Center">
+
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Tapped="Profile_Tapped" />
+            </Border.GestureRecognizers>
+
+            <Label
+                Text="U"
+                FontFamily="{DynamicResource Headline}"
+                FontSize="16"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                TextColor="{DynamicResource ExchangeGold}" />
+
+        </Border>
+    </Grid>
+</ContentView>

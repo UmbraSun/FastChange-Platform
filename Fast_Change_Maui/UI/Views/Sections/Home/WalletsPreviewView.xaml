@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentView
+    x:Class="UI.Views.Sections.Home.WalletsPreviewView"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewModels="clr-namespace:UI.ViewModels"
+    x:DataType="viewModels:HomeViewModel">
+
+    <VerticalStackLayout Spacing="12">
+
+        <Grid ColumnDefinitions="*,Auto">
+
+            <Label
+                Text="Wallets"
+                FontFamily="{DynamicResource Headline}"
+                FontSize="18"
+                TextColor="{DynamicResource ExchangeText}"
+                VerticalOptions="Center" />
+
+            <Label
+                Grid.Column="1"
+                Text="View all"
+                FontFamily="{DynamicResource Body}"
+                FontSize="14"
+                TextColor="{DynamicResource ExchangeGold}"
+                VerticalOptions="Center">
+
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="ViewAll_Tapped" />
+                </Label.GestureRecognizers>
+
+            </Label>
+        </Grid>
+
+        <VerticalStackLayout
+            BindableLayout.ItemsSource="{Binding Wallets}"
+            Spacing="10"
+            IsVisible="{Binding HasWallets}">
+
+            <BindableLayout.ItemTemplate>
+                <DataTemplate>
+
+                    <Border
+                        Padding="16"
+                        BackgroundColor="{DynamicResource ExchangeCard}"
+                        Stroke="{DynamicResource ExchangeBorder}"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 18">
+
+                        <Grid ColumnDefinitions="Auto,*,Auto">
+
+                            <Border
+                                WidthRequest="42"
+                                HeightRequest="42"
+                                BackgroundColor="{DynamicResource ExchangeBg}"
+                                Stroke="{DynamicResource ExchangeBorder}"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 21"
+                                VerticalOptions="Center">
+
+                                <Label
+                                    Text="{Binding Currency}"
+                                    FontFamily="{DynamicResource Headline}"
+                                    FontSize="11"
+                                    HorizontalOptions="Center"
+                                    VerticalOptions="Center"
+                                    TextColor="{DynamicResource ExchangeGold}" />
+
+                            </Border>
+
+                            <VerticalStackLayout
+                                Grid.Column="1"
+                                Margin="12,0,8,0"
+                                Spacing="3"
+                                VerticalOptions="Center">
+
+                                <Label
+                                    Text="{Binding Currency}"
+                                    FontFamily="{DynamicResource Headline}"
+                                    FontSize="15"
+                                    TextColor="{DynamicResource ExchangeText}" />
+
+                                <Label
+                                    Text="Wallet"
+                                    FontFamily="{DynamicResource Body}"
+                                    FontSize="12"
+                                    TextColor="{DynamicResource ExchangeMuted}" />
+
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout
+                                Grid.Column="2"
+                                Spacing="3"
+                                HorizontalOptions="End"
+                                VerticalOptions="Center">
+
+                                <Label
+                                    Text="{Binding Balance, StringFormat='{0:N2}'}"
+                                    FontFamily="{DynamicResource Headline}"
+                                    FontSize="15"
+                                    HorizontalTextAlignment="End"
+                                    TextColor="{DynamicResource ExchangeText}" />
+
+                                <Label
+                                    Text="{Binding Currency}"
+                                    FontFamily="{DynamicResource Body}"
+                                    FontSize="12"
+                                    HorizontalTextAlignment="End"
+                                    TextColor="{DynamicResource ExchangeMuted}" />
+
+                            </VerticalStackLayout>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </BindableLayout.ItemTemplate>
+        </VerticalStackLayout>
+
+        <Border
+            Padding="16"
+            BackgroundColor="{DynamicResource ExchangeCard}"
+            Stroke="{DynamicResource ExchangeBorder}"
+            StrokeThickness="1"
+            StrokeShape="RoundRectangle 18"
+            IsVisible="{Binding IsEmptyVisible}">
+
+            <Label
+                Text="No wallets available."
+                FontFamily="{DynamicResource Body}"
+                FontSize="14"
+                HorizontalTextAlignment="Center"
+                TextColor="{DynamicResource ExchangeMuted}" />
+
+        </Border>
+    </VerticalStackLayout>
+</ContentView>
