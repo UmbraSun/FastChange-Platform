@@ -1,19 +1,26 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Core.DTOs.Transactions;
 using Core.DTOs.Wallets;
 using Core.Interfaces;
-using System.Collections.ObjectModel;
 
 namespace UI.ViewModels;
 
 public partial class HomeViewModel : ObservableObject
 {
+    private const int RecentActivityCount = 5;
+    private const int RecentActivityPageSize = 5;
+
     private readonly IUserService _userService;
     private readonly IPortfolioService _portfolioService;
+    private readonly ITransactionService _transactionService;
 
     public ObservableCollection<WalletDto> Wallets { get; } = [];
 
     public ObservableCollection<MarketItemViewModel> Markets { get; } = [];
+
+    public ObservableCollection<RecentActivityItemViewModel> RecentActivity { get; } = [];
 
     [ObservableProperty]
     private string userName = string.Empty;
@@ -36,6 +43,9 @@ public partial class HomeViewModel : ObservableObject
     [ObservableProperty]
     private string errorMessage = string.Empty;
 
+    [ObservableProperty]
+    private string recentActivityErrorMessage = string.Empty;
+
     public string DisplayBalance => IsBalanceVisible ? TotalBalance.ToString("N2") : "••••••";
 
     public string DisplayBalanceChange => IsBalanceVisible ? $"{BalanceChange:+0.00;-0.00;0.00}" : "••••••";
@@ -52,7 +62,13 @@ public partial class HomeViewModel : ObservableObject
 
     public bool HasMarkets => Markets.Count > 0;
 
+    public bool HasRecentActivity => RecentActivity.Count > 0;
+
     public bool IsMarketsEmpty => !IsBusy && !IsErrorVisible && !HasMarkets;
+
+    public bool IsRecentActivityErrorVisible => !string.IsNullOrWhiteSpace(RecentActivityErrorMessage);
+
+    public bool IsRecentActivityEmpty => !IsBusy && !IsRecentActivityErrorVisible && !HasRecentActivity;
 
     public bool IsErrorVisible => !string.IsNullOrWhiteSpace(ErrorMessage);
 
@@ -60,14 +76,16 @@ public partial class HomeViewModel : ObservableObject
 
     public bool IsContentVisible => !IsBusy && !IsErrorVisible && HasWallets;
 
-    private static readonly string[] MarketCurrencies = [ "BTC", "ETH", "SOL" ];
+    private static readonly string[] MarketCurrencies = ["BTC", "ETH", "SOL"];
 
     public HomeViewModel(
         IUserService userService,
-        IPortfolioService portfolioService)
+        IPortfolioService portfolioService,
+        ITransactionService transactionService)
     {
         _userService = userService;
         _portfolioService = portfolioService;
+        _transactionService = transactionService;
     }
 
     [RelayCommand]
@@ -79,6 +97,7 @@ public partial class HomeViewModel : ObservableObject
         {
             IsBusy = true;
             ErrorMessage = string.Empty;
+            RecentActivityErrorMessage = string.Empty;
 
             NotifyStateChanged();
 
@@ -105,13 +124,16 @@ public partial class HomeViewModel : ObservableObject
             TotalBalance = portfolio.TotalBalance;
             BalanceChange = performance.ChangeAmount;
             BalanceChangePercent = performance.ChangePercent;
-            
+
             Markets.Clear();
             foreach (var market in markets)
                 Markets.Add(new MarketItemViewModel(market));
 
+            await LoadRecentActivityAsync(wallets);
+
             NotifyStateChanged();
             NotifyBalanceStateChanged();
+            NotifyRecentActivityStateChanged();
         }
         catch (Exception)
         {
@@ -122,7 +144,42 @@ public partial class HomeViewModel : ObservableObject
         {
             IsBusy = false;
             NotifyStateChanged();
+            NotifyRecentActivityStateChanged();
         }
+    }
+
+    private async Task LoadRecentActivityAsync(
+        IReadOnlyCollection<WalletDto> wallets)
+    {
+        RecentActivity.Clear();
+        RecentActivityErrorMessage = string.Empty;
+
+        if (wallets.Count == 0)
+        {
+            NotifyRecentActivityStateChanged();
+            return;
+        }
+
+        try
+        {
+            var transactionTasks = wallets.Select(wallet =>_transactionService.GetTransactionsAsync(wallet.WalletId, page: 1, pageSize: RecentActivityPageSize));
+            var results = await Task.WhenAll(transactionTasks);
+
+            var transactions = results
+                .SelectMany(result => result.Items)
+                .OrderByDescending(transaction => transaction.CreatedAtUtc)
+                .Take(RecentActivityCount);
+
+            foreach (var transaction in transactions)
+                RecentActivity.Add(new RecentActivityItemViewModel(transaction));
+        }
+        catch (Exception)
+        {
+            RecentActivity.Clear();
+            RecentActivityErrorMessage = "Unable to load recent activity.";
+        }
+
+        NotifyRecentActivityStateChanged();
     }
 
     [RelayCommand]
@@ -141,6 +198,13 @@ public partial class HomeViewModel : ObservableObject
         OnPropertyChanged(nameof(HasPositiveBalanceChange));
         OnPropertyChanged(nameof(HasNegativeBalanceChange));
         OnPropertyChanged(nameof(HasNoBalanceChange));
+    }
+
+    private void NotifyRecentActivityStateChanged()
+    {
+        OnPropertyChanged(nameof(HasRecentActivity));
+        OnPropertyChanged(nameof(IsRecentActivityErrorVisible));
+        OnPropertyChanged(nameof(IsRecentActivityEmpty));
     }
 
     private void NotifyStateChanged()

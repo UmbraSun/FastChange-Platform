@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentView
+    x:Class="UI.Views.Sections.Home.QuickActionsView"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <Grid
+        RowDefinitions="Auto,Auto"
+        ColumnDefinitions="*,*"
+        RowSpacing="12"
+        ColumnSpacing="12">
+
+        <!-- Deposit -->
+
+        <Border
+            Grid.Row="0"
+            Grid.Column="0"
+            Padding="16"
+            BackgroundColor="{DynamicResource ExchangeCard}"
+            Stroke="{DynamicResource ExchangeBorder}"
+            StrokeThickness="1"
+            StrokeShape="RoundRectangle 20">
+
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Tapped="Deposit_Tapped" />
+            </Border.GestureRecognizers>
+
+            <Grid
+                RowDefinitions="Auto,Auto"
+                RowSpacing="10">
+
+                <Label
+                    Text="+"
+                    FontSize="24"
+                    FontFamily="{DynamicResource Headline}"
+                    TextColor="{DynamicResource ExchangeGold}" />
+
+                <Label
+                    Grid.Row="1"
+                    Text="Deposit"
+                    FontFamily="{DynamicResource Body}"
+                    FontSize="14"
+                    TextColor="{DynamicResource ExchangeText}" />
+
+            </Grid>
+        </Border>
+
+        <!-- Exchange -->
+
+        <Border
+            Grid.Row="0"
+            Grid.Column="1"
+            Padding="16"
+            BackgroundColor="{DynamicResource ExchangeCard}"
+            Stroke="{DynamicResource ExchangeBorder}"
+            StrokeThickness="1"
+            StrokeShape="RoundRectangle 20">
+
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Tapped="Exchange_Tapped" />
+            </Border.GestureRecognizers>
+
+            <Grid
+                RowDefinitions="Auto,Auto"
+                RowSpacing="10">
+
+                <Label
+                    Text="⇄"
+                    FontSize="24"
+                    FontFamily="{DynamicResource Headline}"
+                    TextColor="{DynamicResource ExchangeGold}" />
+
+                <Label
+                    Grid.Row="1"
+                    Text="Exchange"
+                    FontFamily="{DynamicResource Body}"
+                    FontSize="14"
+                    TextColor="{DynamicResource ExchangeText}" />
+
+            </Grid>
+        </Border>
+
+        <!-- Withdraw -->
+
+        <Border
+            Grid.Row="1"
+            Grid.Column="0"
+            Padding="16"
+            BackgroundColor="{DynamicResource ExchangeCard}"
+            Stroke="{DynamicResource ExchangeBorder}"
+            StrokeThickness="1"
+            StrokeShape="RoundRectangle 20">
+
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Tapped="Withdraw_Tapped" />
+            </Border.GestureRecognizers>
+
+            <Grid
+                RowDefinitions="Auto,Auto"
+                RowSpacing="10">
+
+                <Label
+                    Text="−"
+                    FontSize="24"
+                    FontFamily="{DynamicResource Headline}"
+                    TextColor="{DynamicResource ExchangeGold}" />
+
+                <Label
+                    Grid.Row="1"
+                    Text="Withdraw"
+                    FontFamily="{DynamicResource Body}"
+                    FontSize="14"
+                    TextColor="{DynamicResource ExchangeText}" />
+
+            </Grid>
+
+        </Border>
+
+        <!-- Transfer -->
+
+        <Border
+            Grid.Row="1"
+            Grid.Column="1"
+            Padding="16"
+            BackgroundColor="{DynamicResource ExchangeCard}"
+            Stroke="{DynamicResource ExchangeBorder}"
+            StrokeThickness="1"
+            StrokeShape="RoundRectangle 20">
+
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Tapped="Transfer_Tapped" />
+            </Border.GestureRecognizers>
+
+            <Grid
+                RowDefinitions="Auto,Auto"
+                RowSpacing="10">
+
+                <Label
+                    Text="→"
+                    FontSize="24"
+                    FontFamily="{DynamicResource Headline}"
+                    TextColor="{DynamicResource ExchangeGold}" />
+
+                <Label
+                    Grid.Row="1"
+                    Text="Transfer"
+                    FontFamily="{DynamicResource Body}"
+                    FontSize="14"
+                    TextColor="{DynamicResource ExchangeText}" />
+
+            </Grid>
+        </Border>
+    </Grid>
+</ContentView>

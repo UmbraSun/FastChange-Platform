@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentView
+    x:Class="UI.Views.Sections.Home.BalanceCardView"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewModels="clr-namespace:UI.ViewModels"
+    x:DataType="viewModels:HomeViewModel">
+
+    <Border
+        Padding="20"
+        BackgroundColor="{DynamicResource ExchangeCard}"
+        Stroke="{DynamicResource ExchangeBorder}"
+        StrokeThickness="1"
+        StrokeShape="RoundRectangle 24">
+
+        <Grid
+            RowDefinitions="Auto,Auto,Auto"
+            RowSpacing="12">
+
+            <!-- Header -->
+
+            <Grid
+                Grid.Row="0"
+                ColumnDefinitions="*,Auto">
+
+                <Label
+                    Text="Total Balance"
+                    FontFamily="{DynamicResource Body}"
+                    FontSize="14"
+                    TextColor="{DynamicResource ExchangeMuted}"
+                    VerticalOptions="Center" />
+
+                <Label
+                    Grid.Column="1"
+                    Text="USD"
+                    FontFamily="{DynamicResource Headline}"
+                    FontSize="13"
+                    TextColor="{DynamicResource ExchangeGold}"
+                    VerticalOptions="Center" />
+
+            </Grid>
+
+            <!-- Balance -->
+
+            <Grid
+                Grid.Row="1"
+                ColumnDefinitions="*,Auto"
+                ColumnSpacing="12">
+
+                <Label
+                    Grid.Column="0"
+                    Text="{Binding DisplayBalance}"
+                    FontFamily="{DynamicResource Headline}"
+                    FontSize="32"
+                    LineBreakMode="TailTruncation"
+                    TextColor="{DynamicResource ExchangeText}"
+                    VerticalOptions="Center" />
+
+                <Border
+                    Grid.Column="1"
+                    WidthRequest="40"
+                    HeightRequest="40"
+                    BackgroundColor="{DynamicResource ExchangeBg}"
+                    Stroke="{DynamicResource ExchangeBorder}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 20"
+                    VerticalOptions="Center">
+
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer
+                            Command="{Binding ToggleBalanceVisibilityCommand}" />
+                    </Border.GestureRecognizers>
+
+                    <Label
+                        FontSize="18"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"
+                        TextColor="{DynamicResource ExchangeText}">
+
+                        <Label.Triggers>
+
+                            <DataTrigger
+                                TargetType="Label"
+                                Binding="{Binding IsBalanceVisible}"
+                                Value="True">
+
+                                <Setter
+                                    Property="Text"
+                                    Value="◉" />
+
+                            </DataTrigger>
+
+                            <DataTrigger
+                                TargetType="Label"
+                                Binding="{Binding IsBalanceVisible}"
+                                Value="False">
+
+                                <Setter
+                                    Property="Text"
+                                    Value="⊘" />
+
+                            </DataTrigger>
+                        </Label.Triggers>
+                    </Label>
+                </Border>
+            </Grid>
+
+            <!-- Performance -->
+
+            <HorizontalStackLayout
+                Grid.Row="2"
+                Spacing="8">
+
+                <Label
+                    Text="{Binding DisplayBalanceChange}"
+                    FontFamily="{DynamicResource Body}"
+                    FontSize="14"
+                    TextColor="{DynamicResource ExchangeText}"
+                    VerticalOptions="Center" />
+
+                <Label
+                    Text="{Binding DisplayBalanceChangePercent}"
+                    FontFamily="{DynamicResource Body}"
+                    FontSize="14"
+                    TextColor="{DynamicResource ExchangeMuted}"
+                    VerticalOptions="Center" />
+
+            </HorizontalStackLayout>
+        </Grid>
+    </Border>
+</ContentView>
