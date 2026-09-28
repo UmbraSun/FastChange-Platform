@@ -12,9 +12,16 @@ public partial class HomeViewModel : ObservableObject
     private const int RecentActivityCount = 5;
     private const int RecentActivityPageSize = 5;
 
+    private static readonly string[] MarketCurrencies = ["BTC", "ETH", "SOL"];
+    
+    private static readonly TimeSpan HomeCacheDuration = TimeSpan.FromSeconds(20);
+
     private readonly IUserService _userService;
     private readonly IPortfolioService _portfolioService;
     private readonly ITransactionService _transactionService;
+
+    private CancellationTokenSource? _loadCts;
+    private DateTimeOffset _lastSuccessfulLoad = DateTimeOffset.MinValue;
 
     public ObservableCollection<WalletDto> Wallets { get; } = [];
 
@@ -76,8 +83,6 @@ public partial class HomeViewModel : ObservableObject
 
     public bool IsContentVisible => !IsBusy && !IsErrorVisible && HasWallets;
 
-    private static readonly string[] MarketCurrencies = ["BTC", "ETH", "SOL"];
-
     public HomeViewModel(
         IUserService userService,
         IPortfolioService portfolioService,
@@ -91,7 +96,23 @@ public partial class HomeViewModel : ObservableObject
     [RelayCommand]
     private async Task LoadAsync()
     {
+        await LoadInternalAsync(forceRefresh: false);
+    }
+
+    public async Task RefreshAsync()
+    {
+        await LoadInternalAsync(forceRefresh: true);
+    }
+
+    private async Task LoadInternalAsync(bool forceRefresh)
+    {
         if (IsBusy) return;
+
+        if (!forceRefresh && DateTimeOffset.UtcNow - _lastSuccessfulLoad < HomeCacheDuration)
+            return;
+
+        var cts = new CancellationTokenSource();
+        _loadCts = cts;
 
         try
         {
@@ -100,14 +121,17 @@ public partial class HomeViewModel : ObservableObject
             RecentActivityErrorMessage = string.Empty;
 
             NotifyStateChanged();
+            NotifyRecentActivityStateChanged();
 
-            var userTask = _userService.GetCurrentUserAsync();
-            var walletsTask = _userService.GetWalletsAsync();
-            var portfolioTask = _portfolioService.GetPortfolioAsync("USD");
-            var performanceTask = _portfolioService.GetPerformanceAsync("USD");
-            var marketTask = _portfolioService.GetMarketOverviewAsync(MarketCurrencies, "USD");
+            var userTask = _userService.GetCurrentUserAsync(cts.Token);
+            var walletsTask = _userService.GetWalletsAsync(cts.Token);
+            var portfolioTask = _portfolioService.GetPortfolioAsync("USD", cts.Token);
+            var performanceTask = _portfolioService.GetPerformanceAsync("USD", cts.Token);
+            var marketTask = _portfolioService.GetMarketOverviewAsync(MarketCurrencies, "USD", cts.Token);
 
             await Task.WhenAll(userTask, walletsTask, portfolioTask, performanceTask, marketTask);
+
+            cts.Token.ThrowIfCancellationRequested();
 
             var user = await userTask;
             var wallets = await walletsTask;
@@ -129,11 +153,17 @@ public partial class HomeViewModel : ObservableObject
             foreach (var market in markets)
                 Markets.Add(new MarketItemViewModel(market));
 
-            await LoadRecentActivityAsync(wallets);
+            await LoadRecentActivityAsync(wallets, cts.Token);
+            cts.Token.ThrowIfCancellationRequested();
+            _lastSuccessfulLoad = DateTimeOffset.UtcNow;
 
             NotifyStateChanged();
             NotifyBalanceStateChanged();
             NotifyRecentActivityStateChanged();
+        }
+        catch (OperationCanceledException)
+        {
+            // The current load was cancelled.
         }
         catch (Exception)
         {
@@ -142,14 +172,19 @@ public partial class HomeViewModel : ObservableObject
         }
         finally
         {
+            if (ReferenceEquals(_loadCts, cts))
+                _loadCts = null;
+
             IsBusy = false;
             NotifyStateChanged();
             NotifyRecentActivityStateChanged();
+            cts.Dispose();
         }
     }
 
     private async Task LoadRecentActivityAsync(
-        IReadOnlyCollection<WalletDto> wallets)
+        IReadOnlyList<WalletDto> wallets,
+        CancellationToken cancellationToken)
     {
         RecentActivity.Clear();
         RecentActivityErrorMessage = string.Empty;
@@ -162,16 +197,31 @@ public partial class HomeViewModel : ObservableObject
 
         try
         {
-            var transactionTasks = wallets.Select(wallet =>_transactionService.GetTransactionsAsync(wallet.WalletId, page: 1, pageSize: RecentActivityPageSize));
-            var results = await Task.WhenAll(transactionTasks);
+            var historyTasks = wallets.Select(wallet =>
+                _transactionService.GetHistoryAsync(wallet.WalletId, RecentActivityPageSize, cancellationToken))
+                .ToArray();
 
-            var transactions = results
-                .SelectMany(result => result.Items)
-                .OrderByDescending(transaction => transaction.CreatedAtUtc)
-                .Take(RecentActivityCount);
+            var results = await Task.WhenAll(historyTasks);
+            cancellationToken.ThrowIfCancellationRequested();
+            var recentItems = results
+                .SelectMany(result => result)
+                .OrderByDescending(item => item.CreatedAtUtc)
+                .Take(RecentActivityCount)
+                .ToList();
 
-            foreach (var transaction in transactions)
-                RecentActivity.Add(new RecentActivityItemViewModel(transaction));
+            var walletCurrencies = wallets.ToDictionary(wallet => wallet.WalletId, wallet => wallet.Currency);
+
+            foreach (var item in recentItems)
+            {
+                if (!walletCurrencies.TryGetValue(item.WalletId, out var currency))
+                    continue;
+
+                RecentActivity.Add(new RecentActivityItemViewModel(item, currency));
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
         }
         catch (Exception)
         {
@@ -200,13 +250,6 @@ public partial class HomeViewModel : ObservableObject
         OnPropertyChanged(nameof(HasNoBalanceChange));
     }
 
-    private void NotifyRecentActivityStateChanged()
-    {
-        OnPropertyChanged(nameof(HasRecentActivity));
-        OnPropertyChanged(nameof(IsRecentActivityErrorVisible));
-        OnPropertyChanged(nameof(IsRecentActivityEmpty));
-    }
-
     private void NotifyStateChanged()
     {
         OnPropertyChanged(nameof(HasWallets));
@@ -215,5 +258,12 @@ public partial class HomeViewModel : ObservableObject
         OnPropertyChanged(nameof(IsErrorVisible));
         OnPropertyChanged(nameof(IsEmptyVisible));
         OnPropertyChanged(nameof(IsContentVisible));
+    }
+
+    private void NotifyRecentActivityStateChanged()
+    {
+        OnPropertyChanged(nameof(HasRecentActivity));
+        OnPropertyChanged(nameof(IsRecentActivityErrorVisible));
+        OnPropertyChanged(nameof(IsRecentActivityEmpty));
     }
 }

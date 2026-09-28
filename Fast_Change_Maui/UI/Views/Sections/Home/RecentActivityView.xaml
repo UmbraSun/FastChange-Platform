@@ -8,9 +8,7 @@
 
     <!-- Recent Activity -->
     <Border
-        Grid.Row="6"
         Padding="18"
-        Margin="0,0,0,24"
         BackgroundColor="{DynamicResource ExchangeCard}"
         Stroke="{DynamicResource ExchangeBorder}"
         StrokeThickness="1"

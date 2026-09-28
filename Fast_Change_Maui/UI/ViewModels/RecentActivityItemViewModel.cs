@@ -1,4 +1,4 @@
-﻿using Core.DTOs.Transactions;
+﻿using Core.DTOs.Wallets;
 
 namespace UI.ViewModels;
 
@@ -12,11 +12,9 @@ public sealed class RecentActivityItemViewModel
 
     public DateTime CreatedAtUtc { get; }
 
-    public string DisplayAmount =>
-        $"{(Amount > 0 ? "+" : string.Empty)}{Amount:N2} {Currency}";
+    public string DisplayAmount => $"{(Amount > 0 ? "+" : string.Empty)}{Amount:N2} {Currency}";
 
-    public string DisplayDate =>
-        CreatedAtUtc.ToLocalTime().ToString("dd MMM, HH:mm");
+    public string DisplayDate => CreatedAtUtc.ToLocalTime().ToString("dd MMM, HH:mm");
 
     public bool IsPositive => Amount > 0;
 
@@ -24,11 +22,13 @@ public sealed class RecentActivityItemViewModel
 
     public bool IsNeutral => Amount == 0;
 
-    public RecentActivityItemViewModel(TransactionDto transaction)
+    public RecentActivityItemViewModel(
+        WalletHistoryItemDto historyItem,
+        string currency)
     {
-        Type = transaction.Type;
-        Currency = transaction.Currency;
-        Amount = transaction.Amount;
-        CreatedAtUtc = transaction.CreatedAtUtc;
+        Type = historyItem.OperationType;
+        Currency = currency;
+        Amount = historyItem.SignedAmount;
+        CreatedAtUtc = historyItem.CreatedAtUtc;
     }
 }
