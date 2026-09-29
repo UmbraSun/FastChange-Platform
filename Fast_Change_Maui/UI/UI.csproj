@@ -76,6 +76,12 @@
 	  <MauiXaml Update="Views\RegisterPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\Sections\Home\AssistantPreviewView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\Sections\Home\AssistantView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\Sections\Home\BalanceCardView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

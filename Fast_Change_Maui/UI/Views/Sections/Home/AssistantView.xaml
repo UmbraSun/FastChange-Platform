@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentView
+    x:Class="UI.Views.Sections.AssistantView"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewModels="clr-namespace:UI.ViewModels"
+    x:DataType="viewModels:AssistantViewModel"
+    BackgroundColor="{DynamicResource ExchangeBg}">
+
+    <ScrollView>
+        <Grid
+            Padding="20,18,20,24"
+            RowDefinitions="Auto,Auto,Auto,Auto,Auto"
+            RowSpacing="20">
+
+            <Grid
+                Grid.Row="0"
+                ColumnDefinitions="*,Auto">
+
+                <VerticalStackLayout
+                    Spacing="4"
+                    VerticalOptions="Center">
+
+                    <Label
+                        Text="FastChange Assistant"
+                        FontFamily="{DynamicResource Headline}"
+                        FontSize="24"
+                        TextColor="{DynamicResource ExchangeText}" />
+
+                    <Label
+                        Text="Your personal financial assistant"
+                        FontFamily="{DynamicResource Body}"
+                        FontSize="14"
+                        TextColor="{DynamicResource ExchangeMuted}" />
+
+                </VerticalStackLayout>
+
+            </Grid>
+
+            <Border
+                Grid.Row="1"
+                Padding="18"
+                BackgroundColor="{DynamicResource ExchangeCard}"
+                Stroke="{DynamicResource ExchangeBorder}"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 20">
+
+                <VerticalStackLayout Spacing="14">
+
+                    <Label
+                        Text="Ask about your finances"
+                        FontFamily="{DynamicResource Headline}"
+                        FontSize="18"
+                        TextColor="{DynamicResource ExchangeText}" />
+
+                    <Label
+                        Text="Ask about balances, transactions, currencies or exchange rates."
+                        FontFamily="{DynamicResource Body}"
+                        FontSize="13"
+                        LineBreakMode="WordWrap"
+                        TextColor="{DynamicResource ExchangeMuted}" />
+
+                    <Border
+                        Padding="14"
+                        BackgroundColor="{DynamicResource ExchangeBg}"
+                        Stroke="{DynamicResource ExchangeBorder}"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 14">
+
+                        <Editor
+                            Text="{Binding Question}"
+                            Placeholder="Ask the assistant..."
+                            PlaceholderColor="{DynamicResource ExchangeMuted}"
+                            FontFamily="{DynamicResource Body}"
+                            FontSize="14"
+                            TextColor="{DynamicResource ExchangeText}"
+                            BackgroundColor="Transparent"
+                            AutoSize="TextChanges"
+                            MinimumHeightRequest="100" />
+
+                    </Border>
+
+                    <Button
+                        Text="Ask Assistant"
+                        Command="{Binding AskCommand}"
+                        IsEnabled="{Binding CanAsk}"
+                        BackgroundColor="{DynamicResource ExchangeGold}"
+                        TextColor="#000000"
+                        FontFamily="{DynamicResource Headline}"
+                        FontSize="14"
+                        CornerRadius="14"
+                        HeightRequest="50" />
+
+                </VerticalStackLayout>
+            </Border>
+
+            <ActivityIndicator
+                Grid.Row="2"
+                IsRunning="{Binding IsBusy}"
+                IsVisible="{Binding IsBusy}"
+                HorizontalOptions="Center"
+                Color="{DynamicResource ExchangeGold}" />
+
+            <Border
+                Grid.Row="3"
+                Padding="18"
+                BackgroundColor="{DynamicResource ExchangeCard}"
+                Stroke="{DynamicResource ExchangeBorder}"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 20"
+                IsVisible="{Binding IsAnswerVisible}">
+
+                <VerticalStackLayout Spacing="10">
+
+                    <Label
+                        Text="Assistant"
+                        FontFamily="{DynamicResource Headline}"
+                        FontSize="16"
+                        TextColor="{DynamicResource ExchangeGold}" />
+
+                    <Label
+                        Text="{Binding Answer}"
+                        FontFamily="{DynamicResource Body}"
+                        FontSize="14"
+                        LineBreakMode="WordWrap"
+                        TextColor="{DynamicResource ExchangeText}" />
+
+                </VerticalStackLayout>
+            </Border>
+
+            <Border
+                Grid.Row="4"
+                Padding="14"
+                BackgroundColor="{DynamicResource ExchangeCard}"
+                Stroke="{DynamicResource ExchangeBorder}"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 14"
+                IsVisible="{Binding IsErrorVisible}">
+
+                <Label
+                    Text="{Binding ErrorMessage}"
+                    FontFamily="{DynamicResource Body}"
+                    FontSize="13"
+                    TextColor="#F6465D" />
+
+            </Border>
+
+        </Grid>
+    </ScrollView>
+</ContentView>

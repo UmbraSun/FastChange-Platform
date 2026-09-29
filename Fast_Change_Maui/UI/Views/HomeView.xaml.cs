@@ -19,6 +19,8 @@ public partial class HomeView : ContentView
 
     public Func<Task>? ProfileRequested { get; set; }
 
+    public Func<Task>? AssistantRequested { get; set; }
+
     public HomeView(HomeViewModel viewModel)
     {
         InitializeComponent();
@@ -38,7 +40,7 @@ public partial class HomeView : ContentView
         QuickActionsView.ExchangeRequested += OnExchangeRequested;
         QuickActionsView.WithdrawRequested += OnWithdrawRequested;
         QuickActionsView.TransferRequested += OnTransferRequested;
-
+        AssistantPreviewView.AssistantRequested += OnAssistantRequested;
         WalletsPreviewView.ViewAllRequested += OnViewAllWalletsRequested;
 
         _eventsSubscribed = true;
@@ -55,7 +57,7 @@ public partial class HomeView : ContentView
         QuickActionsView.ExchangeRequested -= OnExchangeRequested;
         QuickActionsView.WithdrawRequested -= OnWithdrawRequested;
         QuickActionsView.TransferRequested -= OnTransferRequested;
-
+        AssistantPreviewView.AssistantRequested -= OnAssistantRequested;
         WalletsPreviewView.ViewAllRequested -= OnViewAllWalletsRequested;
 
         _eventsSubscribed = false;
@@ -100,5 +102,11 @@ public partial class HomeView : ContentView
     {
         if (ViewAllWalletsRequested is not null)
             await ViewAllWalletsRequested();
+    }
+
+    private async void OnAssistantRequested(object? sender, EventArgs e)
+    {
+        if (AssistantRequested is not null)
+            await AssistantRequested();
     }
 }
