@@ -13,7 +13,8 @@ public partial class MainViewModel : ObservableObject
     private readonly ProfileView _profileView;
     private readonly DepositView _depositView;
     private readonly WithdrawView _withdrawView;
-    private readonly TransferView _transferView;
+    private readonly TransferView _transferView; 
+    private readonly AssistantView _assistantView;
 
     [ObservableProperty]
     private ContentView currentView;
@@ -26,7 +27,8 @@ public partial class MainViewModel : ObservableObject
         ProfileView profileView,
         DepositView depositView,
         WithdrawView withdrawView,
-        TransferView transferView)
+        TransferView transferView,
+        AssistantView assistantView)
     {
         _homeView = homeView;
         _walletsView = walletsView;
@@ -36,6 +38,7 @@ public partial class MainViewModel : ObservableObject
         _depositView = depositView;
         _withdrawView = withdrawView;
         _transferView = transferView;
+        _assistantView = assistantView;
 
         _homeView.ExchangeRequested = ShowExchangeAsync;
         _homeView.DepositRequested = ShowDepositAsync;
@@ -43,6 +46,7 @@ public partial class MainViewModel : ObservableObject
         _homeView.TransferRequested = ShowTransferAsync;
         _homeView.ViewAllWalletsRequested = ShowWalletsAsync;
         _homeView.ProfileRequested = ShowProfileAsync;
+        _homeView.AssistantRequested = ShowAssistantAsync;
 
         CurrentView = _homeView;
     }
@@ -111,5 +115,11 @@ public partial class MainViewModel : ObservableObject
     {
         CurrentView = _transferView;
         await _transferView.LoadAsync();
+    }
+
+    public Task ShowAssistantAsync()
+    {
+        CurrentView = _assistantView;
+        return Task.CompletedTask;
     }
 }

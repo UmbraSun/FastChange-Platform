@@ -16,7 +16,7 @@
 
         <Grid
             Padding="20,18,20,24"
-            RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto"
+            RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto"
             RowSpacing="24">
 
             <home:HomeHeaderView 
@@ -30,16 +30,20 @@
                 x:Name="QuickActionsView"
                 Grid.Row="2" />
 
-            <home:WalletsPreviewView
-                x:Name="WalletsPreviewView"
+            <home:AssistantPreviewView
+                x:Name="AssistantPreviewView"
                 Grid.Row="3" />
 
-            <home:MarketPreviewView
+            <home:WalletsPreviewView
+                x:Name="WalletsPreviewView"
                 Grid.Row="4" />
 
-            <home:RecentActivityView
+            <home:MarketPreviewView 
                 Grid.Row="5" />
-            
+
+            <home:RecentActivityView 
+                Grid.Row="6" />
+
         </Grid>
     </ScrollView>
 </ContentView>

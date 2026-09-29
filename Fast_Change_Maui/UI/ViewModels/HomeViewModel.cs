@@ -1,7 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Core.DTOs.Transactions;
 using Core.DTOs.Wallets;
 using Core.Interfaces;
 
@@ -13,7 +12,7 @@ public partial class HomeViewModel : ObservableObject
     private const int RecentActivityPageSize = 5;
 
     private static readonly string[] MarketCurrencies = ["BTC", "ETH", "SOL"];
-    
+
     private static readonly TimeSpan HomeCacheDuration = TimeSpan.FromSeconds(20);
 
     private readonly IUserService _userService;
@@ -123,37 +122,21 @@ public partial class HomeViewModel : ObservableObject
             NotifyStateChanged();
             NotifyRecentActivityStateChanged();
 
-            var userTask = _userService.GetCurrentUserAsync(cts.Token);
-            var walletsTask = _userService.GetWalletsAsync(cts.Token);
-            var portfolioTask = _portfolioService.GetPortfolioAsync("USD", cts.Token);
-            var performanceTask = _portfolioService.GetPerformanceAsync("USD", cts.Token);
-            var marketTask = _portfolioService.GetMarketOverviewAsync(MarketCurrencies, "USD", cts.Token);
-
-            await Task.WhenAll(userTask, walletsTask, portfolioTask, performanceTask, marketTask);
+            var userTask = LoadUserAsync(cts.Token);
+            var walletsTask = LoadWalletsAsync(cts.Token);
+            
+            await Task.WhenAll(userTask, walletsTask);
 
             cts.Token.ThrowIfCancellationRequested();
-
-            var user = await userTask;
+            
             var wallets = await walletsTask;
-            var portfolio = await portfolioTask;
-            var performance = await performanceTask;
-            var markets = await marketTask;
+            var portfolioTask = LoadPortfolioAsync(cts.Token);
+            var performanceTask = LoadPerformanceAsync(cts.Token);
+            var marketsTask = LoadMarketsAsync(cts.Token);
+            var recentActivityTask = LoadRecentActivityAsync(wallets, cts.Token);
 
-            UserName = user.Email;
+            await Task.WhenAll(portfolioTask, performanceTask, marketsTask, recentActivityTask);
 
-            Wallets.Clear();
-            foreach (var wallet in wallets)
-                Wallets.Add(wallet);
-
-            TotalBalance = portfolio.TotalBalance;
-            BalanceChange = performance.ChangeAmount;
-            BalanceChangePercent = performance.ChangePercent;
-
-            Markets.Clear();
-            foreach (var market in markets)
-                Markets.Add(new MarketItemViewModel(market));
-
-            await LoadRecentActivityAsync(wallets, cts.Token);
             cts.Token.ThrowIfCancellationRequested();
             _lastSuccessfulLoad = DateTimeOffset.UtcNow;
 
@@ -182,9 +165,108 @@ public partial class HomeViewModel : ObservableObject
         }
     }
 
-    private async Task LoadRecentActivityAsync(
-        IReadOnlyList<WalletDto> wallets,
-        CancellationToken cancellationToken)
+    private async Task LoadUserAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            var user = await _userService.GetCurrentUserAsync(cancellationToken);
+            UserName = user.Email;
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
+        catch (Exception)
+        {
+            ErrorMessage = "Unable to load account data.";
+        }
+    }
+
+    private async Task<IReadOnlyList<WalletDto>> LoadWalletsAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            var wallets = await _userService.GetWalletsAsync(cancellationToken);
+            Wallets.Clear();
+            foreach (var wallet in wallets)
+                Wallets.Add(wallet);
+
+            OnPropertyChanged(nameof(HasWallets));
+            return wallets;
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
+        catch (Exception)
+        {
+            ErrorMessage = "Unable to load account data.";
+            Wallets.Clear();
+            OnPropertyChanged(nameof(HasWallets));
+            return [];
+        }
+    }
+
+    private async Task LoadPortfolioAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            var portfolio = await _portfolioService.GetPortfolioAsync("USD", cancellationToken);
+            TotalBalance = portfolio.TotalBalance;
+            OnPropertyChanged(nameof(DisplayBalance));
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
+        catch (Exception)
+        {
+        }
+    }
+
+    private async Task LoadPerformanceAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            var performance = await _portfolioService.GetPerformanceAsync("USD", cancellationToken);
+            BalanceChange = performance.ChangeAmount;
+            BalanceChangePercent = performance.ChangePercent;
+
+            NotifyBalanceStateChanged();
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
+        catch (Exception)
+        {
+        }
+    }
+
+    private async Task LoadMarketsAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            var markets = await _portfolioService.GetMarketOverviewAsync(MarketCurrencies, "USD", cancellationToken);
+
+            Markets.Clear();
+            foreach (var market in markets)
+                Markets.Add(new MarketItemViewModel(market));
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
+        catch (Exception)
+        {
+            Markets.Clear();
+        }
+
+        OnPropertyChanged(nameof(HasMarkets));
+        OnPropertyChanged(nameof(IsMarketsEmpty));
+    }
+
+    private async Task LoadRecentActivityAsync(IReadOnlyList<WalletDto> wallets, CancellationToken cancellationToken)
     {
         RecentActivity.Clear();
         RecentActivityErrorMessage = string.Empty;
@@ -203,13 +285,12 @@ public partial class HomeViewModel : ObservableObject
 
             var results = await Task.WhenAll(historyTasks);
             cancellationToken.ThrowIfCancellationRequested();
+            var walletCurrencies = wallets.ToDictionary(wallet => wallet.WalletId, wallet => wallet.Currency);
             var recentItems = results
                 .SelectMany(result => result)
                 .OrderByDescending(item => item.CreatedAtUtc)
                 .Take(RecentActivityCount)
                 .ToList();
-
-            var walletCurrencies = wallets.ToDictionary(wallet => wallet.WalletId, wallet => wallet.Currency);
 
             foreach (var item in recentItems)
             {
