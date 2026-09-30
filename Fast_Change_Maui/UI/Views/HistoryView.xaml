@@ -5,212 +5,367 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:viewModels="clr-namespace:UI.ViewModels"
-    xmlns:controls="clr-namespace:UI.Controls"
     x:DataType="viewModels:HistoryViewModel"
     BackgroundColor="{DynamicResource ExchangeBg}">
 
-    <Grid
-        Padding="20,18,20,0"
-        RowDefinitions="Auto,Auto,*">
+    <ScrollView Orientation="Vertical">
 
-        <!-- Header -->
-        <VerticalStackLayout
-            Grid.Row="0"
-            Spacing="5"
-            Margin="0,0,20,18">
+        <Grid
+            Padding="20,18,20,24"
+            RowDefinitions="Auto,Auto,Auto,Auto"
+            RowSpacing="20">
 
-            <Label
-                Text="History"
-                FontFamily="{DynamicResource Headline}"
-                FontSize="28"
-                TextColor="{DynamicResource ExchangeText}" />
+            <!-- Header -->
+            <Grid
+                Grid.Row="0"
+                ColumnDefinitions="*,Auto"
+                ColumnSpacing="12">
 
-            <Label
-                Text="Your recent transactions"
-                FontFamily="{DynamicResource Body}"
-                FontSize="14"
-                TextColor="{DynamicResource ExchangeMuted}" />
+                <VerticalStackLayout
+                    Grid.Column="0"
+                    Spacing="5">
 
-        </VerticalStackLayout>
+                    <Label
+                        Text="History"
+                        FontFamily="{DynamicResource Headline}"
+                        FontSize="28"
+                        TextColor="{DynamicResource ExchangeText}" />
 
-        <!-- Wallet selector -->
-        <controls:WalletSelector
-            Grid.Row="1"
-            Margin="0,0,0,18"
-            Wallets="{Binding Wallets}"
-            SelectedWallet="{Binding SelectedWallet, Mode=TwoWay}"
-            SelectorTitle="Wallet" />
+                    <Label
+                        Text="Your recent account activity"
+                        FontFamily="{DynamicResource Body}"
+                        FontSize="14"
+                        TextColor="{DynamicResource ExchangeMuted}" />
 
-        <!-- Content -->
-        <Grid Grid.Row="2">
-
-            <!-- Loading -->
-            <VerticalStackLayout
-                IsVisible="{Binding IsBusy}"
-                HorizontalOptions="Center"
-                VerticalOptions="Center"
-                Spacing="12">
-
-                <ActivityIndicator
-                    IsRunning="{Binding IsBusy}"
-                    Color="{DynamicResource ExchangeGold}" />
+                </VerticalStackLayout>
 
                 <Label
-                    Text="Loading history..."
+                    Grid.Column="1"
+                    Text="{Binding OperationCount, StringFormat='{0} operations'}"
                     FontFamily="{DynamicResource Body}"
-                    FontSize="13"
-                    HorizontalTextAlignment="Center"
+                    FontSize="12"
+                    VerticalOptions="End"
+                    Margin="0,0,0,3"
                     TextColor="{DynamicResource ExchangeMuted}" />
 
-            </VerticalStackLayout>
+            </Grid>
 
-            <!-- Error -->
-            <VerticalStackLayout
-                IsVisible="{Binding IsErrorVisible}"
-                HorizontalOptions="Center"
-                VerticalOptions="Center"
-                Spacing="8">
+            <!-- Filters -->
+            <Border
+                Grid.Row="1"
+                Padding="16"
+                BackgroundColor="{DynamicResource ExchangeCard}"
+                Stroke="{DynamicResource ExchangeBorder}"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 20">
 
-                <Label
-                    Text="Unable to load history"
-                    FontFamily="{DynamicResource Title}"
-                    FontSize="16"
-                    HorizontalTextAlignment="Center"
-                    TextColor="{DynamicResource ExchangeText}" />
+                <VerticalStackLayout Spacing="14">
 
-                <Label
-                    Text="{Binding ErrorMessage}"
-                    FontFamily="{DynamicResource Body}"
-                    FontSize="13"
-                    HorizontalTextAlignment="Center"
-                    TextColor="{DynamicResource ExchangeMuted}" />
+                    <Label
+                        Text="Filters"
+                        FontFamily="{DynamicResource Title}"
+                        FontSize="16"
+                        TextColor="{DynamicResource ExchangeText}" />
 
-            </VerticalStackLayout>
+                    <Grid
+                        ColumnDefinitions="*,*"
+                        ColumnSpacing="10">
 
-            <!-- No wallets -->
-            <VerticalStackLayout
-                IsVisible="{Binding IsEmptyWalletsVisible}"
-                HorizontalOptions="Center"
-                VerticalOptions="Center"
-                Spacing="8">
-
-                <Label
-                    Text="No wallets yet"
-                    FontFamily="{DynamicResource Title}"
-                    FontSize="16"
-                    HorizontalTextAlignment="Center"
-                    TextColor="{DynamicResource ExchangeText}" />
-
-                <Label
-                    Text="Transaction history will appear after you have a wallet."
-                    FontFamily="{DynamicResource Body}"
-                    FontSize="13"
-                    HorizontalTextAlignment="Center"
-                    TextColor="{DynamicResource ExchangeMuted}" />
-
-            </VerticalStackLayout>
-
-            <!-- No transactions -->
-            <VerticalStackLayout
-                IsVisible="{Binding IsEmptyTransactionsVisible}"
-                HorizontalOptions="Center"
-                VerticalOptions="Center"
-                Spacing="8">
-
-                <Label
-                    Text="No transactions yet"
-                    FontFamily="{DynamicResource Title}"
-                    FontSize="16"
-                    HorizontalTextAlignment="Center"
-                    TextColor="{DynamicResource ExchangeText}" />
-
-                <Label
-                    Text="Your transactions will appear here."
-                    FontFamily="{DynamicResource Body}"
-                    FontSize="13"
-                    HorizontalTextAlignment="Center"
-                    TextColor="{DynamicResource ExchangeMuted}" />
-
-            </VerticalStackLayout>
-
-            <!-- Transaction list -->
-            <CollectionView
-                IsVisible="{Binding IsContentVisible}"
-                ItemsSource="{Binding Transactions}"
-                SelectionMode="None">
-
-                <CollectionView.ItemTemplate>
-
-                    <DataTemplate>
-
+                        <!-- Wallet -->
                         <Border
-                            Padding="16"
-                            Margin="0,0,0,10"
-                            BackgroundColor="{DynamicResource ExchangeCard}"
+                            Grid.Column="0"
+                            Padding="8,0"
+                            BackgroundColor="{DynamicResource ExchangeBg}"
                             Stroke="{DynamicResource ExchangeBorder}"
                             StrokeThickness="1"
                             StrokeShape="RoundRectangle 14">
 
-                            <Grid
-                                ColumnDefinitions="*,Auto"
-                                ColumnSpacing="16">
-
-                                <!-- Transaction information -->
-                                <VerticalStackLayout
-                                    Grid.Column="0"
-                                    Spacing="4"
-                                    VerticalOptions="Center">
-
-                                    <Label
-                                        Text="{Binding Type}"
-                                        FontFamily="{DynamicResource Title}"
-                                        FontSize="15"
-                                        LineBreakMode="TailTruncation"
-                                        TextColor="{DynamicResource ExchangeText}" />
-
-                                    <Label
-                                        Text="{Binding CreatedAtUtc, StringFormat='{0:dd MMM yyyy, HH:mm}'}"
-                                        FontFamily="{DynamicResource Body}"
-                                        FontSize="12"
-                                        TextColor="{DynamicResource ExchangeMuted}" />
-
-                                </VerticalStackLayout>
-
-                                <!-- Amount -->
-                                <VerticalStackLayout
-                                    Grid.Column="1"
-                                    Spacing="2"
-                                    HorizontalOptions="End"
-                                    VerticalOptions="Center">
-
-                                    <Label
-                                        Text="{Binding Amount, StringFormat='{0:N2}'}"
-                                        FontFamily="{DynamicResource Headline}"
-                                        FontSize="17"
-                                        HorizontalTextAlignment="End"
-                                        TextColor="{DynamicResource ExchangeText}" />
-
-                                    <Label
-                                        Text="{Binding Currency}"
-                                        FontFamily="{DynamicResource Body}"
-                                        FontSize="11"
-                                        HorizontalTextAlignment="End"
-                                        TextColor="{DynamicResource ExchangeMuted}" />
-
-                                </VerticalStackLayout>
-
-                            </Grid>
+                            <Picker
+                                Margin="10"
+                                ItemsSource="{Binding WalletFilters}"
+                                SelectedItem="{Binding SelectedWalletFilter, Mode=TwoWay}"
+                                ItemDisplayBinding="{Binding DisplayName}"
+                                FontFamily="{DynamicResource Body}"
+                                FontSize="14"
+                                TextColor="{DynamicResource ExchangeText}"
+                                Title="Wallet"
+                                TitleColor="{DynamicResource ExchangeMuted}"
+                                HorizontalOptions="Fill"
+                                VerticalOptions="Center" />
 
                         </Border>
 
+                        <!-- Type -->
+                        <Border
+                            Grid.Column="1"
+                            Padding="8,0"
+                            BackgroundColor="{DynamicResource ExchangeBg}"
+                            Stroke="{DynamicResource ExchangeBorder}"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 14">
+
+                            <Picker
+                                Margin="10"
+                                ItemsSource="{Binding OperationTypes}"
+                                SelectedItem="{Binding SelectedOperationType, Mode=TwoWay}"
+                                FontFamily="{DynamicResource Body}"
+                                FontSize="14"
+                                TextColor="{DynamicResource ExchangeText}"
+                                Title="Type"
+                                TitleColor="{DynamicResource ExchangeMuted}"
+                                HorizontalOptions="Fill"
+                                VerticalOptions="Center" />
+
+                        </Border>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Loading / error / empty -->
+            <Grid
+                Grid.Row="2"
+                IsVisible="{Binding IsBusy}"
+                MinimumHeightRequest="180">
+
+                <VerticalStackLayout
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    Spacing="12">
+
+                    <ActivityIndicator
+                        IsRunning="{Binding IsBusy}"
+                        Color="{DynamicResource ExchangeGold}" />
+
+                    <Label
+                        Text="Loading history..."
+                        FontFamily="{DynamicResource Body}"
+                        FontSize="13"
+                        HorizontalTextAlignment="Center"
+                        TextColor="{DynamicResource ExchangeMuted}" />
+
+                </VerticalStackLayout>
+            </Grid>
+
+            <Grid
+                Grid.Row="2"
+                IsVisible="{Binding IsErrorVisible}"
+                MinimumHeightRequest="180">
+
+                <VerticalStackLayout
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    Spacing="8">
+
+                    <Label
+                        Text="Unable to load history"
+                        FontFamily="{DynamicResource Title}"
+                        FontSize="16"
+                        HorizontalTextAlignment="Center"
+                        TextColor="{DynamicResource ExchangeText}" />
+
+                    <Label
+                        Text="{Binding ErrorMessage}"
+                        FontFamily="{DynamicResource Body}"
+                        FontSize="13"
+                        HorizontalTextAlignment="Center"
+                        TextColor="{DynamicResource ExchangeMuted}" />
+
+                </VerticalStackLayout>
+            </Grid>
+
+            <Grid
+                Grid.Row="2"
+                IsVisible="{Binding IsEmptyWalletsVisible}"
+                MinimumHeightRequest="180">
+
+                <VerticalStackLayout
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    Spacing="8">
+
+                    <Label
+                        Text="No wallets yet"
+                        FontFamily="{DynamicResource Title}"
+                        FontSize="16"
+                        HorizontalTextAlignment="Center"
+                        TextColor="{DynamicResource ExchangeText}" />
+
+                    <Label
+                        Text="Transaction history will appear after you have a wallet."
+                        FontFamily="{DynamicResource Body}"
+                        FontSize="13"
+                        HorizontalTextAlignment="Center"
+                        TextColor="{DynamicResource ExchangeMuted}" />
+
+                </VerticalStackLayout>
+            </Grid>
+
+            <Grid
+                Grid.Row="2"
+                IsVisible="{Binding IsEmptyHistoryVisible}"
+                MinimumHeightRequest="180">
+
+                <VerticalStackLayout
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    Spacing="8">
+
+                    <Label
+                        Text="No activity yet"
+                        FontFamily="{DynamicResource Title}"
+                        FontSize="16"
+                        HorizontalTextAlignment="Center"
+                        TextColor="{DynamicResource ExchangeText}" />
+
+                    <Label
+                        Text="Your account activity will appear here."
+                        FontFamily="{DynamicResource Body}"
+                        FontSize="13"
+                        HorizontalTextAlignment="Center"
+                        TextColor="{DynamicResource ExchangeMuted}" />
+
+                </VerticalStackLayout>
+            </Grid>
+
+            <!-- History -->
+            <VerticalStackLayout
+                Grid.Row="3"
+                Spacing="18"
+                IsVisible="{Binding IsContentVisible}"
+                BindableLayout.ItemsSource="{Binding HistoryGroups}">
+
+                <BindableLayout.ItemTemplate>
+
+                    <DataTemplate x:DataType="viewModels:HistoryGroupViewModel">
+
+                        <VerticalStackLayout Spacing="8">
+
+                            <!-- Date header -->
+                            <Grid
+                                ColumnDefinitions="*,Auto"
+                                Margin="2,0,2,2">
+
+                                <Label
+                                    Grid.Column="0"
+                                    Text="{Binding DisplayDate}"
+                                    FontFamily="{DynamicResource Title}"
+                                    FontSize="15"
+                                    TextColor="{DynamicResource ExchangeText}" />
+
+                                <Label
+                                    Grid.Column="1"
+                                    Text="{Binding DisplayCount}"
+                                    FontFamily="{DynamicResource Body}"
+                                    FontSize="12"
+                                    VerticalOptions="Center"
+                                    TextColor="{DynamicResource ExchangeMuted}" />
+
+                            </Grid>
+
+                            <!-- Operations -->
+                            <Border
+                                Padding="0"
+                                BackgroundColor="{DynamicResource ExchangeCard}"
+                                Stroke="{DynamicResource ExchangeBorder}"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 18">
+
+                                <VerticalStackLayout
+                                    Spacing="0"
+                                    BindableLayout.ItemsSource="{Binding Items}">
+
+                                    <BindableLayout.ItemTemplate>
+
+                                        <DataTemplate
+                                            x:DataType="viewModels:HistoryItemViewModel">
+
+                                            <Grid
+                                                Padding="14"
+                                                ColumnDefinitions="Auto,*,Auto"
+                                                ColumnSpacing="12">
+
+                                                <!-- Operation icon -->
+                                                <Border
+                                                    Grid.Column="0"
+                                                    WidthRequest="40"
+                                                    HeightRequest="40"
+                                                    BackgroundColor="{DynamicResource ExchangeBg}"
+                                                    StrokeThickness="0"
+                                                    StrokeShape="RoundRectangle 20"
+                                                    VerticalOptions="Center">
+
+                                                    <Label
+                                                        Text="{Binding Icon}"
+                                                        FontFamily="{DynamicResource Headline}"
+                                                        FontSize="16"
+                                                        HorizontalTextAlignment="Center"
+                                                        VerticalTextAlignment="Center"
+                                                        TextColor="{DynamicResource ExchangeGold}" />
+
+                                                </Border>
+
+                                                <!-- Information -->
+                                                <VerticalStackLayout
+                                                    Grid.Column="1"
+                                                    Spacing="3"
+                                                    VerticalOptions="Center">
+
+                                                    <Label
+                                                        Text="{Binding Type}"
+                                                        FontFamily="{DynamicResource Title}"
+                                                        FontSize="14"
+                                                        TextColor="{DynamicResource ExchangeText}" />
+
+                                                    <Label
+                                                        Text="{Binding Currency, StringFormat='{0} · {1}'}"
+                                                        FontFamily="{DynamicResource Body}"
+                                                        FontSize="12"
+                                                        TextColor="{DynamicResource ExchangeMuted}">
+                                                        <Label.FormattedText>
+                                                            <FormattedString>
+                                                                <Span
+                                                                    Text="{Binding Currency}" />
+                                                                <Span
+                                                                    Text=" · " />
+                                                                <Span
+                                                                    Text="{Binding DisplayTime}" />
+                                                            </FormattedString>
+                                                        </Label.FormattedText>
+                                                    </Label>
+
+                                                </VerticalStackLayout>
+
+                                                <!-- Amount / balance -->
+                                                <VerticalStackLayout
+                                                    Grid.Column="2"
+                                                    Spacing="3"
+                                                    HorizontalOptions="End"
+                                                    VerticalOptions="Center">
+
+                                                    <Label
+                                                        Text="{Binding DisplayAmount}"
+                                                        FontFamily="{DynamicResource Headline}"
+                                                        FontSize="14"
+                                                        HorizontalTextAlignment="End"
+                                                        TextColor="{DynamicResource ExchangeText}" />
+
+                                                    <Label
+                                                        Text="{Binding DisplayBalance}"
+                                                        FontFamily="{DynamicResource Body}"
+                                                        FontSize="11"
+                                                        HorizontalTextAlignment="End"
+                                                        TextColor="{DynamicResource ExchangeMuted}" />
+
+                                                </VerticalStackLayout>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </BindableLayout.ItemTemplate>
+                                </VerticalStackLayout>
+                            </Border>
+                        </VerticalStackLayout>
                     </DataTemplate>
-
-                </CollectionView.ItemTemplate>
-
-            </CollectionView>
-
+                </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
         </Grid>
-
-    </Grid>
-
+    </ScrollView>
 </ContentView>
